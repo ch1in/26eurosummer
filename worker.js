@@ -43,12 +43,28 @@ function b64DecodeUtf8(str) {
   return decodeURIComponent(escape(atob(str)));
 }
 
-async function getFile(env, path) {
+async function getFileOnce(env, path) {
   const res = await fetch(contentsUrl(path), { headers: ghHeaders(env) });
   if (res.status === 404) return { content: null, sha: null };
-  if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + await res.text());
-  const data = await res.json();
+  const bodyText = await res.text();
+  if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + bodyText);
+  let data;
+  try { data = JSON.parse(bodyText); }
+  catch (e) { throw new Error('GitHub GET returned non-JSON body (status ' + res.status + ', len ' + bodyText.length + '): ' + bodyText.slice(0, 200)); }
+  if (!data || typeof data.content !== 'string') {
+    throw new Error('GitHub GET missing content field (status ' + res.status + '): ' + bodyText.slice(0, 200));
+  }
   return { content: b64DecodeUtf8(data.content.replace(/\n/g, '')), sha: data.sha };
+}
+// GitHub's API occasionally hiccups with a transient 5xx or a truncated
+// body (we've seen both) — one retry after a short pause clears it.
+async function getFile(env, path) {
+  try {
+    return await getFileOnce(env, path);
+  } catch (e) {
+    await new Promise(r => setTimeout(r, 500));
+    return await getFileOnce(env, path);
+  }
 }
 
 async function putFile(env, path, contentStr, sha) {
