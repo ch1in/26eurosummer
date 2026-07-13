@@ -604,6 +604,24 @@
   }
   .loading-note{text-align:center; padding:14px; color:var(--ink-soft); font-size:12px; font-family:'IBM Plex Mono',monospace;}
 
+  /* ================= SYNC TOAST ================= */
+  .sync-toast{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px);
+    z-index:9998;
+    background:var(--ink); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+    padding:9px 16px; border-radius:20px;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+    display:flex; align-items:center; gap:7px;
+    opacity:0; pointer-events:none;
+    transition:opacity .2s, transform .2s;
+    white-space:nowrap; max-width:88vw;
+  }
+  .sync-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .sync-toast.ok{ background:var(--forest); }
+  .sync-toast.err{ background:var(--rust); }
+  .sync-toast.pending{ background:var(--ink); }
+
   /* ================= LOCK GATE ================= */
   .lock-gate{
     position:fixed; inset:0; z-index:9999;
@@ -765,6 +783,8 @@
   <div class="sec-label">穿搭紀錄</div>
   <div id="ootd-list"></div>
 </div>
+
+<div id="sync-toast" class="sync-toast"></div>
 
 </div><!-- /#app-content -->
 
@@ -1051,15 +1071,32 @@ async function pushToCloud(){
   }catch(e){ throw new Error('連不到 Worker：' + e.message); }
   if(!res.ok) throw new Error('寫入失敗：' + await describeFailedResponse(res));
 }
+let _toastHideTimer = null;
+function showSyncToast(message, kind, autoHideMs){
+  const el = document.getElementById('sync-toast');
+  if(!el) return;
+  clearTimeout(_toastHideTimer);
+  el.textContent = message;
+  el.className = 'sync-toast show' + (kind ? (' ' + kind) : '');
+  if(autoHideMs){
+    _toastHideTimer = setTimeout(()=>{ el.classList.remove('show'); }, autoHideMs);
+  }
+}
 function scheduleWorkerPush(){
   if(!_workerReady) return;
   clearTimeout(_workerPushTimer);
+  showSyncToast('⏳ 準備同步…', 'pending');
   _workerPushTimer = setTimeout(async ()=>{
+    showSyncToast('☁️ 同步中…', 'pending');
     try{
       await pushToCloud();
       workerSyncOK = true; lastSyncError = '';
       await refreshAllViews();
-    }catch(e){ workerSyncOK = false; lastSyncError = e.message; console.warn('cloud sync failed', e); }
+      showSyncToast('✓ 已同步到雲端', 'ok', 2000);
+    }catch(e){
+      workerSyncOK = false; lastSyncError = e.message; console.warn('cloud sync failed', e);
+      showSyncToast('⚠️ 同步失敗：' + e.message, 'err', 4000);
+    }
     updatePersistNote();
   }, 1200);
 }
