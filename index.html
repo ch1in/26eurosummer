@@ -1871,13 +1871,14 @@ async function resizeImageFile(img, maxDim, quality){
 async function compressForStorage(file){
   // Photos live inline as base64 inside the synced JSON file, and GitHub's
   // Contents API refuses to read files over ~1MB TOTAL (all photos combined,
-  // not per-photo) — so each photo needs a tight budget, not just "under 1MB
-  // on its own". ~150KB keeps a multi-day trip's worth of photos well clear.
+  // not per-photo, and shared with expenses/hotels/todos too). Budgeted for
+  // roughly 20 photos over the trip: ~35KB each keeps ~20 photos at ~700KB,
+  // leaving headroom under the 1MB ceiling for everything else.
   const img = await loadImageEl(await fileToDataUrl(file));
-  const attempts = [[900,0.65],[700,0.55],[560,0.5],[440,0.45],[360,0.4]];
+  const attempts = [[800,0.62],[640,0.55],[520,0.48],[420,0.42],[320,0.38]];
   let dataUrl = await resizeImageFile(img, attempts[0][0], attempts[0][1]);
   let i = 1;
-  while(dataUrl.length > 150*1024 && i < attempts.length){
+  while(dataUrl.length > 35*1024 && i < attempts.length){
     dataUrl = await resizeImageFile(img, attempts[i][0], attempts[i][1]);
     i++;
   }
