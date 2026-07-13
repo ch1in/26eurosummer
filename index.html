@@ -1,1 +1,1995 @@
-<!-- this historical version of index.html contained hardcoded itinerary/hotel data and was redacted from git history for privacy. See current index.html on the main branch. -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>德瑞義鐵道行 · 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --paper-2:#EFEADD;
+    --ink:#20291F;
+    --ink-soft:#5B6459;
+    --rust:#9E4429;
+    --rust-2:#B85536;
+    --forest:#2E4A3A;
+    --forest-2:#3D6350;
+    --lake:#3A6B85;
+    --line:#D7CFBC;
+    --gold:#B08A3E;
+    --card:#FCFAF4;
+    --de:#9E4429;
+    --ch:#2E4A3A;
+    --it:#B08A3E;
+    --fr:#3A5C8F;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{background:var(--rust);color:#fff;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .disp{font-family:'Fraunces',serif;}
+
+  /* ---------- Header ---------- */
+  .app-header{
+    background:var(--ink);
+    color:var(--paper);
+    padding:22px 20px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .app-header::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0;
+    height:6px;
+    background:repeating-linear-gradient(90deg,var(--rust) 0 18px, var(--forest-2) 18px 36px, var(--gold) 36px 54px);
+    opacity:.85;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:#C9BFA8;
+    margin-bottom:6px;
+  }
+  .app-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:.01em;
+    margin:0 0 10px;
+  }
+  .flight-row{
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .flight-chip{
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:3px;
+    padding:7px 11px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    line-height:1.5;
+    color:#EDE7D8;
+  }
+  .flight-chip b{color:#fff; letter-spacing:.04em;}
+
+  /* ---------- Tabs ---------- */
+  .tabbar{
+    display:flex;
+    background:var(--paper-2);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:50;
+    overflow-x:auto;
+  }
+  .tab-btn{
+    flex:1;
+    min-width:0;
+    padding:12px 4px 10px;
+    text-align:center;
+    background:none; border:none;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    position:relative;
+    letter-spacing:.01em;
+    white-space:nowrap;
+  }
+  .tab-btn .ic{display:block; font-size:15px; margin-bottom:2px;}
+  .tab-btn.active{color:var(--ink);}
+  .tab-btn.active::after{
+    content:"";
+    position:absolute; left:14px; right:14px; bottom:0;
+    height:3px; background:var(--rust); border-radius:2px 2px 0 0;
+  }
+
+  .view{display:none; padding:18px 16px 60px; max-width:760px; margin:0 auto;}
+  .view.active{display:block;}
+
+  /* ---------- Section headers ---------- */
+  .sec-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:8px;
+    margin:26px 0 10px;
+  }
+  .sec-label:first-child{margin-top:0;}
+  .sec-label::after{content:""; flex:1; height:1px; background:var(--line);}
+
+  /* ================= CALENDAR TAB ================= */
+  .rail{
+    position:relative;
+    padding-left:26px;
+  }
+  .rail::before{
+    content:"";
+    position:absolute; left:9px; top:6px; bottom:6px;
+    width:2px;
+    background:repeating-linear-gradient(180deg, var(--line) 0 6px, transparent 6px 11px);
+  }
+  .rail-stop{
+    position:relative;
+    padding:0 0 18px;
+    cursor:pointer;
+  }
+  .rail-stop:last-child{padding-bottom:0;}
+  .rail-dot{
+    position:absolute; left:-28px; top:1px;
+    width:22px; height:22px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; line-height:1;
+  }
+  .rail-dot.ch, .rail-dot.it, .rail-dot.fr, .rail-dot.de{}
+  .rail-dot.fly{}
+  .rail-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:11px 13px;
+    display:flex; justify-content:space-between; align-items:center;
+    gap:10px;
+    transition:border-color .15s;
+  }
+  .rail-card:active{border-color:var(--rust);}
+  .rail-date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+  }
+  .rail-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:15.5px;
+  }
+  .rail-sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
+  .flag-pill{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    padding:3px 7px;
+    border-radius:20px;
+    white-space:nowrap;
+    color:#fff;
+  }
+  .flag-pill.de{background:var(--de);}
+  .flag-pill.ch{background:var(--ch);}
+  .flag-pill.it{background:var(--it);}
+  .flag-pill.fr{background:var(--fr);}
+  .flag-pill.fly{background:var(--ink);}
+
+  /* ================= TODO TAB ================= */
+  .todo-sec{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    margin-bottom:16px;
+    overflow:hidden;
+  }
+  .todo-sec-head{
+    padding:12px 14px;
+    display:flex; align-items:center; gap:9px;
+    border-bottom:1px solid var(--line);
+    background:var(--paper-2);
+  }
+  .todo-sec-head .ic{font-size:17px;}
+  .todo-sec-head h3{
+    font-family:'Fraunces',serif;
+    font-size:15.5px; font-weight:600; margin:0;
+    flex:1;
+  }
+  .todo-sec-head .badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px; color:var(--ink-soft);
+  }
+  .todo-item{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:11px 14px;
+    border-bottom:1px solid #EFEADD;
+  }
+  .todo-item:last-child{border-bottom:none;}
+  .custom-todo-del{
+    background:none; border:none; color:var(--ink-soft);
+    font-size:15px; cursor:pointer; padding:2px 4px; flex-shrink:0;
+    align-self:center;
+  }
+  .custom-todo-del:hover{color:var(--rust);}
+  .todo-check{
+    width:18px; height:18px; border-radius:4px;
+    border:1.5px solid var(--line);
+    margin-top:2px; flex-shrink:0;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    background:#fff;
+    font-size:12px; color:#fff;
+    transition:.15s;
+  }
+  .todo-check.done{background:var(--forest-2); border-color:var(--forest-2);}
+  .todo-body{flex:1; min-width:0;}
+  .todo-title{font-size:13.5px; font-weight:600; line-height:1.4;}
+  .todo-title.done{text-decoration:line-through; color:var(--ink-soft);}
+  .todo-desc{font-size:12px; color:var(--ink-soft); margin-top:2px; line-height:1.5;}
+  .todo-links{display:flex; gap:8px; flex-wrap:wrap; margin-top:7px;}
+  .link-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    padding:5px 10px;
+    border-radius:20px;
+    border:1px solid var(--rust);
+    color:var(--rust);
+    text-decoration:none;
+    display:inline-flex; align-items:center; gap:4px;
+    background:#fff;
+  }
+  .link-btn.alt{border-color:var(--lake); color:var(--lake);}
+  .link-btn.gold{border-color:var(--gold); color:var(--gold);}
+  .priority-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    padding:2px 6px;
+    border-radius:3px;
+    margin-left:6px;
+    vertical-align:1px;
+  }
+  .priority-tag.high{background:#F4DED6; color:var(--rust);}
+  .priority-tag.medium{background:#F7EFDC; color:var(--gold);}
+  .priority-tag.low{background:#DEEAE2; color:var(--forest);}
+
+  /* ================= ITINERARY TAB ================= */
+  .day-strip{
+    display:flex; gap:8px; overflow-x:auto;
+    padding:2px 2px 12px;
+    margin:0 -16px 8px;
+    padding-left:16px; padding-right:16px;
+  }
+  .day-stub{
+    flex-shrink:0;
+    width:64px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 0 7px;
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+  }
+  .day-stub.active{
+    background:var(--ink); border-color:var(--ink);
+  }
+  .day-stub .dnum{font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--ink-soft);}
+  .day-stub.active .dnum{color:#C9BFA8;}
+  .day-stub .ddate{font-family:'Fraunces',serif; font-weight:600; font-size:16px; margin-top:1px;}
+  .day-stub.active .ddate{color:#fff;}
+  .day-stub .dflag{font-size:13px; margin-top:2px;}
+
+  .day-panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .day-panel-head{
+    padding:16px 16px 14px;
+    background:var(--paper-2);
+    border-bottom:1px solid var(--line);
+  }
+  .day-panel-head .dp-date{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .day-panel-head h2{
+    font-family:'Fraunces',serif; font-size:21px; font-weight:600;
+    margin:3px 0 0;
+  }
+  .transit-block{
+    margin:12px 16px; padding:10px 12px;
+    background:#fff; border:1px dashed var(--line); border-radius:7px;
+    font-size:12.5px; color:var(--ink-soft);
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .transit-block .t-ic{font-size:15px;}
+  .transit-block a{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--lake); text-decoration:none;
+    border:1px solid var(--lake); padding:4px 9px; border-radius:20px;
+    white-space:nowrap;
+  }
+  .transit-book-note{
+    flex-basis:100%; font-size:11px; color:var(--rust); font-weight:600;
+    display:flex; align-items:center; gap:5px; margin-top:2px;
+  }
+  .luggage-block{
+    margin:10px 16px; padding:10px 12px;
+    background:#FBF3E3; border:1px solid #E8D8AE; border-radius:7px;
+    font-size:12px; color:#7A5E23;
+    display:flex; align-items:flex-start; gap:8px;
+  }
+  .luggage-block .lg-ic{font-size:15px; flex-shrink:0;}
+  .book-alert-block{
+    margin:10px 16px; padding:10px 12px;
+    background:#F4DED6; border:1px solid #E3BCA9; border-radius:7px;
+    font-size:12px; color:var(--rust);
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .book-alert-block .ba-head{display:flex; align-items:center; gap:7px; font-weight:700;}
+  .book-alert-block a{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--rust); text-decoration:none;
+    border:1px solid var(--rust); padding:4px 9px; border-radius:20px;
+    background:#fff;
+  }
+  .stay-start-banner{
+    margin:0 16px 12px; padding:9px 12px;
+    background:var(--forest); color:#fff;
+    border-radius:7px; font-size:12.5px; font-weight:700;
+    display:flex; align-items:center; gap:6px;
+  }
+  .spot-list{padding:4px 16px 14px;}
+  .spot-card{
+    display:flex; gap:11px;
+    padding:11px 0;
+    border-bottom:1px solid #EFEADD;
+  }
+  .spot-card:last-child{border-bottom:none;}
+  .spot-photo{
+    width:78px; height:78px; border-radius:7px;
+    object-fit:cover; flex-shrink:0;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+  }
+  .spot-info{flex:1; min-width:0; padding-top:1px;}
+  .spot-name{font-family:'Fraunces',serif; font-weight:600; font-size:14.5px;}
+  .spot-price{
+    display:inline-flex; align-items:center; gap:4px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--gold); background:#F7EFDC; border:1px solid #E8D8AE;
+    padding:2px 7px; border-radius:20px; margin-top:4px;
+  }
+  .spot-note{font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.5;}
+  .spot-actions{display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;}
+
+  /* connector between spots showing transit relationship */
+  .spot-connector{
+    display:flex; align-items:center; gap:8px;
+    padding:4px 0 4px 39px;
+    margin:-2px 0;
+  }
+  .spot-connector .sc-line{
+    width:1px; align-self:stretch; background:var(--line);
+  }
+  .spot-connector .sc-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--ink-soft);
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:3px 10px;
+    display:inline-flex; align-items:center; gap:5px;
+    white-space:nowrap;
+  }
+  .spot-connector a{
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--lake); text-decoration:none;
+  }
+
+  .hotel-block{
+    margin:4px 16px 16px;
+    padding:13px 14px;
+    border-radius:8px;
+    background:#fff;
+    border:1px solid var(--line);
+  }
+  .hotel-block .hb-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--ink-soft); letter-spacing:.08em; text-transform:uppercase;
+    margin-bottom:8px; display:flex; align-items:center; gap:6px;
+  }
+  .hotel-city-row{
+    display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap;
+  }
+  .hotel-city{font-family:'Fraunces',serif; font-weight:600; font-size:16.5px;}
+  .hotel-dates{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);
+  }
+  .hotel-status{
+    display:inline-block; margin-top:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    padding:3px 9px; border-radius:20px;
+  }
+  .hotel-status.pending{background:#F4DED6; color:var(--rust);}
+  .hotel-status.set{background:#DEEAE2; color:var(--forest);}
+  .hotel-area{
+    margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+  }
+  .hotel-area .ha-label{
+    font-size:11.5px; font-weight:700; color:var(--forest); margin-bottom:3px;
+    display:flex; align-items:center; gap:5px;
+  }
+  .hotel-area .ha-region{font-size:13px; font-weight:600; margin-bottom:3px;}
+  .hotel-area .ha-tip{font-size:12px; color:var(--ink-soft); line-height:1.55;}
+  .hotel-input-row{display:flex; gap:6px; margin-top:10px;}
+  .hotel-input-row input{
+    flex:1; min-width:0;
+    border:1px solid var(--line); border-radius:5px;
+    padding:8px 9px; font-size:12.5px; font-family:'Inter',sans-serif;
+    background:var(--paper);
+  }
+  .hotel-input-row button{
+    border:none; background:var(--forest-2); color:#fff;
+    border-radius:5px; padding:0 13px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12px;
+    cursor:pointer;
+  }
+  .hotel-saved-link{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    color:var(--lake); text-decoration:none; margin-top:8px;
+  }
+  .hotel-clear{
+    background:none; border:none; color:var(--ink-soft);
+    font-size:11px; text-decoration:underline; cursor:pointer; margin-left:8px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .hotel-booking-link{margin-top:8px;}
+
+  /* ================= OOTD TAB ================= */
+  .ootd-add{
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:14px; margin-bottom:18px;
+  }
+  .ootd-add label{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--ink-soft); text-transform:uppercase; letter-spacing:.08em;
+    margin-bottom:5px;
+  }
+  .ootd-add select,
+  .ootd-add input[type=text],
+  .ootd-add input[type=number],
+  .ootd-add input[type=date]{
+    width:100%; box-sizing:border-box;
+    border:1px solid var(--line); border-radius:6px;
+    padding:9px 10px; font-size:13.5px; font-family:'Inter',sans-serif;
+    margin-bottom:12px; background:#fff;
+    height:40px; -webkit-appearance:none; appearance:none;
+  }
+  .ootd-add select{
+    -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%235B6459'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center;
+    padding-right:28px;
+  }
+  .exp-row2{display:flex; gap:10px;}
+  .exp-row2 > div{min-width:0;}
+  .exp-row2 > div > label{display:block;}
+  /* expense total header */
+  .expense-total{
+    background:var(--ink); color:var(--paper);
+    border-radius:10px; padding:15px 16px; margin-bottom:16px;
+  }
+  .expense-total .et-label{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    letter-spacing:.12em; text-transform:uppercase; color:#C9BFA8; margin-bottom:8px;
+  }
+  .expense-total .et-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:3px 0;
+  }
+  .expense-total .et-cur{font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C9BFA8;}
+  .expense-total .et-amt{font-family:'Fraunces',serif; font-weight:600; font-size:20px;}
+  .expense-total .et-empty{font-size:12.5px; color:#C9BFA8;}
+  .swipe-hint{
+    text-align:right; font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; color:var(--ink-soft); margin-bottom:8px;
+  }
+  .persist-note{
+    background:#F4DED6; border:1px solid #E3BCA9; border-radius:8px;
+    padding:10px 12px; margin-bottom:14px;
+    font-size:12px; color:var(--rust); line-height:1.5;
+  }
+  /* expense rows with swipe: left→delete, right→edit */
+  .exp-item-wrap{
+    position:relative; overflow:hidden;
+    border-radius:8px; margin-bottom:9px;
+    background:var(--line);
+  }
+  .exp-del-btn{
+    position:absolute; top:0; right:0; bottom:0;
+    width:76px; border:none; background:var(--rust); color:#fff;
+    font-family:'Inter',sans-serif; font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; gap:3px;
+    cursor:pointer;
+  }
+  .exp-edit-btn{
+    position:absolute; top:0; left:0; bottom:0;
+    width:76px; border:none; background:var(--lake); color:#fff;
+    font-family:'Inter',sans-serif; font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center; gap:3px;
+    cursor:pointer;
+  }
+  .exp-item{
+    position:relative; z-index:1;
+    background:var(--card); border:1px solid var(--line); border-radius:8px;
+    padding:12px 14px;
+    display:flex; align-items:center; gap:11px;
+    transition:transform .22s cubic-bezier(.2,.7,.3,1);
+    touch-action:pan-y;
+  }
+  .exp-item.swiped{transform:translateX(-76px);}
+  .exp-item.swiped-right{transform:translateX(76px);}
+  .exp-cat-ic{
+    width:34px; height:34px; border-radius:8px; flex-shrink:0;
+    background:var(--paper-2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:17px;
+  }
+  .exp-info{flex:1; min-width:0;}
+  .exp-name-txt{font-weight:600; font-size:13.5px; line-height:1.35; word-break:break-word;}
+  .exp-meta{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft); margin-top:2px;}
+  .exp-cancel{font-size:10.5px; color:var(--forest); margin-top:2px;}
+  .exp-amt-txt{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px;
+    white-space:nowrap; flex-shrink:0;
+  }
+  .exp-filed-badge{
+    display:inline-flex; align-items:center; gap:4px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--forest); background:#DEEAE2; border:1px solid #BCD4C3;
+    padding:3px 8px; border-radius:20px; margin-top:8px;
+  }
+  .file-drop{
+    border:1.5px dashed var(--line); border-radius:8px;
+    padding:18px; text-align:center; cursor:pointer;
+    margin-bottom:12px; background:#fff;
+    font-size:12.5px; color:var(--ink-soft);
+  }
+  .file-drop.has-img{padding:0; border-style:solid;}
+  .file-drop img{width:100%; max-height:220px; object-fit:cover; display:block; border-radius:6px;}
+  .ootd-save-btn{
+    width:100%; border:none; background:var(--rust); color:#fff;
+    padding:11px; border-radius:7px; font-weight:700; font-size:13.5px;
+    cursor:pointer; font-family:'Inter',sans-serif;
+  }
+  .ootd-save-btn:disabled{background:var(--line); color:var(--ink-soft); cursor:not-allowed;}
+  .ootd-save-btn.editing{background:var(--lake);}
+  .ootd-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  }
+  .ootd-card{
+    background:var(--card); border:1px solid var(--line); border-radius:9px;
+    overflow:hidden; position:relative;
+  }
+  .ootd-card img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block;}
+  .ootd-meta{padding:8px 10px 10px;}
+  .ootd-date{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ink-soft);}
+  .ootd-note{font-size:12px; margin-top:2px;}
+  .ootd-del{
+    position:absolute; top:6px; right:6px;
+    width:24px; height:24px; border-radius:50%;
+    background:rgba(32,41,31,.72); color:#fff; border:none;
+    font-size:13px; cursor:pointer;
+  }
+  .empty-note{
+    text-align:center; padding:30px 10px; color:var(--ink-soft); font-size:13px;
+  }
+  .loading-note{text-align:center; padding:14px; color:var(--ink-soft); font-size:12px; font-family:'IBM Plex Mono',monospace;}
+
+  /* ================= LOCK GATE ================= */
+  .lock-gate{
+    position:fixed; inset:0; z-index:9999;
+    background:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .lock-card{
+    width:100%; max-width:340px;
+    background:var(--card);
+    border-radius:12px;
+    padding:26px 22px 22px;
+    box-shadow:0 12px 40px rgba(0,0,0,.35);
+  }
+  .lock-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:19px;
+    margin-bottom:2px; color:var(--ink);
+  }
+  .lock-sub{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    color:var(--ink-soft); margin-bottom:16px;
+  }
+  .lock-input{
+    width:100%; box-sizing:border-box;
+    border:1px solid var(--line); border-radius:6px;
+    padding:10px 11px; font-size:14px; font-family:'Inter',sans-serif;
+    margin-bottom:10px; background:#fff;
+  }
+  .lock-btn{
+    width:100%; border:none; background:var(--rust); color:#fff;
+    padding:11px; border-radius:7px; font-weight:700; font-size:13.5px;
+    cursor:pointer; font-family:'Inter',sans-serif; margin-top:2px;
+  }
+  .lock-err{
+    color:var(--rust); font-size:12px; margin-top:10px; min-height:14px;
+  }
+</style>
+</head>
+<body>
+
+<div id="lock-gate" class="lock-gate">
+  <div class="lock-card">
+    <div class="lock-title">🔒 德瑞義 16 日鐵道行</div>
+    <div class="lock-sub">請輸入帳號密碼才能檢視行程</div>
+    <input type="text" id="lock-user" class="lock-input" placeholder="帳號" autocomplete="username">
+    <input type="password" id="lock-pass" class="lock-input" placeholder="密碼" autocomplete="current-password">
+    <button id="lock-submit" class="lock-btn">登入</button>
+    <div id="lock-err" class="lock-err"></div>
+  </div>
+</div>
+
+<div id="app-content" style="display:none;">
+
+<div class="app-header">
+  <div class="eyebrow" id="header-eyebrow">載入中…</div>
+  <h1 class="app-title" id="header-title">&nbsp;</h1>
+  <div class="flight-row" id="header-flights"></div>
+</div>
+<div class="persist-note" id="itinerary-error" style="display:none;"></div>
+
+<div class="tabbar">
+  <button class="tab-btn active" data-tab="cal"><span class="ic">🗓️</span>行事曆</button>
+  <button class="tab-btn" data-tab="todo"><span class="ic">✅</span>待辦</button>
+  <button class="tab-btn" data-tab="itin"><span class="ic">🧭</span>每日行程</button>
+  <button class="tab-btn" data-tab="expense"><span class="ic">💰</span>記帳</button>
+  <button class="tab-btn" data-tab="ootd"><span class="ic">👗</span>穿搭</button>
+</div>
+
+<!-- ============ CALENDAR ============ -->
+<div class="view active" id="view-cal">
+  <div class="sec-label">行程總覽 · 16 天</div>
+  <div class="rail" id="rail-list"></div>
+</div>
+
+<!-- ============ TODO ============ -->
+<div class="view" id="view-todo">
+  <div class="ootd-add" style="margin-bottom:16px;">
+    <label>新增待辦</label>
+    <input type="text" id="custom-todo-title" placeholder="輸入待辦事項…">
+    <button class="ootd-save-btn" id="custom-todo-add">新增待辦</button>
+  </div>
+  <div id="todo-root"></div>
+</div>
+
+<!-- ============ ITINERARY ============ -->
+<div class="view" id="view-itin">
+  <div class="day-strip" id="day-strip"></div>
+  <div class="day-panel" id="day-panel"></div>
+</div>
+
+<!-- ============ EXPENSE ============ -->
+<div class="view" id="view-expense">
+  <div class="expense-total" id="expense-total"></div>
+  <div class="persist-note" id="persist-note" style="display:none;"></div>
+
+  <div class="ootd-add expense-add">
+    <div class="exp-row2">
+      <div style="flex:1;">
+        <label>日期</label>
+        <input type="date" id="exp-date">
+      </div>
+      <div style="flex:1;">
+        <label>分類</label>
+        <select id="exp-category">
+          <option value="住宿">🏨 住宿</option>
+          <option value="交通">🚄 交通</option>
+          <option value="門票">🎫 門票</option>
+          <option value="餐飲">🍽️ 餐飲</option>
+          <option value="購物">🛍️ 購物</option>
+          <option value="其他">📦 其他</option>
+        </select>
+      </div>
+    </div>
+    <label>支付方式</label>
+    <select id="exp-payment">
+      <option value="幸福M">幸福 M</option>
+      <option value="台新">台新</option>
+      <option value="大戶">大戶</option>
+      <option value="現金">現金</option>
+    </select>
+    <label>項目名稱</label>
+    <input type="text" id="exp-name" placeholder="例如：Zermatt 晚餐、Gornergrat 車票">
+    <div class="exp-row2">
+      <div style="flex:2;">
+        <label>金額</label>
+        <input type="number" inputmode="decimal" id="exp-amount" placeholder="0">
+      </div>
+      <div style="flex:1;">
+        <label>幣別</label>
+        <select id="exp-currency">
+          <option value="EUR">EUR</option>
+          <option value="CHF">CHF</option>
+          <option value="TWD">TWD</option>
+          <option value="USD">USD</option>
+        </select>
+      </div>
+    </div>
+    <button class="ootd-save-btn" id="exp-save">新增記帳</button>
+    <button id="exp-cancel-edit" style="display:none;width:100%;margin-top:8px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);padding:9px;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;">取消編輯</button>
+  </div>
+  <div class="sec-label">記帳明細</div>
+  <div class="swipe-hint" id="swipe-hint">← 左滑刪除　·　右滑編輯 →</div>
+  <div id="expense-list"></div>
+</div>
+
+<!-- ============ OOTD ============ -->
+<div class="view" id="view-ootd">
+  <div class="persist-note" id="persist-note-ootd" style="display:none;"></div>
+  <div class="ootd-add">
+    <label>日期</label>
+    <select id="ootd-date"></select>
+    <label>備註（選填）</label>
+    <input type="text" id="ootd-note" placeholder="例如：Grindelwald 健行穿搭">
+    <label>照片</label>
+    <div class="file-drop" id="ootd-drop">點此選擇照片</div>
+    <input type="file" id="ootd-file" accept="image/*" style="display:none">
+    <button class="ootd-save-btn" id="ootd-save" disabled>儲存穿搭</button>
+  </div>
+  <div class="sec-label">穿搭紀錄</div>
+  <div id="ootd-list"></div>
+</div>
+
+</div><!-- /#app-content -->
+
+<script>
+/* Shared with the cloud-sync Worker call: same hash used for the login
+   check below is sent as the Worker's bearer token, so the Worker can
+   gate reads/writes without ever handing the GitHub token to the browser. */
+const AUTH_HASH = "1c00c49c7af5b520b8c73ff4678100efd4dc99a472f90a996d81b08ab9c170ea";
+
+/* ============================================================
+   LOCK GATE — client-side password check (SHA-256 of "user:pass").
+   This only gates the UI in the browser; anyone with the repo URL
+   can still read the hash from source. It's meant to keep casual
+   visitors out, not to withstand a determined attacker.
+   ============================================================ */
+(function(){
+  var AUTH_KEY = 'trip-auth-ok-v1';
+  var gate = document.getElementById('lock-gate');
+  var content = document.getElementById('app-content');
+  var userEl = document.getElementById('lock-user');
+  var passEl = document.getElementById('lock-pass');
+  var errEl = document.getElementById('lock-err');
+
+  function unlock(){
+    gate.style.display = 'none';
+    content.style.display = '';
+    try{ localStorage.setItem(AUTH_KEY, '1'); }catch(e){}
+  }
+
+  async function sha256Hex(str){
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+
+  async function tryLogin(){
+    var u = userEl.value.trim();
+    var p = passEl.value;
+    var h = await sha256Hex(u + ':' + p);
+    if(h === AUTH_HASH){
+      errEl.textContent = '';
+      unlock();
+    } else {
+      errEl.textContent = '帳號或密碼錯誤';
+    }
+  }
+
+  document.getElementById('lock-submit').addEventListener('click', tryLogin);
+  passEl.addEventListener('keydown', function(e){ if(e.key === 'Enter') tryLogin(); });
+  userEl.addEventListener('keydown', function(e){ if(e.key === 'Enter') passEl.focus(); });
+
+  try{
+    if(localStorage.getItem(AUTH_KEY) === '1') unlock();
+  }catch(e){}
+})();
+
+/* ============================================================
+   DATA
+   ============================================================ */
+const COUNTRY_FLAG = {DE:'🇩🇪', CH:'🇨🇭', IT:'🇮🇹', FR:'🇫🇷'};
+const COUNTRY_CLASS = {DE:'de', CH:'ch', IT:'it', FR:'fr'};
+
+function mapSearch(q){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+function mapDir(origin, dest, mode){
+  mode = mode || 'transit';
+  return 'https://www.google.com/maps/dir/?api=1&origin=' + encodeURIComponent(origin) +
+    '&destination=' + encodeURIComponent(dest) + '&travelmode=' + mode;
+}
+function photoUrl(q){ return 'https://source.unsplash.com/400x400/?' + encodeURIComponent(q); }
+
+/* ---------- Resilient storage wrapper ----------
+   Cross-device sync requires Claude's account-linked cloud storage
+   (window.storage) — that's the only layer that follows you between
+   devices, since it's tied to your Claude login rather than one browser.
+   Priority:
+   1. Claude window.storage (cloud) — authoritative, cross-device
+   2. localStorage — offline mirror; keeps this device working if cloud
+      is briefly unavailable, and is the only thing that works at all
+      when the file is opened outside Claude (e.g. a raw downloaded file)
+   3. in-memory — last resort so the session doesn't crash
+   Note: localStorage itself is device+browser bound and never syncs
+   anywhere on its own — it's a cache, not a sync mechanism.            */
+const _memCache = {};
+let persistOK = false;      // did the write land anywhere durable?
+let cloudOK = false;        // did the write reach the cross-device cloud layer?
+let persistChecked = false;
+
+function _lsGet(key){
+  try{ return localStorage.getItem(key); }catch(e){ return null; }
+}
+function _lsSet(key,value){
+  try{ localStorage.setItem(key,value); return true; }catch(e){ return false; }
+}
+function _lsDel(key){
+  try{ localStorage.removeItem(key); }catch(e){}
+}
+
+const Store = {
+  async get(key){
+    // 1. cloud (cross-device source of truth)
+    try{
+      const r = await window.storage.get(key, false);
+      if(r && typeof r.value === 'string'){
+        _memCache[key] = r.value;
+        _lsSet(key, r.value); // mirror locally for offline speed/fallback
+        return r.value;
+      }
+    }catch(e){}
+    // 2. localStorage mirror
+    const ls = _lsGet(key);
+    if(ls !== null){ _memCache[key] = ls; return ls; }
+    // 3. memory
+    return (key in _memCache) ? _memCache[key] : null;
+  },
+  async set(key, value){
+    _memCache[key] = value; // keep session working no matter what
+    const localOk = _lsSet(key, value);
+    let cOk = false;
+    try{
+      await window.storage.set(key, value, false);
+      cOk = true;
+    }catch(e){ /* cloud unavailable — localStorage may still have saved it */ }
+    cloudOK = cOk;
+    persistOK = cOk || localOk;
+    persistChecked = true;
+    if(!persistOK) console.warn('persist failed (kept in memory only)');
+    updatePersistNote();
+    scheduleWorkerPush();
+    return persistOK;
+  },
+  async delete(key){
+    delete _memCache[key];
+    _lsDel(key);
+    try{ await window.storage.delete(key, false); }catch(e){}
+    scheduleWorkerPush();
+  }
+};
+function updatePersistNote(){
+  const els = ['persist-note', 'persist-note-ootd'].map(id=>document.getElementById(id)).filter(Boolean);
+  if(!els.length) return;
+  if(workerSyncOK){
+    els.forEach(el=>{ el.style.display='none'; }); // cloud relay sync active — durable & cross-device
+    return;
+  }
+  if(!_workerReady){ els.forEach(el=>{ el.style.display='none'; }); return; } // haven't attempted a sync yet
+  if(cloudOK){
+    els.forEach(el=>{ el.style.display='none'; });
+  } else if(persistOK){
+    els.forEach(el=>{
+      el.style.display='block'; el.className='persist-note warn';
+      el.textContent = '⚠️ 跨裝置雲端同步目前連不上，資料暫時只存在這台裝置。' + (lastSyncError ? ('（' + lastSyncError + '）') : '');
+    });
+  } else {
+    els.forEach(el=>{
+      el.style.display='block'; el.className='persist-note warn';
+      el.textContent = '⚠️ 這個環境無法永久儲存，重新整理就會消失！';
+    });
+  }
+}
+
+/* ============================================================
+   CLOUD SYNC — a small Cloudflare Worker relay holds the GitHub
+   write token server-side (see worker.js); the browser only ever
+   sends the login password's hash as a bearer token, so the real
+   GitHub token never appears in this page's source. The Worker
+   reads/writes data/trip-data.json in ch1in/26eurosummer.
+   ============================================================ */
+const WORKER_SYNC_URL = 'https://wandering-butterfly-7a47.itschienhui.workers.dev/';
+let workerSyncOK = false;
+let _workerReady = false; // becomes true after the initial pull, so pushes don't fire prematurely
+let _workerPushTimer = null;
+
+function workerAuthHeaders(json){
+  const h = { 'Authorization': 'Bearer ' + AUTH_HASH };
+  if(json) h['Content-Type'] = 'application/json';
+  return h;
+}
+let lastSyncError = '';
+async function describeFailedResponse(res){
+  let body = '';
+  try{ body = await res.text(); }catch(e){}
+  return res.status + (body ? (' ' + body.slice(0,200)) : '');
+}
+async function pullFromCloud(){
+  let res;
+  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders() }); }
+  catch(e){ throw new Error('連不到 Worker：' + e.message); }
+  if(!res.ok) throw new Error('讀取失敗：' + await describeFailedResponse(res));
+  const data = await res.json();
+  let n = 0;
+  for(const [key, value] of Object.entries(data)){
+    _memCache[key] = value; _lsSet(key, value);
+    try{ await window.storage.set(key, value, false); }catch(e){}
+    n++;
+  }
+  return n;
+}
+// Lists that get added-to independently on different devices (an expense
+// entered on phone A shouldn't get wiped out by phone B pushing its own,
+// older snapshot a few seconds later). Merged by id — union of both sides,
+// local wins on an exact id conflict. Note this can't distinguish "never
+// synced" from "deleted elsewhere", so a delete made on one device can
+// reappear if another device pushes a stale copy before it sees that
+// delete — a reasonable trade-off vs. silently losing new entries.
+const MERGE_LIST_KEYS = ['expenses', 'ootd-entries', 'custom-todos'];
+// Plain key→bool maps: shallow-merged, local wins per key.
+const MERGE_MAP_KEYS = ['todo-checks'];
+
+function mergeListById(remoteStr, localStr){
+  let remote = []; try{ remote = remoteStr ? JSON.parse(remoteStr) : []; }catch(e){}
+  let local = []; try{ local = localStr ? JSON.parse(localStr) : []; }catch(e){}
+  const map = new Map();
+  remote.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
+  local.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
+  return JSON.stringify(Array.from(map.values()));
+}
+function mergeMap(remoteStr, localStr){
+  let remote = {}; try{ remote = remoteStr ? JSON.parse(remoteStr) : {}; }catch(e){}
+  let local = {}; try{ local = localStr ? JSON.parse(localStr) : {}; }catch(e){}
+  return JSON.stringify(Object.assign({}, remote, local));
+}
+async function fetchCloudSnapshot(){
+  let res;
+  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders() }); }
+  catch(e){ throw new Error('連不到 Worker：' + e.message); }
+  if(!res.ok) throw new Error('讀取失敗：' + await describeFailedResponse(res));
+  return await res.json();
+}
+async function pushToCloud(){
+  let remote = {};
+  try{ remote = await fetchCloudSnapshot(); }
+  catch(e){ /* couldn't read remote first — fall back to pushing local as-is below */ }
+
+  const local = collectAllData();
+  const merged = Object.assign({}, remote, local);
+  for(const k of MERGE_LIST_KEYS){
+    if(k in local || k in remote) merged[k] = mergeListById(remote[k], local[k]);
+  }
+  for(const k of MERGE_MAP_KEYS){
+    if(k in local || k in remote) merged[k] = mergeMap(remote[k], local[k]);
+  }
+  // reflect the merged result on this device too, so a merge that pulled in
+  // another device's entries shows up immediately, not just on next reload
+  for(const [key, value] of Object.entries(merged)){
+    _memCache[key] = value; _lsSet(key, value);
+  }
+
+  let res;
+  try{
+    res = await fetch(WORKER_SYNC_URL, {
+      method: 'POST',
+      headers: workerAuthHeaders(true),
+      body: JSON.stringify(merged)
+    });
+  }catch(e){ throw new Error('連不到 Worker：' + e.message); }
+  if(!res.ok) throw new Error('寫入失敗：' + await describeFailedResponse(res));
+}
+function scheduleWorkerPush(){
+  if(!_workerReady) return;
+  clearTimeout(_workerPushTimer);
+  _workerPushTimer = setTimeout(async ()=>{
+    try{
+      await pushToCloud();
+      workerSyncOK = true; lastSyncError = '';
+      await refreshAllViews();
+    }catch(e){ workerSyncOK = false; lastSyncError = e.message; console.warn('cloud sync failed', e); }
+    updatePersistNote();
+  }, 1200);
+}
+function collectAllData(){
+  const out = {};
+  for(const key of allDataKeys()){
+    const v = (key in _memCache) ? _memCache[key] : _lsGet(key);
+    if(v !== null && v !== undefined) out[key] = v;
+  }
+  return out;
+}
+async function refreshAllViews(){
+  await loadTodoState();
+  await renderDayPanel();
+  await renderTodo();
+  await renderExpenses();
+  await renderOotdList();
+  await renderCalendar();
+}
+async function initWorkerSync(){
+  try{
+    await pullFromCloud();
+    workerSyncOK = true;
+    lastSyncError = '';
+    await refreshAllViews();
+  }catch(e){
+    workerSyncOK = false;
+    lastSyncError = e.message;
+    console.warn('cloud sync unavailable', e);
+  }
+  _workerReady = true;
+  updatePersistNote();
+}
+
+async function loadItinerarySeed(){
+  const errEl = document.getElementById('itinerary-error');
+  try{
+    const res = await fetch(WORKER_SYNC_URL.replace(/\/$/, '') + '/itinerary', { headers: workerAuthHeaders() });
+    if(!res.ok) throw new Error(await describeFailedResponse(res));
+    const seed = await res.json();
+    if(!seed || !seed.days) throw new Error('回傳內容是空的');
+    stays = seed.stays || {};
+    stayOrder = seed.stayOrder || [];
+    DEFAULT_HOTELS = seed.hotels || {};
+    days = seed.days || [];
+    renderHeader(seed.header);
+    if(errEl) errEl.style.display = 'none';
+    return true;
+  }catch(e){
+    console.error('itinerary load failed', e);
+    if(errEl){
+      errEl.style.display = 'block';
+      errEl.className = 'persist-note warn';
+      errEl.textContent = '⚠️ 行程資料載入失敗，請檢查網路連線後重新整理頁面。（' + e.message + '）';
+    }
+    return false;
+  }
+}
+function renderHeader(header){
+  if(!header) return;
+  const eyebrow = document.getElementById('header-eyebrow');
+  const title = document.getElementById('header-title');
+  const flights = document.getElementById('header-flights');
+  if(eyebrow) eyebrow.textContent = header.eyebrow || '';
+  if(title) title.textContent = header.title || '';
+  if(flights) flights.innerHTML = (header.flights||[]).map(f=>`<div class="flight-chip"><b>${f.code}</b> ${f.text}</div>`).join('');
+}
+
+
+/* stays / stayOrder / DEFAULT_HOTELS / days / header text used to be
+   hardcoded here. They now live in the private data repo and are fetched
+   at startup by loadItinerarySeed() (see CLOUD SYNC section) — keeping the
+   actual itinerary and hotel costs out of this public page's source. */
+let stays = {};
+let stayOrder = [];
+let DEFAULT_HOTELS = {};
+async function seedDefaultHotels(){
+  let seededAny = false;
+  for(const key of Object.keys(DEFAULT_HOTELS)){
+    const def = DEFAULT_HOTELS[key];
+    const existing = await getHotelEntry(key);
+    if(existing) continue; // already has live data (yours or synced) — don't touch it
+    const record = { name:def.name, url:def.url, cancelBefore:def.cancelBefore, amount:def.amount, currency:def.currency, payment:def.payment };
+    await Store.set('hotel:'+key, JSON.stringify(record));
+    await upsertExpense({
+      id: 'hotel-'+key,
+      name: def.name + '（'+stays[key].city+' 住宿）',
+      amount: def.amount, currency: def.currency, payment: def.payment,
+      category: '住宿',
+      date: stays[key].checkin,
+      cancelBefore: def.cancelBefore,
+      hotelKey: key
+    });
+    seededAny = true;
+  }
+  return seededAny;
+}
+async function ensureLuzernCheckinLink(){
+  // Luzern's link should always be the host's check-in instructions page,
+  // regardless of whatever entry (old or synced) already exists there —
+  // this overrides just the URL, keeping any other saved details intact.
+  const def = DEFAULT_HOTELS.luzern;
+  const existing = await getHotelEntry('luzern');
+  const merged = existing ? { ...existing, url: def.url } : { ...def };
+  await Store.set('hotel:luzern', JSON.stringify(merged));
+}
+
+function fmtShort(iso){
+  const dt = new Date(iso+'T00:00:00');
+  return (dt.getMonth()+1)+'/'+dt.getDate();
+}
+async function getHotelEntry(key){
+  try{
+    const v = await Store.get('hotel:'+key);
+    return v ? JSON.parse(v) : null;
+  }catch(e){ return null; }
+}
+async function saveHotel(key){
+  const nameEl = document.getElementById('hotel-name-'+key);
+  const urlEl = document.getElementById('hotel-url-'+key);
+  const amtEl = document.getElementById('hotel-amt-'+key);
+  const curEl = document.getElementById('hotel-cur-'+key);
+  const payEl = document.getElementById('hotel-pay-'+key);
+  const cancelEl = document.getElementById('hotel-cancel-'+key);
+  const name = nameEl.value.trim();
+  let url = urlEl.value.trim();
+  if(!name){ nameEl.focus(); return; }
+  if(!url){ url = mapSearch(name + ' ' + stays[key].city); }
+  const amount = amtEl && amtEl.value ? parseFloat(amtEl.value) : null;
+  const currency = curEl ? curEl.value : 'EUR';
+  const payment = payEl ? payEl.value : null;
+  const cancelBefore = cancelEl && cancelEl.value ? cancelEl.value : null;
+  try{
+    await Store.set('hotel:'+key, JSON.stringify({name, url, cancelBefore, amount, currency, payment}));
+    // if an amount was entered, file it into the expense ledger (linked to this hotel)
+    if(amount && amount > 0){
+      await upsertExpense({
+        id: 'hotel-'+key,
+        name: name + '（'+stays[key].city+' 住宿）',
+        amount, currency, payment,
+        category: '住宿',
+        date: stays[key].checkin,
+        cancelBefore,
+        hotelKey: key
+      });
+    }
+  }catch(e){ console.error('save hotel failed', e); }
+  renderDayPanel();
+  renderTodo();
+  renderExpenses();
+}
+async function clearHotel(key){
+  try{
+    await Store.delete('hotel:'+key);
+    await deleteExpense('hotel-'+key);
+  }catch(e){}
+  renderDayPanel();
+  renderTodo();
+  renderExpenses();
+}
+
+let days = [];
+
+const todoData = [
+  { icon:'🚄', title:'交通票券｜出發前先買', badge:'先處理', group:'pre', items:[
+    { title:'Swiss Travel Pass 8 日券（連續）', desc:'Day4–Day11（9/14–9/21）在瑞士境內共 8 天，含多段火車＋Rhine/Como 渡輪＋Gornergrat／Brunni 等山區纜車折扣，比單買每段划算，也免每天現場排隊。2nd class 8 日券約 CHF439/人，多數山區纜車享 5 折。可設定 9/14 生效，官方 SBB 旅客商店線上買、即時取得電子票。\n\n💡「証件卡／半價折扣」是什麼：行程裡寫「持 Swiss Travel Pass 半價」，指的就是憑這張 Swiss Travel Pass（買了它就是你的折扣憑證，手機出示電子票 QR code 即可）。你不需要另外辦其他卡。瑞士另有「Half Fare Card 半價卡（CHF150/月）」也能享同樣折扣，但既然已買 Travel Pass 就不必再買。', priority:'high', links:[
+      {label:'官方 SBB 購買', url:'https://www.swissrailways.com/en/buy-swiss-travel-pass', cls:''}
+    ]},
+    { title:'Frankfurt → Colmar（FlixBus）', desc:'價格通常比火車便宜、少轉車，拖大行李較省事。尚未進瑞士，不在 Swiss Travel Pass 範圍內。', priority:'high', links:[
+      {label:'FlixBus 訂票', url:'https://www.flixbus.com', cls:''},
+      {label:'DB 火車備案', url:'https://www.bahn.com', cls:'alt'}
+    ]},
+    { title:'Colmar → Luzern', desc:'通常於 Basel 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。', priority:'high', links:[
+      {label:'SBB 訂票', url:'https://www.sbb.ch/en', cls:''},
+      {label:'DB 訂票', url:'https://www.bahn.com', cls:'alt'}
+    ]},
+    { title:'Zermatt → Como（EuroCity）', desc:'跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段涵蓋在 Swiss Travel Pass 內，義大利段需另購。', priority:'high', links:[
+      {label:'SBB 訂票', url:'https://www.sbb.ch/en', cls:''},
+      {label:'Trenitalia', url:'https://www.trenitalia.com', cls:'alt'}
+    ]},
+    { title:'瑞士境內各段火車', desc:'Luzern↔Engelberg／Luzern→Lungern→Brienz／Interlaken↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等，全部涵蓋在 Swiss Travel Pass 內，不用另外訂票。', priority:'low', links:[]}
+  ]},
+
+  { icon:'🎟️', title:'需事先線上訂時段', badge:'出發前務必訂', group:'pre', items:[
+    { title:'Rüdesheim 酒莊導覽品酒（Day2｜9/12，想要導覽才需要）', desc:'若想要有講解的酒莊導覽品酒，Weingut Dr. Nägler 需先線上／電話預約（約€39.5/人起，含 5 款酒＋莊主導覽）。若只想輕鬆試飲則不用預約——見「當天現場買就好」清單。', priority:'medium', links:[
+      {label:'Dr. Nägler 預約', url:'https://www.winetourism.com/experience/wine-tasting-and-tour-at-weingut-dr-naegler/', cls:''}
+    ]}
+  ]},
+
+  { icon:'⛰️', title:'需另購（不含在 Swiss Travel Pass）', badge:'額外預算', group:'pre', items:[
+    { title:'Colmar→Luzern 法國段車票', desc:'法國→Basel 段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。', priority:'medium', links:[] },
+    { title:'Zermatt→Como 義大利段車票', desc:'義大利境內段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。', priority:'medium', links:[] }
+  ]},
+
+  { icon:'🤔', title:'需要先決定的事', badge:'影響打包與訂票', group:'pre', items:[
+    { title:'要不要買 1st class Swiss Travel Pass？', desc:'2nd class 8 日券 CHF439、1st class CHF697，差約 CHF258/人。旺季（9 月）2nd class 通常也有位，若在意景觀列車舒適度或人多時想確保有位可考慮升等；否則 2nd class 已足夠。', priority:'low', links:[]}
+  ]},
+
+  { icon:'📶', title:'出發前 eSIM', badge:'德/瑞/義 通用', group:'pre', items:[
+    { title:'購買歐洲通用 eSIM', desc:'涵蓋 DE/CH（瑞士非歐盟，需確認流量政策）/IT。建議出發前 1–2 週購買並安裝，抵達後開通即可用。', priority:'high', links:[
+      {label:'Airalo', url:'https://www.airalo.com', cls:''},
+      {label:'Klook eSIM', url:'https://www.klook.com/zh-TW/search/?query=esim%20europe', cls:'alt'}
+    ]}
+  ]},
+
+  { icon:'💶', title:'換匯', badge:'EUR＋少量 CHF', group:'pre', items:[
+    { title:'兌換歐元現金', desc:'台灣可先換一筆歐元備用，機場/市區匯率通常較差。瑞士段店家多收 CHF，可少量攜帶或當地提款。', priority:'high', links:[
+      {label:'台銀外幣匯率', url:'https://rate.bot.com.tw/xrt?Lang=zh-TW', cls:''}
+    ]},
+    { title:'確認信用卡海外刷卡/提款手續費', desc:'部分卡片有海外現金回饋或免手續費提款，出發前確認額度與密碼。', priority:'low', links:[]}
+  ]},
+
+  { icon:'🎫', title:'當天現場買就好（免預約）', badge:'到現場買', group:'day', items:[
+    { title:'Rüdesheim 葡萄園纜車（Day2）', desc:'單程約€8／來回約€12，Seilbahn 站售票口現場買。', priority:'low', links:[] },
+    { title:'Rüdesheim 免預約試飲（Day2）', desc:'不想預約導覽的話，直接走進 Drosselgasse 上的 RheinWeinWelt 品酒館，現場試飲約€8–18。', priority:'low', links:[
+      {label:'RheinWeinWelt', url:'https://www.google.com/maps/search/?api=1&query=RheinWeinWelt%20R%C3%BCdesheim', cls:'alt'}
+    ]},
+    { title:'Rhine 遊船船票（Day3）', desc:'Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。', priority:'low', links:[] },
+    { title:'Brunni 纜車（Day5）', desc:'來回約 CHF32（STP 半價 CHF16），現場買、免預約。', priority:'low', links:[] },
+    { title:'Pfingstegg 纜車＋滑草橇（Day8）', desc:'纜車來回約 CHF32；夏季滑草橇單趟約 CHF6–8，現場買、免預約（下雨會關閉）。', priority:'low', links:[] },
+    { title:'Gornergrat 齒軌列車（Day10）', desc:'來回約 CHF80／持 STP 半價 CHF40，Zermatt 站現場或官網皆可，免預約。旺季可加購 CHF7 優先上車。', priority:'low', links:[] },
+    { title:'Blausee 門票（Day9）', desc:'約 CHF9–13/人（無 STP 折扣），含夏季玻璃底遊船，現場買。', priority:'low', links:[] }
+  ]},
+
+  { icon:'🧳', title:'行李寄放（當天彈性）', badge:'看情況', group:'day', items:[
+    { title:'Day4 逛 Colmar 老城前（9/14 上午退房）', desc:'9/14 是離開 Colmar 前往 Luzern 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。', priority:'low', links:[] },
+    { title:'Day9 去 Blausee 前（9/19）', desc:'Blausee 是散步型景點、行李不便帶進園區。可在 Kandersteg 車站置物櫃（約 CHF5–8/件）寄放大行李，輕裝搭巴士來回，再繼續往 Zermatt。', priority:'low', links:[] }
+  ]}
+];
+
+/* ============================================================
+   CALENDAR RENDER
+   ============================================================ */
+async function renderCalendar(){
+  const el = document.getElementById('rail-list');
+  let html = '';
+  html += `<div class="rail-stop" onclick="alert('CI61 台北→法蘭克福\\n22:50 09/10 → 06:50 09/11')">
+    <div class="rail-dot fly">✈️</div>
+    <div class="rail-card">
+      <div><div class="rail-date">09/10 →09/11</div><div class="rail-title">去程航班 CI61</div><div class="rail-sub">台北 → 法蘭克福</div></div>
+      <span class="flag-pill fly">飛行</span>
+    </div></div>`;
+  for(const d of days){
+    const cls = COUNTRY_CLASS[d.country] || 'de';
+    let hotelSub = '';
+    if(d.stayKey){
+      const s = stays[d.stayKey];
+      const saved = await getHotelEntry(d.stayKey);
+      hotelSub = '住宿：'+s.city + (saved ? '' : '（未訂地點）');
+    }
+    html += `<div class="rail-stop" onclick="goToDay(${d.n})">
+      <div class="rail-dot ${cls}">${COUNTRY_FLAG[d.country]||''}</div>
+      <div class="rail-card">
+        <div>
+          <div class="rail-date">${fmtDate(d.date)} · Day ${d.n}</div>
+          <div class="rail-title">${d.title}</div>
+          <div class="rail-sub">${hotelSub}</div>
+        </div>
+        <span class="flag-pill ${cls}">${d.country}</span>
+      </div></div>`;
+  }
+  html += `<div class="rail-stop" onclick="alert('CX234 米蘭→台北\\n12:45 09/26 → 06:15 09/27')">
+    <div class="rail-dot fly">✈️</div>
+    <div class="rail-card">
+      <div><div class="rail-date">09/26 →09/27</div><div class="rail-title">回程航班 CX234</div><div class="rail-sub">米蘭 → 台北</div></div>
+      <span class="flag-pill fly">飛行</span>
+    </div></div>`;
+  el.innerHTML = html;
+}
+function fmtDate(iso){
+  const dt = new Date(iso+'T00:00:00');
+  const w = ['日','一','二','三','四','五','六'][dt.getDay()];
+  return (dt.getMonth()+1)+'/'+dt.getDate()+'（'+w+'）';
+}
+function fmtDateFull(iso){
+  if(!iso) return '';
+  const dt = new Date(iso+'T00:00:00');
+  return dt.getFullYear()+'/'+(dt.getMonth()+1)+'/'+dt.getDate();
+}
+function fmtMoney(n){
+  const num = Number(n)||0;
+  return num.toLocaleString('en-US', {minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2});
+}
+const CAT_ICON = {'住宿':'🏨','交通':'🚄','門票':'🎫','餐飲':'🍽️','購物':'🛍️','其他':'📦'};
+function todayISO(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+}
+
+/* ============================================================
+   TODO RENDER
+   ============================================================ */
+let todoState = {};
+async function loadTodoState(){
+  try{
+    const v = await Store.get('todo-checks');
+    todoState = v ? JSON.parse(v) : {};
+  }catch(e){ todoState = {}; }
+}
+
+/* ---- custom (user-added) todos, cross-device via Store ---- */
+async function getCustomTodos(){
+  try{
+    const v = await Store.get('custom-todos');
+    return v ? JSON.parse(v) : [];
+  }catch(e){ return []; }
+}
+async function saveCustomTodos(list){
+  await Store.set('custom-todos', JSON.stringify(list));
+}
+async function renderCustomTodoSection(){
+  const list = await getCustomTodos();
+  if(!list.length) return '';
+  const rows = list.map(it=>`
+    <div class="todo-item">
+      <div class="todo-check ${it.done?'done':''}" onclick="toggleCustomTodo('${it.id}')">${it.done?'✓':''}</div>
+      <div class="todo-body">
+        <div class="todo-title ${it.done?'done':''}">${it.title}</div>
+      </div>
+      <button class="custom-todo-del" onclick="deleteCustomTodo('${it.id}')">✕</button>
+    </div>`).join('');
+  return `<div class="todo-sec">
+    <div class="todo-sec-head"><span class="ic">✏️</span><h3>我的待辦</h3><span class="badge">自訂</span></div>
+    ${rows}
+  </div>`;
+}
+async function addCustomTodo(){
+  const input = document.getElementById('custom-todo-title');
+  const title = input.value.trim();
+  if(!title){ input.focus(); return; }
+  const list = await getCustomTodos();
+  list.push({ id:'ct-'+Date.now(), title, done:false });
+  await saveCustomTodos(list);
+  input.value = '';
+  await renderTodo();
+}
+async function toggleCustomTodo(id){
+  const list = await getCustomTodos();
+  const it = list.find(x=>x.id===id);
+  if(it) it.done = !it.done;
+  await saveCustomTodos(list);
+  await renderTodo();
+}
+async function deleteCustomTodo(id){
+  const list = (await getCustomTodos()).filter(x=>x.id!==id);
+  await saveCustomTodos(list);
+  await renderTodo();
+}
+document.getElementById('custom-todo-add').addEventListener('click', addCustomTodo);
+document.getElementById('custom-todo-title').addEventListener('keydown', e=>{ if(e.key==='Enter') addCustomTodo(); });
+
+async function renderAccommodationSection(){
+  const rows = await Promise.all(stayOrder.map(async key=>{
+    const s = stays[key];
+    const saved = await getHotelEntry(key);
+    const dayNums = days.filter(d=>d.stayKey===key).map(d=>d.n);
+    const dayLabel = dayNums.length>1 ? `Day ${dayNums[0]}–${dayNums[dayNums.length-1]}` : `Day ${dayNums[0]}`;
+    return `<div class="todo-item">
+      <div class="todo-check ${saved?'done':''}">${saved?'✓':''}</div>
+      <div class="todo-body">
+        <div class="todo-title ${saved?'done':''}">${s.city}<span class="priority-tag ${saved?'low':'high'}">${saved? '已加入地點' : '尚未加入'}</span></div>
+        <div class="todo-desc">${dayLabel} · ${fmtShort(s.checkin)}–${fmtShort(s.checkout)}（${s.nights} 晚）· 建議區域：${s.area}<br>${s.tip}</div>
+        ${saved ? `<div class="todo-links"><a class="link-btn alt" href="${saved.url}" target="_blank" rel="noopener">📍 ${saved.name} ↗</a></div>`
+                : `<div class="todo-links"><a class="link-btn" href="${s.bookUrl}" target="_blank" rel="noopener">Booking.com 搜尋 ↗</a></div>
+                   <div class="todo-desc" style="margin-top:6px;">→ 訂好後可到「每日行程」分頁該天輸入住宿地點</div>`}
+      </div>
+    </div>`;
+  }));
+  return `<div class="todo-sec">
+    <div class="todo-sec-head"><span class="ic">🏨</span><h3>住宿預訂</h3><span class="badge">全部尚待確認地點</span></div>
+    ${rows.join('')}
+  </div>`;
+}
+
+function renderTodoSectionHtml(sec, si){
+  let html = `<div class="todo-sec">
+    <div class="todo-sec-head"><span class="ic">${sec.icon}</span><h3>${sec.title}</h3><span class="badge">${sec.badge}</span></div>`;
+  sec.items.forEach((it, ii)=>{
+    const key = si+'-'+ii;
+    const done = !!todoState[key];
+    const pri = it.priority==='high' ? '<span class="priority-tag high">建議優先</span>'
+              : it.priority==='medium' ? '<span class="priority-tag medium">可選</span>'
+              : '<span class="priority-tag low">不急</span>';
+    html += `<div class="todo-item">
+      <div class="todo-check ${done?'done':''}" onclick="toggleTodo('${key}')">${done?'✓':''}</div>
+      <div class="todo-body">
+        <div class="todo-title ${done?'done':''}">${it.title}${pri}</div>
+        <div class="todo-desc">${it.desc.replace(/\n/g,'<br>')}</div>
+        ${it.links.length ? `<div class="todo-links">${it.links.map(l=>`<a class="link-btn ${l.cls}" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}</div>` : ''}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+async function renderTodo(){
+  const root = document.getElementById('todo-root');
+  root.innerHTML = `<div class="loading-note">載入中...</div>`;
+  const accomHtml = await renderAccommodationSection();
+  const customHtml = await renderCustomTodoSection();
+
+  let preHtml = '', dayHtml = '';
+  todoData.forEach((sec, si)=>{
+    if(sec.group === 'day') dayHtml += renderTodoSectionHtml(sec, si);
+    else preHtml += renderTodoSectionHtml(sec, si);
+  });
+
+  root.innerHTML = accomHtml + customHtml
+    + `<div class="sec-label">📋 行前準備</div>` + preHtml
+    + `<div class="sec-label">🕐 當天才決定</div>` + dayHtml;
+}
+async function toggleTodo(key){
+  todoState[key] = !todoState[key];
+  await Store.set('todo-checks', JSON.stringify(todoState));
+  renderTodo();
+}
+
+/* ============================================================
+   ITINERARY RENDER
+   ============================================================ */
+let activeDay = 1;
+function renderDayStrip(){
+  const el = document.getElementById('day-strip');
+  el.innerHTML = days.map(d=>{
+    const cls = COUNTRY_CLASS[d.country] || 'de';
+    return `<div class="day-stub ${d.n===activeDay?'active':''}" onclick="goToDay(${d.n})">
+      <div class="dnum">DAY ${String(d.n).padStart(2,'0')}</div>
+      <div class="ddate">${new Date(d.date+'T00:00:00').getDate()}</div>
+      <div class="dflag">${COUNTRY_FLAG[d.country]||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function isStayStartDay(d){
+  if(!d.stayKey) return false;
+  const s = stays[d.stayKey];
+  if(!s || s.nights < 2) return false;
+  const idx = days.findIndex(x=>x.n===d.n);
+  const prev = idx>0 ? days[idx-1] : null;
+  return !prev || prev.stayKey !== d.stayKey;
+}
+
+function renderTimelineBlock(items){
+  // items: consecutive run of {type:'spot', ...}
+  const parts = items.map((s, i)=>{
+    const priceHtml = s.price ? `<div class="spot-price">🎫 ${s.price}</div>` : '';
+    const noteHtml = s.note ? `<div class="spot-note">${s.note}</div>` : '';
+    const card = `<div class="spot-card">
+      <img class="spot-photo" src="${photoUrl(s.photo)}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="spot-info">
+        <div class="spot-name">${s.name}</div>
+        ${priceHtml}
+        ${noteHtml}
+        <div class="spot-actions">
+          <a class="link-btn" href="${mapSearch(s.q)}" target="_blank" rel="noopener">📍 位置 ↗</a>
+        </div>
+      </div>
+    </div>`;
+    let connector = '';
+    if(s.next){
+      const nextSpot = items[i+1];
+      const routeLink = nextSpot ? mapDir(s.q, nextSpot.q, s.next.mode==='🚶' ? 'walking' : 'transit') : null;
+      connector = `<div class="spot-connector">
+        <div class="sc-line"></div>
+        <span class="sc-tag">${s.next.mode} ${s.next.text}</span>
+        ${routeLink ? `<a href="${routeLink}" target="_blank" rel="noopener">路線 ↗</a>` : ''}
+      </div>`;
+    }
+    return card + connector;
+  });
+  return `<div class="spot-list">${parts.join('')}</div>`;
+}
+
+async function renderDayPanel(){
+  const d = days.find(x=>x.n===activeDay);
+  const el = document.getElementById('day-panel');
+
+  // render timeline chronologically, batching consecutive spots into one card block
+  let bodyHtml = '';
+  let spotBuffer = [];
+  const flushSpots = ()=>{
+    if(spotBuffer.length){
+      bodyHtml += renderTimelineBlock(spotBuffer);
+      spotBuffer = [];
+    }
+  };
+  (d.timeline||[]).forEach(item=>{
+    if(item.type==='spot'){
+      spotBuffer.push(item);
+      return;
+    }
+    flushSpots();
+    if(item.type==='transit'){
+      const link = item.origin ? mapDir(item.origin, item.dest, item.mode||'transit') : null;
+      bodyHtml += `<div class="transit-block">
+        <span class="t-ic">${item.icon}</span><span>${item.text}</span>
+        ${link ? `<a href="${link}" target="_blank" rel="noopener">路線 ↗</a>` : ''}
+        ${item.bookNote ? `<div class="transit-book-note">🎫 ${item.bookNote}</div>` : ''}
+        ${item.note && !item.bookNote ? `<div class="transit-book-note" style="color:var(--ink-soft);">ℹ️ ${item.note}</div>` : ''}
+      </div>`;
+    } else if(item.type==='luggage'){
+      bodyHtml += `<div class="luggage-block"><span class="lg-ic">🧳</span><div>${item.text}</div></div>`;
+    } else if(item.type==='bookalert'){
+      bodyHtml += `<div class="book-alert-block">
+        <div class="ba-head">⚠️ ${item.title}</div>
+        <div>${item.text}</div>
+        ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">前往預約 ↗</a>` : ''}
+      </div>`;
+    }
+  });
+  flushSpots();
+
+  let hotelHtml = '';
+  if(d.stayKey){
+    const s = stays[d.stayKey];
+    const saved = await getHotelEntry(d.stayKey);
+    const areaBlock = `<div class="hotel-area">
+        <div class="ha-label">📌 建議區域</div>
+        <div class="ha-region">${s.area}</div>
+        <div class="ha-tip">${s.tip}</div>
+      </div>`;
+    hotelHtml = `<div class="hotel-block" id="hotel-block-${d.stayKey}">
+      <div class="hb-label">🏨 住宿</div>
+      <div class="hotel-city-row">
+        <div class="hotel-city">${s.city}</div>
+        <div class="hotel-dates">${fmtShort(s.checkin)} check-in → ${fmtShort(s.checkout)} check-out · ${s.nights} 晚</div>
+      </div>
+      ${saved
+        ? `<a class="hotel-saved-link" href="${saved.url}" target="_blank" rel="noopener">📍 ${saved.name} ↗</a><button class="hotel-clear" onclick="clearHotel('${d.stayKey}')">清除</button>
+           ${saved.cancelBefore ? `<div class="exp-cancel" style="margin-top:6px;">🕒 免費取消期限：${fmtDateFull(saved.cancelBefore)}</div>` : ''}
+           ${saved.amount ? `<div><span class="exp-filed-badge">💰 已記帳 ${saved.currency} ${fmtMoney(saved.amount)}${saved.payment?' · 💳 '+saved.payment:''} · 見記帳分頁</span></div>` : `<div class="exp-cancel" style="margin-top:6px;color:var(--ink-soft);">尚未記帳（可在記帳分頁補登）</div>`}`
+        : `<span class="hotel-status pending">尚未加入地點</span>
+           <div class="hotel-booking-link"><a class="link-btn gold" href="${s.bookUrl}" target="_blank" rel="noopener">Booking.com 搜尋 ↗</a></div>
+           <div class="hotel-input-row">
+             <input type="text" id="hotel-name-${d.stayKey}" placeholder="住宿名稱">
+           </div>
+           <div class="hotel-input-row" style="margin-top:6px;">
+             <input type="text" id="hotel-url-${d.stayKey}" placeholder="貼上 Google 地圖連結（選填）">
+           </div>
+           <div class="hotel-input-row" style="margin-top:6px;">
+             <input type="number" inputmode="decimal" id="hotel-amt-${d.stayKey}" placeholder="金額（記帳，選填）" style="flex:2;">
+             <select id="hotel-cur-${d.stayKey}" style="flex:1;border:1px solid var(--line);border-radius:5px;padding:8px 6px;font-size:12.5px;background:var(--paper);">
+               <option value="EUR">EUR</option><option value="CHF">CHF</option><option value="TWD">TWD</option><option value="USD">USD</option>
+             </select>
+           </div>
+           <div class="hotel-input-row" style="margin-top:6px;align-items:center;">
+             <span style="font-size:11px;color:var(--ink-soft);white-space:nowrap;">支付</span>
+             <select id="hotel-pay-${d.stayKey}" style="flex:1;border:1px solid var(--line);border-radius:5px;padding:8px 6px;font-size:12.5px;background:var(--paper);">
+               <option value="幸福M">幸福 M</option><option value="台新">台新</option><option value="大戶">大戶</option><option value="現金">現金</option>
+             </select>
+           </div>
+           <div class="hotel-input-row" style="margin-top:6px;align-items:center;">
+             <span style="font-size:11px;color:var(--ink-soft);white-space:nowrap;">免費取消前</span>
+             <input type="date" id="hotel-cancel-${d.stayKey}" style="flex:1;border:1px solid var(--line);border-radius:5px;padding:8px 9px;font-size:12.5px;background:var(--paper);">
+             <button onclick="saveHotel('${d.stayKey}')">儲存</button>
+           </div>`
+      }
+      ${saved ? '' : areaBlock}
+    </div>`;
+  }
+
+  const stayBanner = isStayStartDay(d)
+    ? `<div class="stay-start-banner">📌 開始連住 ${stays[d.stayKey].city} x ${stays[d.stayKey].nights} 晚</div>`
+    : '';
+
+  el.innerHTML = `
+    <div class="day-panel-head">
+      <div class="dp-date">${fmtDate(d.date)} · DAY ${String(d.n).padStart(2,'0')}</div>
+      <h2>${COUNTRY_FLAG[d.country]||''} ${d.title}</h2>
+      ${d.note ? `<div style="font-size:12px;color:var(--rust);margin-top:5px;font-weight:600;">📌 ${d.note}</div>` : ''}
+    </div>
+    ${stayBanner}
+    ${bodyHtml}
+    ${hotelHtml}
+  `;
+}
+
+function goToDay(n){
+  activeDay = n;
+  document.querySelector('.tab-btn[data-tab="itin"]').click();
+  renderDayStrip();
+  renderDayPanel();
+}
+
+function allDataKeys(){
+  return ['expenses', 'ootd-entries', 'todo-checks', 'custom-todos', ...stayOrder.map(k=>'hotel:'+k)];
+}
+
+/* ============================================================
+   EXPENSE / 記帳
+   ============================================================ */
+async function getExpenses(){
+  try{
+    const v = await Store.get('expenses');
+    return v ? JSON.parse(v) : [];
+  }catch(e){ return []; }
+}
+async function saveExpenses(list){
+  try{ await Store.set('expenses', JSON.stringify(list)); }
+  catch(e){ console.error('save expenses failed', e); }
+}
+async function upsertExpense(entry){
+  const list = await getExpenses();
+  const idx = list.findIndex(x=>x.id===entry.id);
+  if(idx>=0) list[idx] = {...list[idx], ...entry};
+  else list.unshift(entry);
+  await saveExpenses(list);
+}
+async function deleteExpense(id){
+  let list = await getExpenses();
+  const removed = list.find(x=>x.id===id);
+  list = list.filter(x=>x.id!==id);
+  await saveExpenses(list);
+  // if this expense was linked to a hotel, also strip the amount from the hotel record
+  if(removed && removed.hotelKey){
+    const h = await getHotelEntry(removed.hotelKey);
+    if(h){
+      delete h.amount; delete h.currency;
+      try{ await Store.set('hotel:'+removed.hotelKey, JSON.stringify(h)); }catch(e){}
+    }
+  }
+}
+
+let swipedExpId = null;
+async function renderExpenses(){
+  const totalEl = document.getElementById('expense-total');
+  const listEl = document.getElementById('expense-list');
+  const hintEl = document.getElementById('swipe-hint');
+  const list = await getExpenses();
+
+  // totals grouped by currency
+  const totals = {};
+  list.forEach(e=>{ const c=e.currency||'EUR'; totals[c]=(totals[c]||0)+(Number(e.amount)||0); });
+  const curKeys = Object.keys(totals);
+  if(curKeys.length){
+    totalEl.innerHTML = `<div class="et-label">總金額（依幣別）</div>` +
+      curKeys.map(c=>`<div class="et-row"><span class="et-cur">${c}</span><span class="et-amt">${fmtMoney(totals[c])}</span></div>`).join('');
+  } else {
+    totalEl.innerHTML = `<div class="et-label">總金額</div><div class="et-empty">尚無記帳項目</div>`;
+  }
+
+  if(!list.length){
+    hintEl.style.display = 'none';
+    listEl.innerHTML = `<div class="empty-note">還沒有記帳項目，用上方表單新增，或在行程住宿卡填金額自動歸檔到這裡。</div>`;
+    return;
+  }
+  hintEl.style.display = 'block';
+
+  // sort by date then keep insertion order
+  const sorted = [...list].sort((a,b)=> (a.date||'').localeCompare(b.date||''));
+  listEl.innerHTML = sorted.map(e=>{
+    const ic = CAT_ICON[e.category] || '📦';
+    return `<div class="exp-item-wrap">
+      <button class="exp-edit-btn" onclick="onEditExpense('${e.id}')">✏️ 編輯</button>
+      <button class="exp-del-btn" onclick="onDeleteExpense('${e.id}')">🗑 刪除</button>
+      <div class="exp-item" data-id="${e.id}">
+        <div class="exp-cat-ic">${ic}</div>
+        <div class="exp-info">
+          <div class="exp-name-txt">${e.name||'(未命名)'}</div>
+          <div class="exp-meta">${e.category||''} · ${e.date?fmtDateFull(e.date):'無日期'}${e.payment?' · 💳 '+e.payment:''}</div>
+          ${e.cancelBefore?`<div class="exp-cancel">🕒 免費取消前：${fmtDateFull(e.cancelBefore)}</div>`:''}
+        </div>
+        <div class="exp-amt-txt">${e.currency||''} ${fmtMoney(e.amount)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  attachSwipe();
+}
+
+function attachSwipe(){
+  document.querySelectorAll('#expense-list .exp-item').forEach(item=>{
+    let startX=0, startY=0, dragging=false, decided=false, horizontal=false;
+    const openLeft = ()=>{ closeAllSwipes(item); item.classList.remove('swiped-right'); item.classList.add('swiped'); swipedExpId=item.dataset.id; };
+    const openRight = ()=>{ closeAllSwipes(item); item.classList.remove('swiped'); item.classList.add('swiped-right'); swipedExpId=item.dataset.id; };
+    const close = ()=>{ item.classList.remove('swiped'); item.classList.remove('swiped-right'); if(swipedExpId===item.dataset.id) swipedExpId=null; };
+
+    const start = (x,y)=>{ startX=x; startY=y; dragging=true; decided=false; horizontal=false; };
+    const move = (x,y,e)=>{
+      if(!dragging) return;
+      const dx=x-startX, dy=y-startY;
+      if(!decided){
+        if(Math.abs(dx)>8 || Math.abs(dy)>8){ decided=true; horizontal=Math.abs(dx)>Math.abs(dy); }
+      }
+      if(horizontal){
+        if(e&&e.cancelable) e.preventDefault();
+        const base = item.classList.contains('swiped') ? -76 : (item.classList.contains('swiped-right') ? 76 : 0);
+        let tx = Math.max(-76, Math.min(76, base+dx));
+        item.style.transform = `translateX(${tx}px)`;
+      }
+    };
+    const end = (x)=>{
+      if(!dragging) return; dragging=false;
+      item.style.transform='';
+      if(!horizontal) return;
+      const base = item.classList.contains('swiped') ? -76 : (item.classList.contains('swiped-right') ? 76 : 0);
+      const tx = Math.max(-76, Math.min(76, base + (x-startX)));
+      if(tx < -38) openLeft();
+      else if(tx > 38) openRight();
+      else close();
+    };
+
+    item.addEventListener('touchstart', e=>{ start(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
+    item.addEventListener('touchmove', e=>{ move(e.touches[0].clientX, e.touches[0].clientY, e); }, {passive:false});
+    item.addEventListener('touchend', e=>{ end((e.changedTouches[0]||{}).clientX||startX); });
+
+    // mouse fallback for desktop
+    item.addEventListener('mousedown', e=>{ start(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', e=>{ if(dragging) move(e.clientX, e.clientY, e); });
+    window.addEventListener('mouseup', e=>{ if(dragging) end(e.clientX); });
+
+    // tap on an open row closes it
+    item.addEventListener('click', ()=>{ if(item.classList.contains('swiped')||item.classList.contains('swiped-right')) close(); });
+  });
+}
+function closeAllSwipes(except){
+  document.querySelectorAll('#expense-list .exp-item.swiped, #expense-list .exp-item.swiped-right').forEach(el=>{ if(el!==except){ el.classList.remove('swiped'); el.classList.remove('swiped-right'); } });
+}
+async function onDeleteExpense(id){
+  await deleteExpense(id);
+  await renderExpenses();
+  renderDayPanel();
+}
+async function onEditExpense(id){
+  const list = await getExpenses();
+  const e = list.find(x=>x.id===id);
+  if(!e){ return; }
+  // load values into the add form and switch it to edit mode
+  document.getElementById('exp-date').value = e.date || todayISO();
+  document.getElementById('exp-category').value = e.category || '其他';
+  document.getElementById('exp-payment').value = e.payment || '幸福M';
+  document.getElementById('exp-name').value = e.name || '';
+  document.getElementById('exp-amount').value = e.amount != null ? e.amount : '';
+  document.getElementById('exp-currency').value = e.currency || 'EUR';
+  editingExpenseId = id;
+  const btn = document.getElementById('exp-save');
+  btn.textContent = '更新記帳';
+  btn.classList.add('editing');
+  // reveal a cancel-edit affordance
+  let cancelBtn = document.getElementById('exp-cancel-edit');
+  if(cancelBtn) cancelBtn.style.display = 'block';
+  // scroll form into view + close swipe
+  await renderExpenses();
+  document.getElementById('view-expense').scrollTo?.({top:0, behavior:'smooth'});
+  document.getElementById('exp-name').focus();
+}
+function exitEditMode(){
+  editingExpenseId = null;
+  const btn = document.getElementById('exp-save');
+  btn.textContent = '新增記帳';
+  btn.classList.remove('editing');
+  const cancelBtn = document.getElementById('exp-cancel-edit');
+  if(cancelBtn) cancelBtn.style.display = 'none';
+  document.getElementById('exp-name').value='';
+  document.getElementById('exp-amount').value='';
+  document.getElementById('exp-date').value = todayISO();
+}
+
+let editingExpenseId = null;
+document.getElementById('exp-save').addEventListener('click', async ()=>{
+  const nameEl=document.getElementById('exp-name');
+  const amtEl=document.getElementById('exp-amount');
+  const name=nameEl.value.trim();
+  const amount=amtEl.value?parseFloat(amtEl.value):null;
+  if(!name){ nameEl.focus(); return; }
+  if(!amount || amount<=0){ amtEl.focus(); return; }
+  const common={
+    name, amount,
+    currency:document.getElementById('exp-currency').value,
+    category:document.getElementById('exp-category').value,
+    payment:document.getElementById('exp-payment').value,
+    date:document.getElementById('exp-date').value || null
+  };
+  if(editingExpenseId){
+    // preserve fields not shown in the form (e.g. hotelKey, cancelBefore)
+    await upsertExpense({ id: editingExpenseId, ...common });
+    // if editing a hotel-linked expense, mirror the amount/currency/payment back to the hotel record
+    if(editingExpenseId.startsWith('hotel-')){
+      const hk = editingExpenseId.slice('hotel-'.length);
+      const h = await getHotelEntry(hk);
+      if(h){ h.amount=common.amount; h.currency=common.currency; h.payment=common.payment; try{ await Store.set('hotel:'+hk, JSON.stringify(h)); }catch(e){} }
+    }
+    exitEditMode();
+    renderDayPanel();
+  } else {
+    await upsertExpense({ id:'exp-'+Date.now(), ...common });
+    nameEl.value=''; amtEl.value='';
+    document.getElementById('exp-date').value = todayISO();
+  }
+  await renderExpenses();
+});
+document.getElementById('exp-cancel-edit')?.addEventListener('click', ()=>{ exitEditMode(); });
+
+
+function populateOotdDates(){
+  const sel = document.getElementById('ootd-date');
+  sel.innerHTML = days.map(d=>`<option value="${d.date}">${fmtDate(d.date)} · Day ${d.n} ${d.title}</option>`).join('');
+}
+function fileToDataUrl(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function loadImageEl(dataUrl){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+}
+async function resizeImageFile(img, maxDim, quality){
+  let { width, height } = img;
+  if(width > maxDim || height > maxDim){
+    if(width >= height){ height = Math.round(height * maxDim / width); width = maxDim; }
+    else { width = Math.round(width * maxDim / height); height = maxDim; }
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+  return canvas.toDataURL('image/jpeg', quality);
+}
+async function compressForStorage(file){
+  // Photos live inline as base64 inside the synced JSON file, and GitHub's
+  // Contents API refuses to read files over ~1MB — so every photo needs to
+  // stay well under that, not just under some arbitrary upload cap.
+  const img = await loadImageEl(await fileToDataUrl(file));
+  const attempts = [[1280,0.75],[1280,0.6],[1024,0.6],[800,0.55],[640,0.5]];
+  let dataUrl = await resizeImageFile(img, attempts[0][0], attempts[0][1]);
+  let i = 1;
+  while(dataUrl.length > 700*1024 && i < attempts.length){
+    dataUrl = await resizeImageFile(img, attempts[i][0], attempts[i][1]);
+    i++;
+  }
+  return dataUrl;
+}
+document.getElementById('ootd-drop').addEventListener('click', ()=> document.getElementById('ootd-file').click());
+document.getElementById('ootd-file').addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  if(f.size > 20*1024*1024){ alert('照片請小於 20MB'); return; }
+  const drop = document.getElementById('ootd-drop');
+  const prevHtml = drop.innerHTML;
+  const prevHadImg = drop.classList.contains('has-img');
+  drop.textContent = '處理照片中…';
+  try{
+    ootdPendingImg = await compressForStorage(f);
+    drop.innerHTML = `<img src="${ootdPendingImg}">`;
+    drop.classList.add('has-img');
+    document.getElementById('ootd-save').disabled = false;
+  }catch(err){
+    console.error(err);
+    alert('照片處理失敗，請換一張試試');
+    drop.innerHTML = prevHtml;
+    drop.classList.toggle('has-img', prevHadImg);
+  }
+});
+
+document.getElementById('ootd-save').addEventListener('click', async ()=>{
+  const date = document.getElementById('ootd-date').value;
+  const note = document.getElementById('ootd-note').value.trim();
+  if(!ootdPendingImg) return;
+  const btn = document.getElementById('ootd-save');
+  btn.disabled = true; btn.textContent = '儲存中...';
+  try{
+    const listRes = await Store.get('ootd-entries');
+    const list = listRes ? JSON.parse(listRes) : [];
+    list.unshift({ id: Date.now().toString(), date, note, img: ootdPendingImg });
+    await Store.set('ootd-entries', JSON.stringify(list));
+    ootdPendingImg = null;
+    const drop = document.getElementById('ootd-drop');
+    drop.innerHTML = '點此選擇照片';
+    drop.classList.remove('has-img');
+    document.getElementById('ootd-note').value = '';
+    document.getElementById('ootd-file').value = '';
+    await renderOotdList();
+  }catch(e){
+    console.error(e);
+    alert('儲存失敗，請再試一次');
+  }
+  btn.disabled = true; btn.textContent = '儲存穿搭';
+});
+
+async function renderOotdList(){
+  const el = document.getElementById('ootd-list');
+  el.innerHTML = `<div class="loading-note">載入中...</div>`;
+  try{
+    const res = await Store.get('ootd-entries');
+    const list = res ? JSON.parse(res) : [];
+    if(!list.length){
+      el.innerHTML = `<div class="empty-note">還沒有穿搭紀錄，上傳第一張照片吧 ✨</div>`;
+      return;
+    }
+    el.innerHTML = `<div class="ootd-grid">` + list.map(it=>`
+      <div class="ootd-card">
+        <button class="ootd-del" onclick="deleteOotd('${it.id}')">✕</button>
+        <img src="${it.img}">
+        <div class="ootd-meta">
+          <div class="ootd-date">${fmtDate(it.date)}</div>
+          ${it.note ? `<div class="ootd-note">${it.note}</div>` : ''}
+        </div>
+      </div>`).join('') + `</div>`;
+  }catch(e){
+    el.innerHTML = `<div class="empty-note">載入失敗</div>`;
+  }
+}
+async function deleteOotd(id){
+  try{
+    const res = await Store.get('ootd-entries');
+    let list = res ? JSON.parse(res) : [];
+    list = list.filter(x=>x.id!==id);
+    await Store.set('ootd-entries', JSON.stringify(list));
+    renderOotdList();
+  }catch(e){ console.error(e); }
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(function(){ const de=document.getElementById('exp-date'); if(de) de.value=todayISO(); })();
+
+(async function bootstrap(){
+  // days/stays/stayOrder/DEFAULT_HOTELS all come from the private data
+  // repo now — nothing itinerary-related can render until this succeeds.
+  const ok = await loadItinerarySeed();
+  if(!ok) return;
+
+  renderCalendar();
+  loadTodoState().then(renderTodo);
+  renderDayStrip();
+  renderDayPanel();
+  populateOotdDates();
+  renderOotdList();
+  renderExpenses();
+
+  await initWorkerSync();
+  await seedDefaultHotels();
+  await ensureLuzernCheckinLink();
+  await renderDayPanel();
+  await renderTodo();
+  await renderExpenses();
+  await renderCalendar();
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 const REPO = 'ch1in/26eurosummer-data';
-const PATH = 'data/trip-data.json';
+const DATA_PATH = 'data/trip-data.json';
+const ITINERARY_PATH = 'data/itinerary.json';
 const BRANCH = 'main';
 
 function cors(resp) {
@@ -31,8 +32,8 @@ function ghHeaders(env) {
   };
 }
 
-function contentsUrl() {
-  return 'https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(PATH) + '?ref=' + BRANCH;
+function contentsUrl(path) {
+  return 'https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(path) + '?ref=' + BRANCH;
 }
 
 function b64EncodeUtf8(str) {
@@ -42,22 +43,22 @@ function b64DecodeUtf8(str) {
   return decodeURIComponent(escape(atob(str)));
 }
 
-async function getFile(env) {
-  const res = await fetch(contentsUrl(), { headers: ghHeaders(env) });
+async function getFile(env, path) {
+  const res = await fetch(contentsUrl(path), { headers: ghHeaders(env) });
   if (res.status === 404) return { content: null, sha: null };
   if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + await res.text());
   const data = await res.json();
   return { content: b64DecodeUtf8(data.content.replace(/\n/g, '')), sha: data.sha };
 }
 
-async function putFile(env, contentStr, sha) {
+async function putFile(env, path, contentStr, sha) {
   const body = {
     message: 'sync from trip app',
     content: b64EncodeUtf8(contentStr),
     branch: BRANCH
   };
   if (sha) body.sha = sha;
-  const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(PATH), {
+  const res = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + encodeURI(path), {
     method: 'PUT',
     headers: ghHeaders(env),
     body: JSON.stringify(body)
@@ -76,17 +77,27 @@ export default {
       return json({ error: 'unauthorized' }, 401);
     }
 
+    const url = new URL(request.url);
+    const isItinerary = url.pathname.replace(/\/$/, '') === '/itinerary';
+
     try {
+      if (isItinerary) {
+        if (request.method !== 'GET') return json({ error: 'method not allowed' }, 405);
+        const { content } = await getFile(env, ITINERARY_PATH);
+        if (content === null) return json({}, 404);
+        return json(JSON.parse(content));
+      }
+
       if (request.method === 'GET') {
-        const { content } = await getFile(env);
+        const { content } = await getFile(env, DATA_PATH);
         if (content === null) return json({});
         return json(JSON.parse(content));
       }
 
       if (request.method === 'POST') {
         const incoming = await request.json();
-        const { sha } = await getFile(env);
-        await putFile(env, JSON.stringify(incoming), sha);
+        const { sha } = await getFile(env, DATA_PATH);
+        await putFile(env, DATA_PATH, JSON.stringify(incoming), sha);
         return json({ ok: true });
       }
 
