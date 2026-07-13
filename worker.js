@@ -1,4 +1,4 @@
-const REPO = 'ch1in/26eurosummer';
+const REPO = 'ch1in/26eurosummer-data';
 const PATH = 'data/trip-data.json';
 const BRANCH = 'main';
 
