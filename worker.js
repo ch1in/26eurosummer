@@ -13,7 +13,7 @@ function cors(resp) {
 function json(obj, status) {
   return cors(new Response(JSON.stringify(obj), {
     status: status || 200,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   }));
 }
 

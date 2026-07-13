@@ -905,7 +905,11 @@ function updatePersistNote(){
   const els = ['persist-note', 'persist-note-ootd'].map(id=>document.getElementById(id)).filter(Boolean);
   if(!els.length) return;
   if(workerSyncOK){
-    els.forEach(el=>{ el.style.display='none'; }); // cloud relay sync active — durable & cross-device
+    if(cloudSizeWarning){
+      els.forEach(el=>{ el.style.display='block'; el.className='persist-note warn'; el.textContent = cloudSizeWarning; });
+    } else {
+      els.forEach(el=>{ el.style.display='none'; }); // cloud relay sync active — durable & cross-device
+    }
     return;
   }
   if(!_workerReady){ els.forEach(el=>{ el.style.display='none'; }); return; } // haven't attempted a sync yet
@@ -942,6 +946,7 @@ function workerAuthHeaders(json){
   return h;
 }
 let lastSyncError = '';
+let cloudSizeWarning = '';
 async function describeFailedResponse(res){
   let body = '';
   try{ body = await res.text(); }catch(e){}
@@ -949,7 +954,7 @@ async function describeFailedResponse(res){
 }
 async function pullFromCloud(){
   let res;
-  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders() }); }
+  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders(), cache: 'no-store' }); }
   catch(e){ throw new Error('連不到 Worker：' + e.message); }
   if(!res.ok) throw new Error('讀取失敗：' + await describeFailedResponse(res));
   const data = await res.json();
@@ -987,7 +992,7 @@ function mergeMap(remoteStr, localStr){
 }
 async function fetchCloudSnapshot(){
   let res;
-  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders() }); }
+  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders(), cache: 'no-store' }); }
   catch(e){ throw new Error('連不到 Worker：' + e.message); }
   if(!res.ok) throw new Error('讀取失敗：' + await describeFailedResponse(res));
   return await res.json();
@@ -1011,12 +1016,18 @@ async function pushToCloud(){
     _memCache[key] = value; _lsSet(key, value);
   }
 
+  const mergedSize = JSON.stringify(merged).length;
+  cloudSizeWarning = mergedSize > 800*1024
+    ? ('⚠️ 雲端資料已用 ' + Math.round(mergedSize/1024) + 'KB（GitHub 上限約 1MB），接近上限時同步會開始失敗，建議清理較舊的穿搭照片。')
+    : '';
+
   let res;
   try{
     res = await fetch(WORKER_SYNC_URL, {
       method: 'POST',
       headers: workerAuthHeaders(true),
-      body: JSON.stringify(merged)
+      body: JSON.stringify(merged),
+      cache: 'no-store'
     });
   }catch(e){ throw new Error('連不到 Worker：' + e.message); }
   if(!res.ok) throw new Error('寫入失敗：' + await describeFailedResponse(res));
@@ -1067,7 +1078,7 @@ async function initWorkerSync(){
 async function loadItinerarySeed(){
   const errEl = document.getElementById('itinerary-error');
   try{
-    const res = await fetch(WORKER_SYNC_URL.replace(/\/$/, '') + '/itinerary', { headers: workerAuthHeaders() });
+    const res = await fetch(WORKER_SYNC_URL.replace(/\/$/, '') + '/itinerary', { headers: workerAuthHeaders(), cache: 'no-store' });
     if(!res.ok) throw new Error(await describeFailedResponse(res));
     const seed = await res.json();
     if(!seed || !seed.days) throw new Error('回傳內容是空的');
@@ -1859,13 +1870,14 @@ async function resizeImageFile(img, maxDim, quality){
 }
 async function compressForStorage(file){
   // Photos live inline as base64 inside the synced JSON file, and GitHub's
-  // Contents API refuses to read files over ~1MB — so every photo needs to
-  // stay well under that, not just under some arbitrary upload cap.
+  // Contents API refuses to read files over ~1MB TOTAL (all photos combined,
+  // not per-photo) — so each photo needs a tight budget, not just "under 1MB
+  // on its own". ~150KB keeps a multi-day trip's worth of photos well clear.
   const img = await loadImageEl(await fileToDataUrl(file));
-  const attempts = [[1280,0.75],[1280,0.6],[1024,0.6],[800,0.55],[640,0.5]];
+  const attempts = [[900,0.65],[700,0.55],[560,0.5],[440,0.45],[360,0.4]];
   let dataUrl = await resizeImageFile(img, attempts[0][0], attempts[0][1]);
   let i = 1;
-  while(dataUrl.length > 700*1024 && i < attempts.length){
+  while(dataUrl.length > 150*1024 && i < attempts.length){
     dataUrl = await resizeImageFile(img, attempts[i][0], attempts[i][1]);
     i++;
   }
