@@ -969,21 +969,35 @@ async function pullFromCloud(){
 // Lists that get added-to independently on different devices (an expense
 // entered on phone A shouldn't get wiped out by phone B pushing its own,
 // older snapshot a few seconds later). Merged by id — union of both sides,
-// local wins on an exact id conflict. Note this can't distinguish "never
-// synced" from "deleted elsewhere", so a delete made on one device can
-// reappear if another device pushes a stale copy before it sees that
-// delete — a reasonable trade-off vs. silently losing new entries.
+// local wins on an exact id conflict. Deletions are tracked separately as
+// tombstones (see markDeleted below), since a plain union merge can never
+// represent "remove this id" — it would just re-add whatever the other
+// side still has.
 const MERGE_LIST_KEYS = ['expenses', 'ootd-entries', 'custom-todos'];
 // Plain key→bool maps: shallow-merged, local wins per key.
 const MERGE_MAP_KEYS = ['todo-checks'];
+function tombstoneKey(key){ return key + '__deleted'; }
 
-function mergeListById(remoteStr, localStr){
+async function markDeleted(key, id){
+  const tk = tombstoneKey(key);
+  const v = await Store.get(tk);
+  let ids = []; try{ ids = v ? JSON.parse(v) : []; }catch(e){}
+  if(!ids.includes(id)) ids.push(id);
+  await Store.set(tk, JSON.stringify(ids));
+}
+function mergeTombstones(remoteStr, localStr){
+  let remote = []; try{ remote = remoteStr ? JSON.parse(remoteStr) : []; }catch(e){}
+  let local = []; try{ local = localStr ? JSON.parse(localStr) : []; }catch(e){}
+  return JSON.stringify(Array.from(new Set([...remote, ...local])));
+}
+function mergeListById(remoteStr, localStr, tombstoneIds){
   let remote = []; try{ remote = remoteStr ? JSON.parse(remoteStr) : []; }catch(e){}
   let local = []; try{ local = localStr ? JSON.parse(localStr) : []; }catch(e){}
   const map = new Map();
   remote.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
   local.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
-  return JSON.stringify(Array.from(map.values()));
+  const tomb = new Set(tombstoneIds || []);
+  return JSON.stringify(Array.from(map.values()).filter(item => !tomb.has(item.id)));
 }
 function mergeMap(remoteStr, localStr){
   let remote = {}; try{ remote = remoteStr ? JSON.parse(remoteStr) : {}; }catch(e){}
@@ -1005,7 +1019,12 @@ async function pushToCloud(){
   const local = collectAllData();
   const merged = Object.assign({}, remote, local);
   for(const k of MERGE_LIST_KEYS){
-    if(k in local || k in remote) merged[k] = mergeListById(remote[k], local[k]);
+    const tk = tombstoneKey(k);
+    if(k in local || k in remote || tk in local || tk in remote){
+      const mergedTomb = mergeTombstones(remote[tk], local[tk]);
+      merged[tk] = mergedTomb;
+      merged[k] = mergeListById(remote[k], local[k], JSON.parse(mergedTomb));
+    }
   }
   for(const k of MERGE_MAP_KEYS){
     if(k in local || k in remote) merged[k] = mergeMap(remote[k], local[k]);
@@ -1388,6 +1407,7 @@ async function toggleCustomTodo(id){
 async function deleteCustomTodo(id){
   const list = (await getCustomTodos()).filter(x=>x.id!==id);
   await saveCustomTodos(list);
+  await markDeleted('custom-todos', id);
   await renderTodo();
 }
 document.getElementById('custom-todo-add').addEventListener('click', addCustomTodo);
@@ -1628,7 +1648,8 @@ function goToDay(n){
 }
 
 function allDataKeys(){
-  return ['expenses', 'ootd-entries', 'todo-checks', 'custom-todos', ...stayOrder.map(k=>'hotel:'+k)];
+  return ['expenses', 'expenses__deleted', 'ootd-entries', 'ootd-entries__deleted',
+    'todo-checks', 'custom-todos', 'custom-todos__deleted', ...stayOrder.map(k=>'hotel:'+k)];
 }
 
 /* ============================================================
@@ -1656,6 +1677,7 @@ async function deleteExpense(id){
   const removed = list.find(x=>x.id===id);
   list = list.filter(x=>x.id!==id);
   await saveExpenses(list);
+  await markDeleted('expenses', id);
   // if this expense was linked to a hotel, also strip the amount from the hotel record
   if(removed && removed.hotelKey){
     const h = await getHotelEntry(removed.hotelKey);
@@ -1960,6 +1982,7 @@ async function deleteOotd(id){
     let list = res ? JSON.parse(res) : [];
     list = list.filter(x=>x.id!==id);
     await Store.set('ootd-entries', JSON.stringify(list));
+    await markDeleted('ootd-entries', id);
     renderOotdList();
   }catch(e){ console.error(e); }
 }
