@@ -1928,20 +1928,53 @@ async function resizeImageFile(img, maxDim, quality){
   return canvas.toDataURL('image/jpeg', quality);
 }
 async function compressForStorage(file){
-  // Photos live inline as base64 inside the synced JSON file, and GitHub's
-  // Contents API refuses to read files over ~1MB TOTAL (all photos combined,
-  // not per-photo, and shared with expenses/hotels/todos too). Budgeted for
-  // roughly 20 photos over the trip: ~35KB each keeps ~20 photos at ~700KB,
-  // leaving headroom under the 1MB ceiling for everything else.
+  // Each photo is now stored as its OWN file in the private repo (see
+  // uploadPhoto/photoUrl below), not inlined into the shared trip-data.json.
+  // So the ~1MB GitHub Contents API ceiling applies per-photo, not shared
+  // across all of them — plenty of room for much higher quality than before.
   const img = await loadImageEl(await fileToDataUrl(file));
-  const attempts = [[800,0.62],[640,0.55],[520,0.48],[420,0.42],[320,0.38]];
+  const attempts = [[1600,0.82],[1400,0.75],[1200,0.7],[1000,0.65],[800,0.6]];
   let dataUrl = await resizeImageFile(img, attempts[0][0], attempts[0][1]);
   let i = 1;
-  while(dataUrl.length > 35*1024 && i < attempts.length){
+  while(dataUrl.length > 800*1024 && i < attempts.length){
     dataUrl = await resizeImageFile(img, attempts[i][0], attempts[i][1]);
     i++;
   }
   return dataUrl;
+}
+function photoUrl(id){
+  return WORKER_SYNC_URL.replace(/\/$/, '') + '/photo/' + encodeURIComponent(id) + '?t=' + encodeURIComponent(AUTH_HASH);
+}
+async function uploadPhoto(id, dataUrl){
+  const base64 = (dataUrl.split(',')[1] || '');
+  showSyncToast('☁️ 上傳照片中…', 'pending');
+  let res;
+  try{
+    res = await fetch(WORKER_SYNC_URL.replace(/\/$/, '') + '/photo', {
+      method: 'POST',
+      headers: workerAuthHeaders(true),
+      body: JSON.stringify({ id, dataBase64: base64 }),
+      cache: 'no-store'
+    });
+  }catch(e){
+    showSyncToast('⚠️ 照片上傳失敗：連不到 Worker', 'err', 4000);
+    throw new Error('連不到 Worker：' + e.message);
+  }
+  if(!res.ok){
+    const detail = await describeFailedResponse(res);
+    showSyncToast('⚠️ 照片上傳失敗', 'err', 4000);
+    throw new Error('上傳失敗：' + detail);
+  }
+  showSyncToast('✓ 照片已上傳', 'ok', 2000);
+}
+async function deletePhoto(id){
+  try{
+    await fetch(WORKER_SYNC_URL.replace(/\/$/, '') + '/photo/' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: workerAuthHeaders(),
+      cache: 'no-store'
+    });
+  }catch(e){ console.warn('delete photo failed (file may be left orphaned in the repo)', e); }
 }
 document.getElementById('ootd-drop').addEventListener('click', ()=> document.getElementById('ootd-file').click());
 document.getElementById('ootd-file').addEventListener('change', async (e)=>{
@@ -1970,11 +2003,13 @@ document.getElementById('ootd-save').addEventListener('click', async ()=>{
   const note = document.getElementById('ootd-note').value.trim();
   if(!ootdPendingImg) return;
   const btn = document.getElementById('ootd-save');
-  btn.disabled = true; btn.textContent = '儲存中...';
+  btn.disabled = true; btn.textContent = '上傳中...';
+  const id = Date.now().toString();
   try{
+    await uploadPhoto(id, ootdPendingImg);
     const listRes = await Store.get('ootd-entries');
     const list = listRes ? JSON.parse(listRes) : [];
-    list.unshift({ id: Date.now().toString(), date, note, img: ootdPendingImg });
+    list.unshift({ id, date, note });
     await Store.set('ootd-entries', JSON.stringify(list));
     ootdPendingImg = null;
     const drop = document.getElementById('ootd-drop');
@@ -1985,7 +2020,7 @@ document.getElementById('ootd-save').addEventListener('click', async ()=>{
     await renderOotdList();
   }catch(e){
     console.error(e);
-    alert('儲存失敗，請再試一次');
+    alert('儲存失敗：' + e.message);
   }
   btn.disabled = true; btn.textContent = '儲存穿搭';
 });
@@ -2003,7 +2038,7 @@ async function renderOotdList(){
     el.innerHTML = `<div class="ootd-grid">` + list.map(it=>`
       <div class="ootd-card">
         <button class="ootd-del" onclick="deleteOotd('${it.id}')">✕</button>
-        <img src="${it.img}">
+        <img src="${photoUrl(it.id)}" loading="lazy">
         <div class="ootd-meta">
           <div class="ootd-date">${fmtDate(it.date)}</div>
           ${it.note ? `<div class="ootd-note">${it.note}</div>` : ''}
@@ -2020,6 +2055,7 @@ async function deleteOotd(id){
     list = list.filter(x=>x.id!==id);
     await Store.set('ootd-entries', JSON.stringify(list));
     await markDeleted('ootd-entries', id);
+    await deletePhoto(id);
     renderOotdList();
   }catch(e){ console.error(e); }
 }
