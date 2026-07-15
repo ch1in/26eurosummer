@@ -57,7 +57,7 @@ function b64ToBytes(str) {
 
 async function getFileOnce(env, path) {
   const res = await fetch(contentsUrl(path), { headers: ghHeaders(env) });
-  if (res.status === 404) return { content: null, sha: null };
+  if (res.status === 404) return { contentB64: null, sha: null };
   const bodyText = await res.text();
   if (!res.ok) throw new Error('GitHub GET failed: ' + res.status + ' ' + bodyText);
   let data;
