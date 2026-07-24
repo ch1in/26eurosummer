@@ -709,6 +709,7 @@
 <!-- ============ ITINERARY ============ -->
 <div class="view" id="view-itin">
   <div class="day-strip" id="day-strip"></div>
+  <div class="swipe-hint">← 左右滑動切換前後一天 →</div>
   <div class="day-panel" id="day-panel"></div>
 </div>
 
@@ -1896,6 +1897,33 @@ function goToDay(n){
   renderDayPanel();
 }
 
+/* Swipe left/right on the day panel to move to the next/previous day.
+   Bound once on the container (not per-render, since renderDayPanel()
+   replaces its innerHTML but not the container itself). A short tap or a
+   mostly-vertical drag (normal scrolling) is ignored via the thresholds. */
+(function(){
+  const panel = document.getElementById('day-panel');
+  if(!panel) return;
+  let startX = 0, startY = 0, tracking = false;
+  panel.addEventListener('touchstart', (e)=>{
+    if(e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, {passive:true});
+  panel.addEventListener('touchend', (e)=>{
+    if(!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const idx = days.findIndex(x=>x.n===activeDay);
+    if(idx === -1) return;
+    if(dx < 0 && idx < days.length - 1) goToDay(days[idx+1].n);
+    else if(dx > 0 && idx > 0) goToDay(days[idx-1].n);
+  }, {passive:true});
+})();
+
 function allDataKeys(){
   return ['expenses', 'expenses__deleted', 'ootd-entries', 'ootd-entries__deleted',
     'todo-checks', 'custom-todos', 'custom-todos__deleted', ...stayOrder.map(k=>'hotel:'+k)];
@@ -2154,7 +2182,7 @@ async function compressForStorage(file){
   }
   return dataUrl;
 }
-function photoUrl(id){
+function ootdPhotoUrl(id){
   return WORKER_SYNC_URL.replace(/\/$/, '') + '/photo/' + encodeURIComponent(id) + '?t=' + encodeURIComponent(AUTH_HASH);
 }
 async function uploadPhoto(id, dataUrl){
@@ -2250,7 +2278,7 @@ async function renderOotdList(){
     el.innerHTML = `<div class="ootd-grid">` + list.map(it=>`
       <div class="ootd-card">
         <button class="ootd-del" onclick="deleteOotd('${it.id}')">✕</button>
-        <img src="${photoUrl(it.id)}" loading="lazy">
+        <img src="${ootdPhotoUrl(it.id)}" loading="lazy">
         <div class="ootd-meta">
           <div class="ootd-date">${fmtDate(it.date)}</div>
           ${it.note ? `<div class="ootd-note">${it.note}</div>` : ''}
