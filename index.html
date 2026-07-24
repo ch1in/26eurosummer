@@ -1261,70 +1261,288 @@ async function clearHotel(key){
 let days = [];
 
 const todoData = [
-  { icon:'🚄', title:'交通票券｜出發前先買', badge:'先處理', group:'pre', items:[
-    { title:'Swiss Travel Pass 8 日券（連續）', desc:'Day4–Day11（9/14–9/21）在瑞士境內共 8 天，含多段火車＋Rhine/Como 渡輪＋Gornergrat／Brunni 等山區纜車折扣，比單買每段划算，也免每天現場排隊。2nd class 8 日券約 CHF439/人，多數山區纜車享 5 折。可設定 9/14 生效，官方 SBB 旅客商店線上買、即時取得電子票。\n\n💡「証件卡／半價折扣」是什麼：行程裡寫「持 Swiss Travel Pass 半價」，指的就是憑這張 Swiss Travel Pass（買了它就是你的折扣憑證，手機出示電子票 QR code 即可）。你不需要另外辦其他卡。瑞士另有「Half Fare Card 半價卡（CHF150/月）」也能享同樣折扣，但既然已買 Travel Pass 就不必再買。', priority:'high', links:[
-      {label:'官方 SBB 購買', url:'https://www.swissrailways.com/en/buy-swiss-travel-pass', cls:''}
-    ]},
-    { title:'Frankfurt → Colmar（FlixBus）', desc:'價格通常比火車便宜、少轉車，拖大行李較省事。尚未進瑞士，不在 Swiss Travel Pass 範圍內。', priority:'high', links:[
-      {label:'FlixBus 訂票', url:'https://www.flixbus.com', cls:''},
-      {label:'DB 火車備案', url:'https://www.bahn.com', cls:'alt'}
-    ]},
-    { title:'Colmar → Luzern', desc:'通常於 Basel 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。', priority:'high', links:[
-      {label:'SBB 訂票', url:'https://www.sbb.ch/en', cls:''},
-      {label:'DB 訂票', url:'https://www.bahn.com', cls:'alt'}
-    ]},
-    { title:'Zermatt → Como（EuroCity）', desc:'跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段涵蓋在 Swiss Travel Pass 內，義大利段需另購。', priority:'high', links:[
-      {label:'SBB 訂票', url:'https://www.sbb.ch/en', cls:''},
-      {label:'Trenitalia', url:'https://www.trenitalia.com', cls:'alt'}
-    ]},
-    { title:'瑞士境內各段火車', desc:'Luzern↔Engelberg／Luzern→Lungern→Brienz／Interlaken↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等，全部涵蓋在 Swiss Travel Pass 內，不用另外訂票。', priority:'low', links:[]}
-  ]},
-
-  { icon:'🎟️', title:'需事先線上訂時段', badge:'出發前務必訂', group:'pre', items:[
-    { title:'Rüdesheim 酒莊導覽品酒（Day2｜9/12，想要導覽才需要）', desc:'若想要有講解的酒莊導覽品酒，Weingut Dr. Nägler 需先線上／電話預約（約€39.5/人起，含 5 款酒＋莊主導覽）。若只想輕鬆試飲則不用預約——見「當天現場買就好」清單。', priority:'medium', links:[
-      {label:'Dr. Nägler 預約', url:'https://www.winetourism.com/experience/wine-tasting-and-tour-at-weingut-dr-naegler/', cls:''}
-    ]}
-  ]},
-
-  { icon:'⛰️', title:'需另購（不含在 Swiss Travel Pass）', badge:'額外預算', group:'pre', items:[
-    { title:'Colmar→Luzern 法國段車票', desc:'法國→Basel 段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。', priority:'medium', links:[] },
-    { title:'Zermatt→Como 義大利段車票', desc:'義大利境內段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。', priority:'medium', links:[] }
-  ]},
-
-  { icon:'🤔', title:'需要先決定的事', badge:'影響打包與訂票', group:'pre', items:[
-    { title:'要不要買 1st class Swiss Travel Pass？', desc:'2nd class 8 日券 CHF439、1st class CHF697，差約 CHF258/人。旺季（9 月）2nd class 通常也有位，若在意景觀列車舒適度或人多時想確保有位可考慮升等；否則 2nd class 已足夠。', priority:'low', links:[]}
-  ]},
-
-  { icon:'📶', title:'出發前 eSIM', badge:'德/瑞/義 通用', group:'pre', items:[
-    { title:'購買歐洲通用 eSIM', desc:'涵蓋 DE/CH（瑞士非歐盟，需確認流量政策）/IT。建議出發前 1–2 週購買並安裝，抵達後開通即可用。', priority:'high', links:[
-      {label:'Airalo', url:'https://www.airalo.com', cls:''},
-      {label:'Klook eSIM', url:'https://www.klook.com/zh-TW/search/?query=esim%20europe', cls:'alt'}
-    ]}
-  ]},
-
-  { icon:'💶', title:'換匯', badge:'EUR＋少量 CHF', group:'pre', items:[
-    { title:'兌換歐元現金', desc:'台灣可先換一筆歐元備用，機場/市區匯率通常較差。瑞士段店家多收 CHF，可少量攜帶或當地提款。', priority:'high', links:[
-      {label:'台銀外幣匯率', url:'https://rate.bot.com.tw/xrt?Lang=zh-TW', cls:''}
-    ]},
-    { title:'確認信用卡海外刷卡/提款手續費', desc:'部分卡片有海外現金回饋或免手續費提款，出發前確認額度與密碼。', priority:'low', links:[]}
-  ]},
-
-  { icon:'🎫', title:'當天現場買就好（免預約）', badge:'到現場買', group:'day', items:[
-    { title:'Rüdesheim 葡萄園纜車（Day2）', desc:'單程約€8／來回約€12，Seilbahn 站售票口現場買。', priority:'low', links:[] },
-    { title:'Rüdesheim 免預約試飲（Day2）', desc:'不想預約導覽的話，直接走進 Drosselgasse 上的 RheinWeinWelt 品酒館，現場試飲約€8–18。', priority:'low', links:[
-      {label:'RheinWeinWelt', url:'https://www.google.com/maps/search/?api=1&query=RheinWeinWelt%20R%C3%BCdesheim', cls:'alt'}
-    ]},
-    { title:'Rhine 遊船船票（Day3）', desc:'Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。', priority:'low', links:[] },
-    { title:'Brunni 纜車（Day5）', desc:'來回約 CHF32（STP 半價 CHF16），現場買、免預約。', priority:'low', links:[] },
-    { title:'Pfingstegg 纜車＋滑草橇（Day8）', desc:'纜車來回約 CHF32；夏季滑草橇單趟約 CHF6–8，現場買、免預約（下雨會關閉）。', priority:'low', links:[] },
-    { title:'Gornergrat 齒軌列車（Day10）', desc:'來回約 CHF80／持 STP 半價 CHF40，Zermatt 站現場或官網皆可，免預約。旺季可加購 CHF7 優先上車。', priority:'low', links:[] },
-    { title:'Blausee 門票（Day9）', desc:'約 CHF9–13/人（無 STP 折扣），含夏季玻璃底遊船，現場買。', priority:'low', links:[] }
-  ]},
-
-  { icon:'🧳', title:'行李寄放（當天彈性）', badge:'看情況', group:'day', items:[
-    { title:'Day4 逛 Colmar 老城前（9/14 上午退房）', desc:'9/14 是離開 Colmar 前往 Luzern 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。', priority:'low', links:[] },
-    { title:'Day9 去 Blausee 前（9/19）', desc:'Blausee 是散步型景點、行李不便帶進園區。可在 Kandersteg 車站置物櫃（約 CHF5–8/件）寄放大行李，輕裝搭巴士來回，再繼續往 Zermatt。', priority:'low', links:[] }
-  ]}
+  {
+    "icon": "🚄",
+    "title": "交通票券｜出發前先買",
+    "badge": "先處理",
+    "group": "pre",
+    "items": [
+      {
+        "title": "Swiss Travel Pass 8 日券（連續）",
+        "desc": "Day4–Day11（9/14–9/21）在瑞士境內共 8 天，含多段火車＋Rhine/Como 渡輪＋Gornergrat／First 等山區纜車折扣，比單買每段划算，也免每天現場排隊。2nd class 8 日券約 CHF439/人，多數山區纜車享 5 折。可設定 9/14 生效，官方 SBB 旅客商店線上買、即時取得電子票。\n\n💡「証件卡／半價折扣」是什麼：行程裡寫「持 Swiss Travel Pass 半價」，指的就是憑這張 Swiss Travel Pass（買了它就是你的折扣憑證，手機出示電子票 QR code 即可）。你不需要另外辦其他卡。瑞士另有「Half Fare Card 半價卡（CHF150/月）」也能享同樣折扣，但既然已買 Travel Pass 就不必再買。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "官方 SBB 購買",
+            "url": "https://www.swissrailways.com/en/buy-swiss-travel-pass",
+            "cls": ""
+          }
+        ]
+      },
+      {
+        "title": "Frankfurt → Colmar（FlixBus）",
+        "desc": "價格通常比火車便宜、少轉車，拖大行李較省事。尚未進瑞士，不在 Swiss Travel Pass 範圍內。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "FlixBus 訂票",
+            "url": "https://www.flixbus.com",
+            "cls": ""
+          },
+          {
+            "label": "DB 火車備案",
+            "url": "https://www.bahn.com",
+            "cls": "alt"
+          }
+        ]
+      },
+      {
+        "title": "Colmar → Luzern",
+        "desc": "通常於 Basel 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "SBB 訂票",
+            "url": "https://www.sbb.ch/en",
+            "cls": ""
+          },
+          {
+            "label": "DB 訂票",
+            "url": "https://www.bahn.com",
+            "cls": "alt"
+          }
+        ]
+      },
+      {
+        "title": "Zermatt → Como（EuroCity）",
+        "desc": "跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段涵蓋在 Swiss Travel Pass 內，義大利段需另購。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "SBB 訂票",
+            "url": "https://www.sbb.ch/en",
+            "cls": ""
+          },
+          {
+            "label": "Trenitalia",
+            "url": "https://www.trenitalia.com",
+            "cls": "alt"
+          }
+        ]
+      },
+      {
+        "title": "瑞士境內各段火車",
+        "desc": "Luzern→Lungern→Brienz／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等，全部涵蓋在 Swiss Travel Pass 內，不用另外訂票。",
+        "priority": "low",
+        "links": []
+      }
+    ]
+  },
+  {
+    "icon": "🎟️",
+    "title": "需事先線上訂時段",
+    "badge": "出發前務必訂",
+    "group": "pre",
+    "items": [
+      {
+        "title": "Rüdesheim 酒莊導覽品酒（Day2｜9/12，想要導覽才需要）",
+        "desc": "若想要有講解的酒莊導覽品酒，Weingut Dr. Nägler 需先線上／電話預約（約€39.5/人起，含 5 款酒＋莊主導覽）。若只想輕鬆試飲則不用預約——見「當天現場買就好」清單。",
+        "priority": "medium",
+        "links": [
+          {
+            "label": "Dr. Nägler 預約",
+            "url": "https://www.winetourism.com/experience/wine-tasting-and-tour-at-weingut-dr-naegler/",
+            "cls": ""
+          }
+        ]
+      },
+      {
+        "title": "Brienz Rothorn Railway（Day6｜9/16）",
+        "desc": "蒸汽齒軌火車上 Brienzer Rothorn，車廂座位有限、旺季熱門，建議提早官網或現場預售訂票。不含在 Swiss Travel Pass，需另購（實際票價請以官網為準）。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "官網資訊／訂票",
+            "url": "https://www.brienz-rothorn-bahn.ch",
+            "cls": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "icon": "⛰️",
+    "title": "需另購（不含在 Swiss Travel Pass）",
+    "badge": "額外預算",
+    "group": "pre",
+    "items": [
+      {
+        "title": "Colmar→Luzern 法國段車票",
+        "desc": "法國→Basel 段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "title": "Zermatt→Como 義大利段車票",
+        "desc": "義大利境內段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。",
+        "priority": "medium",
+        "links": []
+      }
+    ]
+  },
+  {
+    "icon": "🤔",
+    "title": "需要先決定的事",
+    "badge": "影響打包與訂票",
+    "group": "pre",
+    "items": [
+      {
+        "title": "要不要買 1st class Swiss Travel Pass？",
+        "desc": "2nd class 8 日券 CHF439、1st class CHF697，差約 CHF258/人。旺季（9 月）2nd class 通常也有位，若在意景觀列車舒適度或人多時想確保有位可考慮升等；否則 2nd class 已足夠。",
+        "priority": "low",
+        "links": []
+      }
+    ]
+  },
+  {
+    "icon": "📶",
+    "title": "出發前 eSIM",
+    "badge": "德/瑞/義 通用",
+    "group": "pre",
+    "items": [
+      {
+        "title": "購買歐洲通用 eSIM",
+        "desc": "涵蓋 DE/CH（瑞士非歐盟，需確認流量政策）/IT。建議出發前 1–2 週購買並安裝，抵達後開通即可用。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "Airalo",
+            "url": "https://www.airalo.com",
+            "cls": ""
+          },
+          {
+            "label": "Klook eSIM",
+            "url": "https://www.klook.com/zh-TW/search/?query=esim%20europe",
+            "cls": "alt"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "icon": "💶",
+    "title": "換匯",
+    "badge": "EUR＋少量 CHF",
+    "group": "pre",
+    "items": [
+      {
+        "title": "兌換歐元現金",
+        "desc": "台灣可先換一筆歐元備用，機場/市區匯率通常較差。瑞士段店家多收 CHF，可少量攜帶或當地提款。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "台銀外幣匯率",
+            "url": "https://rate.bot.com.tw/xrt?Lang=zh-TW",
+            "cls": ""
+          }
+        ]
+      },
+      {
+        "title": "確認信用卡海外刷卡/提款手續費",
+        "desc": "部分卡片有海外現金回饋或免手續費提款，出發前確認額度與密碼。",
+        "priority": "low",
+        "links": []
+      }
+    ]
+  },
+  {
+    "icon": "🎫",
+    "title": "當天現場買就好（免預約）",
+    "badge": "到現場買",
+    "group": "day",
+    "items": [
+      {
+        "title": "Rüdesheim 葡萄園纜車（Day2）",
+        "desc": "單程約€8／來回約€12，Seilbahn 站售票口現場買。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Rüdesheim 免預約試飲（Day2）",
+        "desc": "不想預約導覽的話，直接走進 Drosselgasse 上的 RheinWeinWelt 品酒館，現場試飲約€8–18。",
+        "priority": "low",
+        "links": [
+          {
+            "label": "RheinWeinWelt",
+            "url": "https://www.google.com/maps/search/?api=1&query=RheinWeinWelt%20R%C3%BCdesheim",
+            "cls": "alt"
+          }
+        ]
+      },
+      {
+        "title": "Rhine 遊船船票（Day3）",
+        "desc": "Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Pfingstegg 纜車＋滑草橇（Day8）",
+        "desc": "纜車來回約 CHF32；夏季滑草橇單趟約 CHF6–8，現場買、免預約（下雨會關閉）。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Gornergrat 齒軌列車（Day10）",
+        "desc": "來回約 CHF80／持 STP 半價 CHF40，Zermatt 站現場或官網皆可，免預約。旺季可加購 CHF7 優先上車。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Blausee 門票（Day9）",
+        "desc": "約 CHF9–13/人（無 STP 折扣），含夏季玻璃底遊船，現場買。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "琉森湖遊船（Day5）",
+        "desc": "約 1–2 小時航程，船票現場碼頭購買或官網 SGV 預訂，不需提前訂。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "First Gondola（Day8）",
+        "desc": "Grindelwald → First 纜車，前往 Bachalpsee 健行的起點，現場售票口或官網購買皆可，通常不需提前預約（旺季人潮多可考慮提早）。",
+        "priority": "medium",
+        "links": []
+      }
+    ]
+  },
+  {
+    "icon": "🧳",
+    "title": "行李寄放（當天彈性）",
+    "badge": "看情況",
+    "group": "day",
+    "items": [
+      {
+        "title": "Day4 逛 Colmar 老城前（9/14 上午退房）",
+        "desc": "9/14 是離開 Colmar 前往 Luzern 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Day9 去 Blausee 前（9/19）",
+        "desc": "Blausee 是散步型景點、行李不便帶進園區。可在 Kandersteg 車站置物櫃（約 CHF5–8/件）寄放大行李，輕裝搭巴士來回，再繼續往 Zermatt。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "title": "Day6 去 Brienz Rothorn 前（9/16）",
+        "desc": "到 Brienz 後可把大件行李寄放在 Brienz SBB Station Locker，輕裝搭 Rothorn 齒軌火車上山，回程取回行李再前往 Iseltwald。",
+        "priority": "low",
+        "links": []
+      }
+    ]
+  }
 ];
 
 /* ============================================================
