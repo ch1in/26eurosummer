@@ -1744,6 +1744,12 @@ function renderDayStrip(){
       <div class="dflag">${COUNTRY_FLAG[d.country]||''}</div>
     </div>`;
   }).join('');
+  // Center the active day stub in the horizontally-scrolling strip. Near
+  // the first/last few days there isn't enough strip on one side to
+  // actually center it — the browser just clamps to the scroll edge,
+  // which is the expected exception.
+  const activeEl = el.querySelector('.day-stub.active');
+  if(activeEl) activeEl.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
 }
 
 function isStayStartDay(d){
