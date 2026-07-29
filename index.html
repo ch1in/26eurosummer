@@ -1944,16 +1944,24 @@ function goToDay(n){
 (function(){
   const panel = document.getElementById('day-panel');
   if(!panel) return;
-  let startX = 0, startY = 0, tracking = false;
+  let startX = 0, startY = 0, startT = 0, tracking = false;
   panel.addEventListener('touchstart', (e)=>{
     if(e.touches.length !== 1) return;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
+    startT = Date.now();
     tracking = true;
   }, {passive:true});
   panel.addEventListener('touchend', (e)=>{
     if(!tracking) return;
     tracking = false;
+    // Selecting text is also a horizontal drag (long-press then move) —
+    // don't treat it as a page-change swipe. Bail if a selection exists,
+    // or if the touch was slow/held (a quick flick is short; selecting
+    // starts with a long-press).
+    const sel = window.getSelection();
+    if(sel && sel.toString().length > 0) return;
+    if(Date.now() - startT > 400) return;
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
     if(Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
