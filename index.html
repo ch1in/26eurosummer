@@ -1235,6 +1235,7 @@ let DEFAULT_HOTELS = {};
 async function seedDefaultHotels(){
   let seededAny = false;
   for(const key of Object.keys(DEFAULT_HOTELS)){
+    if(!stays[key]) continue; // seed data for a stay that no longer exists in the itinerary
     const def = DEFAULT_HOTELS[key];
     const existing = await getHotelEntry(key);
     if(existing) continue; // already has live data (yours or synced) — don't touch it
@@ -1253,16 +1254,6 @@ async function seedDefaultHotels(){
   }
   return seededAny;
 }
-async function ensureLuzernCheckinLink(){
-  // Luzern's link should always be the host's check-in instructions page,
-  // regardless of whatever entry (old or synced) already exists there —
-  // this overrides just the URL, keeping any other saved details intact.
-  const def = DEFAULT_HOTELS.luzern;
-  const existing = await getHotelEntry('luzern');
-  const merged = existing ? { ...existing, url: def.url } : { ...def };
-  await Store.set('hotel:luzern', JSON.stringify(merged));
-}
-
 function fmtShort(iso){
   const dt = new Date(iso+'T00:00:00');
   return (dt.getMonth()+1)+'/'+dt.getDate();
@@ -1356,8 +1347,8 @@ const todoData = [
         ]
       },
       {
-        "title": "Colmar → Luzern",
-        "desc": "通常於 Basel 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。",
+        "title": "Colmar → Interlaken",
+        "desc": "通常於 Basel／Bern 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。",
         "priority": "medium",
         "links": [
           {
@@ -1391,7 +1382,7 @@ const todoData = [
       },
       {
         "title": "瑞士境內各段火車",
-        "desc": "Luzern→Lungern→Brienz／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等，全部涵蓋在 Swiss Travel Pass 內，不用另外訂票。",
+        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等，全部涵蓋在 Swiss Travel Pass 內，不用另外訂票。",
         "priority": "low",
         "links": []
       }
@@ -1442,7 +1433,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
-        "title": "Colmar→Luzern 法國段車票",
+        "title": "Colmar→Interlaken 法國段車票",
         "desc": "法國→Basel 段不在 Swiss Travel Pass 內，需另購（見上方交通票券）。",
         "priority": "medium",
         "links": []
@@ -1470,6 +1461,12 @@ const todoData = [
       {
         "title": "追蹤 Luzern Young Backpackers Homestay 退款",
         "desc": "已取消這筆訂房（幸福M 卡付款 TWD $7,946）。⚠️ 注意：訂單上的免費取消期限是 2026/7/11，已經過期了——現在取消不一定能全額退款，請直接聯絡 Airbnb/房東確認實際退款金額與到帳時間，並保留聯絡紀錄，若卡片被扣款可作為爭議依據。",
+        "priority": "high",
+        "links": []
+      },
+      {
+        "title": "Day5-6（9/15-16）住 Iseltwald 還是 Brienz？",
+        "desc": "行程目前先暫定住 Iseltwald 兩晚（跟原本 Day6-7 之間的安排一致）。Brienz 離 Rothorn 齒軌鐵路起點更近，Day6 不用來回拖車；Iseltwald 村子小、有「愛的迫降」碼頭景點。決定後跟 Claude 說一聲，行程和訂房會一起改。",
         "priority": "high",
         "links": []
       }
@@ -1638,7 +1635,7 @@ const todoData = [
     "items": [
       {
         "title": "Day4 逛 Colmar 老城前（9/14 上午退房）",
-        "desc": "9/14 是離開 Colmar 前往 Luzern 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。",
+        "desc": "9/14 是離開 Colmar 前往 Interlaken 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。",
         "priority": "low",
         "links": []
       },
@@ -2505,7 +2502,6 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
   await initWorkerSync();
   await seedDefaultHotels();
-  await ensureLuzernCheckinLink();
   await renderDayPanel();
   await renderTodo();
   await renderExpenses();
