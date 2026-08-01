@@ -301,6 +301,52 @@
     border-radius:10px;
     overflow:hidden;
   }
+
+  /* ================= MULTI-DAY (iPad rundown) VIEW ================= */
+  #view-itin.itin-wide{ max-width:1400px; }
+  .itin-mode-toggle{
+    display:flex; gap:8px; margin-bottom:14px;
+  }
+  .itin-mode-btn{
+    font-family:'Inter',sans-serif; font-weight:600; font-size:12.5px;
+    padding:7px 14px; border-radius:20px;
+    border:1px solid var(--line); background:#fff; color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .itin-mode-btn.active{ background:var(--ink); border-color:var(--ink); color:#fff; }
+  .multiday-scroll{
+    display:flex; gap:12px; overflow-x:auto; padding:2px 2px 14px;
+    scroll-snap-type:x proximity;
+  }
+  .md-card{
+    flex-shrink:0; width:178px; scroll-snap-align:start;
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; cursor:pointer; display:flex; flex-direction:column;
+  }
+  .md-card:active{ border-color:var(--rust); }
+  .md-head{
+    padding:10px 12px 8px; background:var(--paper-2); border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .md-daynum{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.05em;}
+  .md-date{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .md-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    padding:9px 12px 6px; line-height:1.3;
+  }
+  .md-items{
+    padding:0 12px 10px; overflow-y:auto; max-height:280px; flex:1;
+  }
+  .md-item{
+    font-size:11px; line-height:1.5; color:var(--ink-soft);
+    padding:3px 0; border-bottom:1px dashed #EFEADD;
+  }
+  .md-item:last-child{border-bottom:none;}
+  .md-item.md-spot{color:var(--ink); font-weight:500;}
+  .md-stay{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--forest);
+    padding:7px 12px; background:#DEEAE2; border-top:1px solid var(--line);
+  }
   .day-panel-head{
     padding:16px 16px 14px;
     background:var(--paper-2);
@@ -708,9 +754,21 @@
 
 <!-- ============ ITINERARY ============ -->
 <div class="view" id="view-itin">
-  <div class="day-strip" id="day-strip"></div>
-  <div class="swipe-hint">← 左右滑動切換前後一天 →</div>
-  <div class="day-panel" id="day-panel"></div>
+  <div class="itin-mode-toggle">
+    <button class="itin-mode-btn active" id="mode-btn-single" onclick="setItinMode('single')">📅 單日</button>
+    <button class="itin-mode-btn" id="mode-btn-multi" onclick="setItinMode('multi')">🗓️ 多日</button>
+  </div>
+
+  <div id="itin-single-view">
+    <div class="day-strip" id="day-strip"></div>
+    <div class="swipe-hint">← 左右滑動切換前後一天 →</div>
+    <div class="day-panel" id="day-panel"></div>
+  </div>
+
+  <div id="itin-multi-view" style="display:none;">
+    <div class="swipe-hint" style="text-align:left;">點任一天可切回單日檢視 · 左右滑動看更多天</div>
+    <div class="multiday-scroll" id="multiday-scroll"></div>
+  </div>
 </div>
 
 <!-- ============ EXPENSE ============ -->
@@ -1935,6 +1993,52 @@ function goToDay(n){
   document.querySelector('.tab-btn[data-tab="itin"]').click();
   renderDayStrip();
   renderDayPanel();
+}
+
+/* ============================================================
+   MULTI-DAY (iPad rundown) VIEW
+   Renders straight from the same `days` / `stays` arrays the single-day
+   view uses — no separate copy of itinerary content. Any future edit to
+   itinerary.json (via loadItinerarySeed) is automatically reflected in
+   BOTH views the next time either is rendered; there is nothing else to
+   keep in sync by hand.
+   ============================================================ */
+let itinMode = 'single';
+function setItinMode(mode){
+  itinMode = mode;
+  document.getElementById('mode-btn-single').classList.toggle('active', mode === 'single');
+  document.getElementById('mode-btn-multi').classList.toggle('active', mode === 'multi');
+  document.getElementById('itin-single-view').style.display = mode === 'single' ? '' : 'none';
+  document.getElementById('itin-multi-view').style.display = mode === 'multi' ? '' : 'none';
+  document.getElementById('view-itin').classList.toggle('itin-wide', mode === 'multi');
+  if(mode === 'multi') renderMultiDayView();
+}
+function switchToSingleDay(n){
+  setItinMode('single');
+  goToDay(n);
+}
+function renderMultiDayCard(d){
+  const items = (d.timeline||[]).map(item=>{
+    if(item.type === 'spot') return `<div class="md-item md-spot">📍 ${item.name}</div>`;
+    if(item.type === 'transit') return `<div class="md-item">${item.icon||'➡️'} ${item.text}</div>`;
+    if(item.type === 'bookalert') return `<div class="md-item">⚠️ ${item.title}</div>`;
+    return '';
+  }).filter(Boolean).join('');
+  const stayNote = (d.stayKey && stays[d.stayKey]) ? `<div class="md-stay">🏨 ${stays[d.stayKey].city}</div>` : '';
+  return `<div class="md-card" onclick="switchToSingleDay(${d.n})">
+    <div class="md-head">
+      <div class="md-daynum">DAY ${String(d.n).padStart(2,'0')}</div>
+      <div class="md-date">${fmtShort(d.date)} ${COUNTRY_FLAG[d.country]||''}</div>
+    </div>
+    <div class="md-title">${d.title}</div>
+    <div class="md-items">${items}</div>
+    ${stayNote}
+  </div>`;
+}
+function renderMultiDayView(){
+  const el = document.getElementById('multiday-scroll');
+  if(!el) return;
+  el.innerHTML = days.map(renderMultiDayCard).join('');
 }
 
 /* Swipe left/right on the day panel to move to the next/previous day.
