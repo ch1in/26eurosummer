@@ -319,7 +319,7 @@
     scroll-snap-type:x proximity;
   }
   .md-card{
-    flex-shrink:0; width:178px; scroll-snap-align:start;
+    flex-shrink:0; width:178px; height:420px; scroll-snap-align:start;
     background:var(--card); border:1px solid var(--line); border-radius:10px;
     overflow:hidden; cursor:pointer; display:flex; flex-direction:column;
   }
@@ -335,7 +335,7 @@
     padding:9px 12px 6px; line-height:1.3;
   }
   .md-items{
-    padding:0 12px 10px; overflow-y:auto; max-height:280px; flex:1;
+    padding:0 12px 10px; overflow-y:auto; flex:1; min-height:0;
   }
   .md-item{
     font-size:11px; line-height:1.5; color:var(--ink-soft);
