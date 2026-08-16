@@ -1606,7 +1606,7 @@ const todoData = [
       },
       {
         "title": "瑞士境內各段火車",
-        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。",
+        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。\n\n🎟️ Day5（9/15）例外：已買 Saver Day Pass，效期 9/15 00:00 – 9/16 05:00、二等、GA 全網範圍，Iseltwald⇄Luzern⇄Lungern 全程涵蓋，那天不用再買任何車票。一樣是記名票，查票要出示護照；票在「🎫 證件」分頁，QR 已存在手機裡。",
         "priority": "low",
         "links": []
       }
@@ -2687,11 +2687,14 @@ async function deleteOotd(id){
    PUBLIC repo, so it carries labels and image ids only — never a name,
    booking reference or ticket number.
    ============================================================ */
-const DOC_QR_CACHE_KEY = '__trip_doc_qr_v1'; // per-device cache, never synced
+const DOC_QR_CACHE_PREFIX = '__trip_doc_qr_v1:'; // per-device cache, never synced
 const DOCS = [
   { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡',
     sub:'效期 2026/09/10 – 10/09 · 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
     qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
+  { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）',
+    sub:'9/15 00:00 – 9/16 05:00 · 二等車廂 · GA 全網範圍<br>這天不必再單買車票，Luzern／Lungern 來回都涵蓋',
+    qr:'daypass915-qr', qrCap:'9/15 當天查票出示：這個 QR ＋ 護照' },
   { id:'ci61', icon:'✈️', title:'去程電子機票 CI61',
     sub:'09/10 22:50 桃園 T1 → 09/11 06:50 Frankfurt T3<br>航程 14:00 · 免費托運 2 件' },
   { id:'cxreturn', icon:'✈️', title:'回程電子機票 CX234 / CX530',
@@ -2714,37 +2717,38 @@ function renderDocs(){
   if(!el) return;
   // built once, but retry the QR fetch on every visit so a load that failed
   // while offline recovers as soon as the tab is opened with a connection
-  if(el.dataset.rendered){ loadHalfFareQr(); return; }
+  if(el.dataset.rendered){ loadAllDocQrs(); return; }
   el.dataset.rendered = '1';
   el.innerHTML = DOCS.map(d => `
     <div class="doc-card">
       <div class="doc-head"><span class="doc-icon">${d.icon}</span><span class="doc-title">${d.title}</span></div>
       <div class="doc-sub">${d.sub}</div>
-      ${d.qr ? `<img class="doc-qr" id="doc-qr-img" alt="半價卡 QR code"><div class="doc-qr-cap">${d.qrCap}</div>` : ''}
+      ${d.qr ? `<img class="doc-qr" id="doc-qr-${d.id}" alt="${d.title} QR code"><div class="doc-qr-cap">${d.qrCap}</div>` : ''}
       <div class="doc-actions">
         <button class="doc-btn primary" onclick="openDocViewer('${d.id}', ${JSON.stringify(d.title)})">📄 看完整文件</button>
       </div>
       <div class="doc-state" id="doc-state-${d.id}"></div>
     </div>`).join('');
-  loadHalfFareQr();
+  loadAllDocQrs();
 }
-/* The half-fare QR is the one thing that has to work when a conductor is
-   standing there, so it's kept as a data URI on the device. Everything else
-   is fetched on demand. */
-async function loadHalfFareQr(){
-  const img = document.getElementById('doc-qr-img');
+/* A ticket QR has to work when an inspector is standing there, so each one is
+   kept as a data URI on the device. The full documents stay fetch-on-demand. */
+function loadAllDocQrs(){ DOCS.filter(d=>d.qr).forEach(loadDocQr); }
+async function loadDocQr(doc){
+  const img = document.getElementById('doc-qr-' + doc.id);
   if(!img) return;
-  const cached = _lsGet(DOC_QR_CACHE_KEY);
+  const cacheKey = DOC_QR_CACHE_PREFIX + doc.qr;
+  const cached = _lsGet(cacheKey);
   if(cached) img.src = cached;
   try{
-    const res = await fetch(ootdPhotoUrl('halffare-qr'), { cache:'no-store' });
+    const res = await fetch(ootdPhotoUrl(doc.qr), { cache:'no-store' });
     if(!res.ok) throw new Error(await describeFailedResponse(res));
     const dataUrl = await fileToDataUrl(await res.blob());
     img.src = dataUrl;
-    if(!_lsSet(DOC_QR_CACHE_KEY, dataUrl)) console.warn('QR cache write failed (quota?)');
-    setDocState('halffare', '✓ 已存在這台裝置，離線也看得到');
+    if(!_lsSet(cacheKey, dataUrl)) console.warn('QR cache write failed (quota?)', doc.qr);
+    setDocState(doc.id, '✓ 已存在這台裝置，離線也看得到');
   }catch(e){
-    setDocState('halffare',
+    setDocState(doc.id,
       cached ? '📶 目前連不上雲端，顯示的是這台裝置存的 QR（仍可查驗）'
              : '⚠️ QR 尚未存到這台裝置，請連上網路後重開此分頁：' + e.message,
       !cached);
@@ -2803,15 +2807,15 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   renderExpenses();
 
   await initWorkerSync();
-  // Warm the offline QR copy once, so it's already on the device the first
-  // time it's actually needed — without re-downloading it on every load.
-  if(!_lsGet(DOC_QR_CACHE_KEY)){
-    fetch(ootdPhotoUrl('halffare-qr'), { cache:'no-store' })
+  // Warm each offline QR copy once, so they're already on the device the first
+  // time they're actually needed — without re-downloading on every load.
+  DOCS.filter(d => d.qr && !_lsGet(DOC_QR_CACHE_PREFIX + d.qr)).forEach(d => {
+    fetch(ootdPhotoUrl(d.qr), { cache:'no-store' })
       .then(r => r.ok ? r.blob() : Promise.reject(new Error(r.status)))
       .then(fileToDataUrl)
-      .then(u => _lsSet(DOC_QR_CACHE_KEY, u))
-      .catch(e => console.warn('QR precache skipped', e));
-  }
+      .then(u => _lsSet(DOC_QR_CACHE_PREFIX + d.qr, u))
+      .catch(e => console.warn('QR precache skipped', d.qr, e));
+  });
   await seedDefaultHotels();
   await renderDayPanel();
   await renderTodo();
