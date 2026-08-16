@@ -257,6 +257,13 @@
     background:#fff;
   }
   .link-btn.doc-jump{cursor:pointer; font-weight:600;}
+  .todo-item.collapsed .todo-desc,
+  .todo-item.collapsed .todo-links{display:none;}
+  .todo-item.collapsed .todo-title{cursor:pointer;}
+  .todo-expand{
+    margin-left:7px; font-size:10.5px; font-weight:600; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:20px; padding:1px 7px; white-space:nowrap;
+  }
   .link-btn.sbb-btn{border-color:var(--lake); color:var(--lake);}
   .doc-inline-link{margin-top:8px;}
   .app-update-bar{
@@ -879,6 +886,7 @@
           <option value="CHF">CHF</option>
           <option value="TWD">TWD</option>
           <option value="USD">USD</option>
+          <option value="HKD">HKD</option>
         </select>
       </div>
     </div>
@@ -1428,7 +1436,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-16.9';
+const APP_VERSION = '2026-08-16.11';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1572,6 +1580,22 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "flight-checkin-windows",
+        "title": "線上報到時間（去程 9/8 開放・回程 9/24 開放）",
+        "docBtn": "🎫 看機票文件",
+        "desc": "兩家都是起飛前 48 小時開放線上報到、起飛前 60 分鐘關閉。先設好手機提醒：\n\n✈️ 去程 CI61（9/10 22:50 桃園 T1 起飛）\n• 線上報到開放：9/8（二）22:50\n• 線上報到截止：9/10 21:50\n• 華航建議起飛前 2 小時到機場；接送 19:40 上車，時間充裕。\n• 已線上報到但要托運行李，仍需在起飛前 1 小時左右到櫃檯。\n\n✈️ 回程 CX234（9/26 12:45 Malpensa T1 起飛）\n• 線上報到開放：9/24（四）12:45\n• 線上報到截止：9/26 11:45\n• 櫃檯一般於起飛前 3 小時開放（約 09:45）。\n• ⚠️ 9/24 開放時人在義大利，eSIM 若已到期會很麻煩——Day15 那則提醒要一起看。\n\n📌 登機證存好後再截圖一份，別只留在雲端。\n（時間依兩家航空公司公告的一般規則推算，電子機票上的 Last check-in 欄位是空白的；臨行前建議在 App 內再確認一次。）",
+        "priority": "high",
+        "links": []
+      },
+      {
+        "id": "award-ticket-miles",
+        "title": "里程換機票（✅ 去回程都已開票）",
+        "docBtn": "🎫 看機票文件",
+        "desc": "去程 CI61 與回程 CX234／CX530 都是里程兌換票，票面票價為 0，實際只付了稅金與燃油附加費（金額尚未登入記帳分頁）。\n\n⚠️ 兌換票的規則比一般票嚴格，出發前先弄清楚：\n① 兩張都是 NONEND（不可簽轉給其他航空），遇到取消／延誤時，地勤能幫你改的選項比一般票少，只能改同航空的班次。\n② 退票要收手續費，而且 **no-show 會另外罰款**——臨時不飛也一定要先取消，不能直接不出現，否則除了罰款，哩程可能也拿不回來。\n③ 回程票有效期為開票日起一年。\n④ 兌換票通常不再累積哩程，別預期這趟能回饋。\n\n📌 出發前要做的兩件事：\n• 確認哩程已正確扣除、訂位狀態仍是 OK\n• 起飛前 72 小時再查一次班表——兌換票遇到時刻變更時，有時不會自動改好，要主動打電話請航空公司重新安排\n\n🎫 兩張電子機票都在「證件」分頁，可直接開啟查看。",
+        "priority": "medium",
+        "links": []
+      },
+      {
         "id": "half-fare-card",
         "sbbBtn": "開啟 SBB App",
         "title": "Swiss Half Fare Card 半價卡（✅ 已購）",
@@ -1646,7 +1670,7 @@ const todoData = [
         "id": "swiss-regional-trains",
         "sbbBtn": "用 SBB App 買票",
         "title": "瑞士境內各段火車",
-        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。\n\n🎟️ Day5（9/15）例外：已買 Saver Day Pass，效期 9/15 00:00 – 9/16 05:00、二等、GA 全網範圍，Iseltwald⇄Luzern⇄Lungern 全程涵蓋，那天不用再買任何車票。一樣是記名票，查票要出示護照；票在「🎫 證件」分頁，QR 已存在手機裡。",
+        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。",
         "priority": "low",
         "links": []
       }
@@ -1722,17 +1746,24 @@ const todoData = [
     "group": "pre",
     "items": [
       {
-          "id": "como-checkin-conflict",
-          "title": "⚠️ 確認 Como 民宿能否晚於 19:00 入住（Day11｜9/21）",
-          "desc": "已訂的 Zermatt → Como 班次 18:49 抵達 Como S. Giovanni，但 Azzano Holidays B&B 的 check-in 截止是 19:00——只差 11 分鐘，扣掉下車、走出站根本來不及從容抵達。\n\n出發前務必先聯絡民宿問清楚：\n① 實際地址，以及從 Como S. Giovanni 過去要多久（民宿名稱裡的 Azzano 若是指湖西岸的 Azzano／Tremezzina，離 Como 市區還有一段距離，光是交通就不只 11 分鐘）\n② 晚到能否入住，有沒有自助入住或鑰匙箱\n③ 若不行，是否改搭更早一班車（SBB App 可改期，但頭等票要看票種規則）\n\n這是整趟行程目前唯一時間壓在紅線上的銜接，建議優先處理。",
-          "priority": "high",
-          "links": []
-        },
+        "id": "como-checkin-conflict",
+        "title": "⚠️ 確認 Como 民宿能否晚於 19:00 入住（Day11｜9/21）",
+        "desc": "已訂的 Zermatt → Como 班次 18:49 抵達 Como S. Giovanni，但 Azzano Holidays B&B 的 check-in 截止是 19:00——只差 11 分鐘，扣掉下車、走出站根本來不及從容抵達。\n\n出發前務必先聯絡民宿問清楚：\n① 實際地址，以及從 Como S. Giovanni 過去要多久（民宿名稱裡的 Azzano 若是指湖西岸的 Azzano／Tremezzina，離 Como 市區還有一段距離，光是交通就不只 11 分鐘）\n② 晚到能否入住，有沒有自助入住或鑰匙箱\n③ 若不行，是否改搭更早一班車（SBB App 可改期，但頭等票要看票種規則）\n\n這是整趟行程目前唯一時間壓在紅線上的銜接，建議優先處理。",
+        "priority": "high",
+        "links": []
+      },
       {
         "id": "luzern-refund",
         "title": "追蹤 Luzern Young Backpackers Homestay 退款",
         "desc": "已取消這筆訂房（幸福M 卡付款 TWD $7,946）。⚠️ 注意：訂單上的免費取消期限是 2026/7/11，已經過期了——現在取消不一定能全額退款，請直接聯絡 Airbnb/房東確認實際退款金額與到帳時間，並保留聯絡紀錄，若卡片被扣款可作為爭議依據。",
         "priority": "high",
+        "links": []
+      },
+      {
+        "id": "shop-earl-grey",
+        "title": "🇩🇪 Earl Grey 紅茶",
+        "desc": "需要事先上網訂購，安排寄送到入住的 Airbnb（不是現場逛超市/百貨就買得到），提早訂才能抓好送達時間，避免人在德國段時包裹還沒到、或已經離開才送達。",
+        "priority": "medium",
         "links": []
       }
     ]
@@ -1809,21 +1840,6 @@ const todoData = [
         "title": "投保旅遊不便險",
         "desc": "建議出發前投保旅遊不便險（涵蓋班機延誤/取消、行李遺失延誤、旅程縮短、緊急醫療等）。部分信用卡「刷卡購買機票」會附加基本保障，出發前先確認保障額度夠不夠，不夠再另外加保一份。",
         "priority": "high",
-        "links": []
-      }
-    ]
-  },
-  {
-    "icon": "🛍️",
-    "title": "想買的東西",
-    "badge": "購物清單",
-    "group": "pre",
-    "items": [
-      {
-        "id": "shop-earl-grey",
-        "title": "🇩🇪 Earl Grey 紅茶",
-        "desc": "需要事先上網訂購，安排寄送到入住的 Airbnb（不是現場逛超市/百貨就買得到），提早訂才能抓好送達時間，避免人在德國段時包裹還沒到、或已經離開才送達。",
-        "priority": "medium",
         "links": []
       }
     ]
@@ -2073,10 +2089,12 @@ function renderTodoSectionHtml(sec, si){
     const pri = it.priority==='high' ? '<span class="priority-tag high">建議優先</span>'
               : it.priority==='medium' ? '<span class="priority-tag medium">可選</span>'
               : '<span class="priority-tag low">不急</span>';
-    html += `<div class="todo-item">
+    // A finished item collapses to just its title so the list stays scannable;
+    // tapping the title expands it again when the details are needed.
+    html += `<div class="todo-item${done?' collapsed':''}" id="todo-item-${key}">
       <div class="todo-check ${done?'done':''}" onclick="toggleTodo('${key}')">${done?'✓':''}</div>
       <div class="todo-body">
-        <div class="todo-title ${done?'done':''}">${it.title}${pri}</div>
+        <div class="todo-title ${done?'done':''}"${done?` onclick="toggleTodoCollapse('${key}')"`:''}>${it.title}${pri}${done?'<span class="todo-expand">展開</span>':''}</div>
         <div class="todo-desc">${it.desc.replace(/\n/g,'<br>')}</div>
         ${(it.links.length || it.docBtn || it.sbbBtn) ? `<div class="todo-links">${
           (it.docBtn ? `<button type="button" class="link-btn doc-jump" onclick="goToDocs()">${it.docBtn}</button>` : '')
@@ -2104,6 +2122,13 @@ async function renderTodo(){
   root.innerHTML = accomHtml + customHtml
     + `<div class="sec-label">📋 行前準備</div>` + preHtml
     + `<div class="sec-label">🕐 當天才決定</div>` + dayHtml;
+}
+function toggleTodoCollapse(key){
+  const el = document.getElementById('todo-item-' + key);
+  if(!el) return;
+  el.classList.toggle('collapsed');
+  const tag = el.querySelector('.todo-expand');
+  if(tag) tag.textContent = el.classList.contains('collapsed') ? '展開' : '收合';
 }
 async function toggleTodo(key){
   todoState[key] = !todoState[key];
