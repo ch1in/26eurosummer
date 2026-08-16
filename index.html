@@ -1427,7 +1427,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-16.4';
+const APP_VERSION = '2026-08-16.7';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1571,6 +1571,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "half-fare-card",
         "title": "Swiss Half Fare Card 半價卡（✅ 已購）",
         "docBtn": "🎫 開啟半價卡文件",
         "desc": "SBB 官方核發 e-ticket。效期 9/10 – 10/9（30 天），涵蓋 Day4–Day11（9/14–9/21）在瑞士的全部行程。（金額與付款卡別記在💰記帳分頁）\n\n📄 卡片本身在「🎫 證件」分頁，QR code 會存在手機裡，離線也叫得出來。\n\n⚠️ 半價卡是「折扣卡」不是車票——瑞士境內每一趟都還是要買票，但都算 5 折（火車、巴士、船、山區纜車皆適用）。\n\n🛂 護照必帶！票面印明「Only valid with your Passport / ID」，這是記名票（票上有姓名、出生年），查票員會核對。在瑞士的 8 天護照要每天隨身，不能鎖在飯店保險箱。\n\n📱 SBB App 設定：因為是透過 KKday 買的，卡片本身「無法」顯示在 App 裡（只有用 SBB／SwissPass 帳號登入直接買的才能）。但可以自行宣告讓 App 顯示半價：\nSettings → Travellers → Edit → 勾「Half-fare travelcard (1/2)」→ Save。設完之後 App 查價就直接是 5 折價。\n\n🎫 查票要出示三樣：① App 裡的車票 ② 半價卡 QR code（見證件分頁）③ 護照。\n\n💡 已定案不買 Swiss Travel Pass：這趟山區纜車特別多（Rothorn、Gornergrat、First、Pfingstegg），持 STP 也一樣只有 5 折；火車段又多是短程區間車，吃不滿 STP 的門檻。",
@@ -1584,25 +1585,27 @@ const todoData = [
         ]
       },
       {
-        "title": "Frankfurt → Colmar（FlixBus）",
-        "desc": "價格通常比火車便宜、少轉車，拖大行李較省事。尚未進瑞士，不在 Swiss Travel Pass 範圍內。",
+        "id": "train-stgoar-colmar",
+        "title": "St. Goar → Colmar",
+        "desc": "Day3（9/13）萊茵河遊船在 St. Goar 上岸後，直接從 St. Goar 車站搭火車到 Colmar，約 4 小時、需轉車（通常經 Koblenz／Mainz／Strasbourg，依班次而定）。\n\n德國段可考慮 DB 早鳥票（Sparpreis）便宜不少，但綁定車次、改簽受限；行程若還有變動就現場買彈性票。\n\n⚠️ 全程都在瑞士境外，半價卡不適用，要買全票。",
         "priority": "high",
         "links": [
           {
-            "label": "FlixBus 訂票",
-            "url": "https://www.flixbus.com",
+            "label": "DB 訂票",
+            "url": "https://www.bahn.com",
             "cls": ""
           },
           {
-            "label": "DB 火車備案",
-            "url": "https://www.bahn.com",
+            "label": "SNCF Connect",
+            "url": "https://www.sncf-connect.com/en-en",
             "cls": "alt"
           }
         ]
       },
       {
+        "id": "train-colmar-iseltwald",
         "title": "Colmar → Iseltwald",
-        "desc": "通常於 Basel／Bern 轉車，建議出發前 2–3 個月先訂。法國→Basel 段需另購，Basel 進瑞士後持 Swiss Travel Pass 即涵蓋。",
+        "desc": "通常於 Basel／Bern 轉車，建議出發前 2–3 個月先訂。法國→Basel 段在瑞士境外，半價卡不適用，需另購全票；Basel 進瑞士之後持半價卡買票是 5 折（仍要買票，半價卡不是車票）。",
         "priority": "medium",
         "links": [
           {
@@ -1618,8 +1621,9 @@ const todoData = [
         ]
       },
       {
+        "id": "train-zermatt-como",
         "title": "Zermatt → Como（EuroCity）",
-        "desc": "跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段涵蓋在 Swiss Travel Pass 內，義大利段需另購。",
+        "desc": "跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段持半價卡買票 5 折（仍要買票），義大利段不適用半價卡，需另購全票。",
         "priority": "medium",
         "links": [
           {
@@ -1635,6 +1639,7 @@ const todoData = [
         ]
       },
       {
+        "id": "swiss-regional-trains",
         "title": "瑞士境內各段火車",
         "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。\n\n🎟️ Day5（9/15）例外：已買 Saver Day Pass，效期 9/15 00:00 – 9/16 05:00、二等、GA 全網範圍，Iseltwald⇄Luzern⇄Lungern 全程涵蓋，那天不用再買任何車票。一樣是記名票，查票要出示護照；票在「🎫 證件」分頁，QR 已存在手機裡。",
         "priority": "low",
@@ -1649,6 +1654,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "rudesheim-winery-tour",
         "title": "Rüdesheim 酒莊導覽品酒（Day2｜9/12，想要導覽才需要）",
         "desc": "若想要有講解的酒莊導覽品酒，Weingut Dr. Nägler 需先線上／電話預約（約€39.5/人起，含 5 款酒＋莊主導覽）。若只想輕鬆試飲則不用預約——見「當天現場買就好」清單。",
         "priority": "medium",
@@ -1661,6 +1667,7 @@ const todoData = [
         ]
       },
       {
+        "id": "brienz-rothorn",
         "title": "Brienz Rothorn Railway（Day6｜9/16）",
         "desc": "蒸汽齒軌火車上 Brienzer Rothorn，車廂座位有限、旺季熱門，建議提早官網或現場預售訂票。\n\n全票 CHF98，持半價卡 5 折 → CHF49。另可加購保證座位 CHF8。",
         "priority": "high",
@@ -1673,6 +1680,7 @@ const todoData = [
         ]
       },
       {
+        "id": "gornergrat",
         "title": "Gornergrat 齒軌列車（Day10）",
         "desc": "夏季（5–10 月）全票 CHF132，持半價卡 5 折 → CHF66。旺季可加購 CHF7 優先上車券。\n\n✅ 決定：到 Zermatt 現場憑半價卡買，不先在 KKday 買。兩者價差很小（KKday 約 TWD 2,428 vs 現場約 TWD 2,620），但現場買可以看天氣決定哪天上山——Gornergrat 是為了看 Matterhorn，雲層擋住就整個白跑。Day9–Day11 都在 Zermatt 附近，有調整空間。",
         "priority": "high",
@@ -1687,12 +1695,14 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "leg-fr-colmar-iseltwald",
         "title": "Colmar→Iseltwald 法國段車票",
         "desc": "法國→Basel 段在瑞士境外，半價卡不適用，需另購（見上方交通票券）。",
         "priority": "medium",
         "links": []
       },
       {
+        "id": "leg-it-zermatt-como",
         "title": "Zermatt→Como 義大利段車票",
         "desc": "義大利境內段不適用半價卡，需另購（見上方交通票券）。",
         "priority": "medium",
@@ -1707,6 +1717,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "luzern-refund",
         "title": "追蹤 Luzern Young Backpackers Homestay 退款",
         "desc": "已取消這筆訂房（幸福M 卡付款 TWD $7,946）。⚠️ 注意：訂單上的免費取消期限是 2026/7/11，已經過期了——現在取消不一定能全額退款，請直接聯絡 Airbnb/房東確認實際退款金額與到帳時間，並保留聯絡紀錄，若卡片被扣款可作為爭議依據。",
         "priority": "high",
@@ -1721,6 +1732,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "esim-purchase",
         "title": "歐洲通用 eSIM（✅ 已購・15 天）",
         "desc": "已購 15 天方案，涵蓋 DE／CH／IT（瑞士非歐盟，注意方案的瑞士流量政策）。出發前先安裝好設定檔，抵達再開通。\n\n⚠️ 15 天是從「開通日」起算，不是從購買日。若 9/11 抵達當天開通 → 9/25（Day15）用完，9/26 回程當天就沒網路了。行程已在 Day15 放了一則提醒去確認到期日。",
         "priority": "high",
@@ -1738,6 +1750,7 @@ const todoData = [
         ]
       },
       {
+        "id": "esim-day15-topup",
         "title": "Day15（9/25）確認 eSIM 到期，決定要不要續購",
         "desc": "15 天方案若在 9/11 開通，到 9/25 當天就到期。9/26 回程要用網路的地方不少：叫車／查 Malpensa Express 班次、線上 check-in、登機證、轉機時聯絡家人。\n\nDay15 在米蘭時先做兩件事：① 在 eSIM App 查剩餘天數與流量 ② 若 9/26 沒有涵蓋，直接在 App 加購最短天數的方案（通常 1–3 天，很便宜），不要等到機場才處理。\n\n💡 備案：Malpensa 機場與航班上都有 Wi-Fi，真的斷了不至於卡死，但別把登機證只留在雲端，前一晚先截圖存手機。",
         "priority": "medium",
@@ -1752,6 +1765,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "cash-eur",
         "title": "兌換歐元現金",
         "desc": "台灣可先換一筆歐元備用，機場/市區匯率通常較差。瑞士段店家多收 CHF，可少量攜帶或當地提款。",
         "priority": "high",
@@ -1764,6 +1778,7 @@ const todoData = [
         ]
       },
       {
+        "id": "card-fx-fees",
         "title": "確認信用卡海外刷卡/提款手續費",
         "desc": "部分卡片有海外現金回饋或免手續費提款，出發前確認額度與密碼。",
         "priority": "low",
@@ -1778,6 +1793,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "travel-insurance",
         "title": "投保旅遊不便險",
         "desc": "建議出發前投保旅遊不便險（涵蓋班機延誤/取消、行李遺失延誤、旅程縮短、緊急醫療等）。部分信用卡「刷卡購買機票」會附加基本保障，出發前先確認保障額度夠不夠，不夠再另外加保一份。",
         "priority": "high",
@@ -1792,6 +1808,7 @@ const todoData = [
     "group": "pre",
     "items": [
       {
+        "id": "shop-earl-grey",
         "title": "🇩🇪 Earl Grey 紅茶",
         "desc": "需要事先上網訂購，安排寄送到入住的 Airbnb（不是現場逛超市/百貨就買得到），提早訂才能抓好送達時間，避免人在德國段時包裹還沒到、或已經離開才送達。",
         "priority": "medium",
@@ -1806,12 +1823,14 @@ const todoData = [
     "group": "day",
     "items": [
       {
+        "id": "bob-train-split",
         "title": "BOB 列車分節（Day7｜9/17）",
         "desc": "Interlaken Ost 出發往 Lauterbrunnen 的列車會在 Zweilütschinen 分節，前後兩節分別開往 Lauterbrunnen／Grindelwald 方向。上車前務必看清月台 Sector A/B 標示與車廂外側／月台螢幕顯示的目的地，坐錯半節車廂會開去反方向。詳見當天行程頁面的警示。",
         "priority": "high",
         "links": []
       },
       {
+        "id": "swiss-platform-sector",
         "title": "瑞士列車月台 Sector 標示（全程通用）",
         "desc": "瑞士許多短程/區域列車（尤其山區支線）月台會標示 Sector A/B/C，不同車廂／目的地停靠位置不同，月台螢幕或車廂外側會顯示。上車前養成習慣先看一眼，不只 Day7 這天，其他天搭區間車也適用。",
         "priority": "medium",
@@ -1826,12 +1845,14 @@ const todoData = [
     "group": "day",
     "items": [
       {
+        "id": "rudesheim-cable-car",
         "title": "Rüdesheim 葡萄園纜車（Day2）",
         "desc": "單程約€8／來回約€12，Seilbahn 站售票口現場買。",
         "priority": "low",
         "links": []
       },
       {
+        "id": "rudesheim-tasting",
         "title": "Rüdesheim 免預約試飲（Day2）",
         "desc": "不想預約導覽的話，直接走進 Drosselgasse 上的 RheinWeinWelt 品酒館，現場試飲約€8–18。",
         "priority": "low",
@@ -1844,24 +1865,28 @@ const todoData = [
         ]
       },
       {
+        "id": "rhine-cruise",
         "title": "Rhine 遊船船票（Day3）",
         "desc": "Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。",
         "priority": "low",
         "links": []
       },
       {
+        "id": "pfingstegg",
         "title": "Pfingstegg 纜車＋滑草橇（未排入行程・備案）",
         "desc": "⛔ 已從 Day7 拿掉——那天光是 Lauterbrunnen → Wengen → Kleine Scheidegg → Grindelwald 就很滿，再加 Pfingstegg 會趕。目前沒有排在任何一天。\n\n若在 Interlaken 的 Day7–Day8 臨時多出半天想補上：纜車來回全票約 CHF32–36，持半價卡 5 折；夏季滑草橇單趟約 CHF6–8，現場買、免預約（下雨會關閉）。",
         "priority": "low",
         "links": []
       },
       {
+        "id": "blausee",
         "title": "Blausee 門票（Day8）",
         "desc": "約 CHF9–13/人（無 STP 折扣），含夏季玻璃底遊船，現場買。",
         "priority": "low",
         "links": []
       },
       {
+        "id": "grindelwald-first",
         "title": "Grindelwald First ＋ Bachalpsee（未排入行程・備案）",
         "desc": "⛔ 已從 Day7 拿掉——Day7 改成純山谷village＋Kleine Scheidegg 景觀路線，不上 First。目前沒有排在任何一天。\n\n若之後想補：Grindelwald → First 纜車是 Bachalpsee 健行的起點，夏季全票 CHF76、持半價卡 5 折 → CHF38。現場售票口或官網皆可，通常不需提前預約。⚠️ 這是半天以上的行程，要補的話建議整天安排，不要塞進已排滿的日子。",
         "priority": "medium",
@@ -1938,7 +1963,14 @@ let todoState = {};
 async function loadTodoState(){
   try{
     const v = await Store.get('todo-checks');
-    todoState = v ? JSON.parse(v) : {};
+    const raw = v ? JSON.parse(v) : {};
+    // Drop keys left over from the old index-based scheme ("3-1"). A device
+    // that hasn't reloaded yet can still push them up; they no longer match
+    // any item, so ignoring them keeps stale entries from resurrecting a
+    // checkmark on whatever item happens to sit at that position now. The
+    // next toggle writes the cleaned map back.
+    todoState = {};
+    Object.keys(raw).forEach(k => { if(!/^\d+-\d+$/.test(k)) todoState[k] = raw[k]; });
   }catch(e){ todoState = {}; }
 }
 
@@ -2021,7 +2053,10 @@ function renderTodoSectionHtml(sec, si){
   let html = `<div class="todo-sec">
     <div class="todo-sec-head"><span class="ic">${sec.icon}</span><h3>${sec.title}</h3><span class="badge">${sec.badge}</span></div>`;
   sec.items.forEach((it, ii)=>{
-    const key = si+'-'+ii;
+    // Each item carries its own stable id. This used to be the section/item
+    // index, which meant inserting, reordering or deleting anything silently
+    // re-pointed every saved checkmark after it at the wrong item.
+    const key = it.id;
     const done = !!todoState[key];
     const pri = it.priority==='high' ? '<span class="priority-tag high">建議優先</span>'
               : it.priority==='medium' ? '<span class="priority-tag medium">可選</span>'
