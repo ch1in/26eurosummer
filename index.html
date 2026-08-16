@@ -1428,7 +1428,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-16.8';
+const APP_VERSION = '2026-08-16.9';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1625,8 +1625,9 @@ const todoData = [
       },
       {
         "id": "train-zermatt-como",
-        "title": "Zermatt → Como（EuroCity）",
-        "desc": "跨國車次班次少，建議出發前 2–3 個月先訂含座位。瑞士段持半價卡買票 5 折（仍要買票），義大利段不適用半價卡，需另購全票。",
+        "sbbBtn": "在 SBB App 看車票",
+        "title": "Zermatt → Como（✅ 已訂・頭等）",
+        "desc": "✅ 已訂：9/21（一）14:06 – 18:49，頭等，2 次轉車。車票在 SBB App 裡，全程涵蓋含義大利段，不必再另外買票。\n\n⚠️ 抵達時間很緊：18:49 到 Como S. Giovanni，但 Azzano Holidays B&B 的 check-in 是 19:00 前。扣掉下車、找路，實際只剩幾分鐘。出發前務必先聯絡民宿確認能否晚到，並問清楚：① 實際地址與從 Como S. Giovanni 過去要多久 ② 晚到是否有自助入住或鑰匙箱。",
         "priority": "medium",
         "links": [
           {
@@ -1720,6 +1721,13 @@ const todoData = [
     "badge": "影響打包與訂票",
     "group": "pre",
     "items": [
+      {
+          "id": "como-checkin-conflict",
+          "title": "⚠️ 確認 Como 民宿能否晚於 19:00 入住（Day11｜9/21）",
+          "desc": "已訂的 Zermatt → Como 班次 18:49 抵達 Como S. Giovanni，但 Azzano Holidays B&B 的 check-in 截止是 19:00——只差 11 分鐘，扣掉下車、走出站根本來不及從容抵達。\n\n出發前務必先聯絡民宿問清楚：\n① 實際地址，以及從 Como S. Giovanni 過去要多久（民宿名稱裡的 Azzano 若是指湖西岸的 Azzano／Tremezzina，離 Como 市區還有一段距離，光是交通就不只 11 分鐘）\n② 晚到能否入住，有沒有自助入住或鑰匙箱\n③ 若不行，是否改搭更早一班車（SBB App 可改期，但頭等票要看票種規則）\n\n這是整趟行程目前唯一時間壓在紅線上的銜接，建議優先處理。",
+          "priority": "high",
+          "links": []
+        },
       {
         "id": "luzern-refund",
         "title": "追蹤 Luzern Young Backpackers Homestay 退款",
