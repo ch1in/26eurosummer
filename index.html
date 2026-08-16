@@ -257,6 +257,7 @@
     background:#fff;
   }
   .link-btn.doc-jump{cursor:pointer; font-weight:600;}
+  .link-btn.sbb-btn{border-color:var(--lake); color:var(--lake);}
   .doc-inline-link{margin-top:8px;}
   .app-update-bar{
     position:fixed; left:0; right:0; bottom:0; z-index:300;
@@ -1427,7 +1428,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-16.7';
+const APP_VERSION = '2026-08-16.8';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1572,6 +1573,7 @@ const todoData = [
     "items": [
       {
         "id": "half-fare-card",
+        "sbbBtn": "開啟 SBB App",
         "title": "Swiss Half Fare Card 半價卡（✅ 已購）",
         "docBtn": "🎫 開啟半價卡文件",
         "desc": "SBB 官方核發 e-ticket。效期 9/10 – 10/9（30 天），涵蓋 Day4–Day11（9/14–9/21）在瑞士的全部行程。（金額與付款卡別記在💰記帳分頁）\n\n📄 卡片本身在「🎫 證件」分頁，QR code 會存在手機裡，離線也叫得出來。\n\n⚠️ 半價卡是「折扣卡」不是車票——瑞士境內每一趟都還是要買票，但都算 5 折（火車、巴士、船、山區纜車皆適用）。\n\n🛂 護照必帶！票面印明「Only valid with your Passport / ID」，這是記名票（票上有姓名、出生年），查票員會核對。在瑞士的 8 天護照要每天隨身，不能鎖在飯店保險箱。\n\n📱 SBB App 設定：因為是透過 KKday 買的，卡片本身「無法」顯示在 App 裡（只有用 SBB／SwissPass 帳號登入直接買的才能）。但可以自行宣告讓 App 顯示半價：\nSettings → Travellers → Edit → 勾「Half-fare travelcard (1/2)」→ Save。設完之後 App 查價就直接是 5 折價。\n\n🎫 查票要出示三樣：① App 裡的車票 ② 半價卡 QR code（見證件分頁）③ 護照。\n\n💡 已定案不買 Swiss Travel Pass：這趟山區纜車特別多（Rothorn、Gornergrat、First、Pfingstegg），持 STP 也一樣只有 5 折；火車段又多是短程區間車，吃不滿 STP 的門檻。",
@@ -1604,8 +1606,9 @@ const todoData = [
       },
       {
         "id": "train-colmar-iseltwald",
-        "title": "Colmar → Iseltwald",
-        "desc": "通常於 Basel／Bern 轉車，建議出發前 2–3 個月先訂。法國→Basel 段在瑞士境外，半價卡不適用，需另購全票；Basel 進瑞士之後持半價卡買票是 5 折（仍要買票，半價卡不是車票）。",
+        "sbbBtn": "在 SBB App 看車票",
+        "title": "Colmar → Iseltwald（✅ Colmar→Interlaken 已訂）",
+        "desc": "✅ 已訂 Colmar → Interlaken Ost：9/14（一）14:23 – 17:28，二等，1 次轉車。車票在 SBB App 裡。\n\n⚠️ 但這張票只到 Interlaken Ost。最後一段 **Interlaken Ost → Iseltwald（巴士 約 20–30 分）沒有含在裡面**，要當天自己買——用 SBB App 現場買即可，持半價卡 5 折。17:28 到站後直接在 App 買票再上車，別忘了。\n\n（法國段本來就在瑞士境外、半價卡不適用；這段已包含在上面這張訂票中。）",
         "priority": "medium",
         "links": [
           {
@@ -1640,6 +1643,7 @@ const todoData = [
       },
       {
         "id": "swiss-regional-trains",
+        "sbbBtn": "用 SBB App 買票",
         "title": "瑞士境內各段火車",
         "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。\n\n🎟️ Day5（9/15）例外：已買 Saver Day Pass，效期 9/15 00:00 – 9/16 05:00、二等、GA 全網範圍，Iseltwald⇄Luzern⇄Lungern 全程涵蓋，那天不用再買任何車票。一樣是記名票，查票要出示護照；票在「🎫 證件」分頁，QR 已存在手機裡。",
         "priority": "low",
@@ -2066,8 +2070,9 @@ function renderTodoSectionHtml(sec, si){
       <div class="todo-body">
         <div class="todo-title ${done?'done':''}">${it.title}${pri}</div>
         <div class="todo-desc">${it.desc.replace(/\n/g,'<br>')}</div>
-        ${(it.links.length || it.docBtn) ? `<div class="todo-links">${
-          it.docBtn ? `<button type="button" class="link-btn doc-jump" onclick="goToDocs()">${it.docBtn}</button>` : ''
+        ${(it.links.length || it.docBtn || it.sbbBtn) ? `<div class="todo-links">${
+          (it.docBtn ? `<button type="button" class="link-btn doc-jump" onclick="goToDocs()">${it.docBtn}</button>` : '')
+          + (it.sbbBtn ? sbbBtnHtml(it.sbbBtn) : '')
         }${it.links.map(l=>`<a class="link-btn ${l.cls}" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}</div>` : ''}
       </div>
     </div>`;
@@ -2744,15 +2749,31 @@ const DOC_QR_CACHE_PREFIX = '__trip_doc_qr_v1:'; // per-device cache, never sync
 const DOCS = [
   { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡', short:'半價卡',
     sub:'效期 2026/09/10 – 10/09 · 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
-    qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
+    sbb:true, qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
   { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）', short:'9/15 一日票',
     sub:'9/15 00:00 – 9/16 05:00 · 二等車廂 · GA 全網範圍<br>這天不必再單買車票，Luzern／Lungern 來回都涵蓋',
-    qr:'daypass915-qr', qrCap:'9/15 當天查票出示：這個 QR ＋ 護照' },
+    sbb:true, qr:'daypass915-qr', qrCap:'9/15 當天查票出示：這個 QR ＋ 護照' },
   { id:'ci61', icon:'✈️', title:'去程電子機票 CI61', short:'去程機票',
     sub:'09/10 22:50 桃園 T1 → 09/11 06:50 Frankfurt T3<br>航程 14:00 · 免費托運 2 件' },
   { id:'cxreturn', icon:'✈️', title:'回程電子機票 CX234 / CX530', short:'回程機票',
     sub:'09/26 12:45 Malpensa T1 → 09/27 06:15 香港 T1<br>轉 CX530 08:35 → 10:35 抵桃園 T1 · 免費托運 1 件' },
 ];
+/* Jump into SBB Mobile's ticket list. The custom scheme does nothing at all
+   when the app isn't installed, so fall back to the website — but only if the
+   page is still in the foreground, since a successful hand-off backgrounds it. */
+function openSbbApp(){
+  const fallback = setTimeout(()=>{
+    if(!document.hidden) location.href = 'https://www.sbb.ch/en';
+  }, 1500);
+  window.addEventListener('pagehide', ()=>clearTimeout(fallback), { once:true });
+  document.addEventListener('visibilitychange', function h(){
+    if(document.hidden){ clearTimeout(fallback); document.removeEventListener('visibilitychange', h); }
+  });
+  location.href = 'sbbmobile://ticketlist';
+}
+function sbbBtnHtml(label){
+  return `<button type="button" class="link-btn doc-jump sbb-btn" onclick="openSbbApp()">🚉 ${label || '開啟 SBB App'}</button>`;
+}
 /* Timeline entries that depend on a ticket carry a docId; this renders the
    button that opens it, so the document is one tap away on the day you need
    it rather than something to go hunting for. Unknown ids render nothing. */
@@ -2789,6 +2810,7 @@ function renderDocs(){
       ${d.qr ? `<img class="doc-qr" id="doc-qr-${d.id}" alt="${d.title} QR code"><div class="doc-qr-cap">${d.qrCap}</div>` : ''}
       <div class="doc-actions">
         <button class="doc-btn primary" onclick="openDocViewer('${d.id}')">📄 看完整文件</button>
+        ${d.sbb ? `<button class="doc-btn" onclick="openSbbApp()">🚉 開啟 SBB App</button>` : ''}
       </div>
       <div class="doc-state" id="doc-state-${d.id}"></div>
     </div>`).join('');
