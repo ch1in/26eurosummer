@@ -940,6 +940,65 @@ function _lsDel(key){
   try{ localStorage.removeItem(key); }catch(e){}
 }
 
+/* ---------- Dirty tracking: what changed on THIS device ----------
+   The Worker's POST replaces trip-data.json wholesale (see worker.js), so
+   whatever this page sends *becomes* the cloud's state. A tab left open for
+   hours still holds the snapshot it loaded with; pushing that blindly sends
+   stale values for every key and silently undoes edits made meanwhile on
+   another device.
+   So every local write records what it touched — down to the individual
+   expense / OOTD / checkbox id — and only those entries win when merging.
+   Anything this device didn't touch takes the cloud's value, which is what
+   stops a stale tab from overwriting newer data.
+   Deliberately kept out of allDataKeys(): this is per-device bookkeeping and
+   must never be synced. Persisted so a change made while offline survives a
+   reload and still gets pushed later.                                      */
+const DIRTY_KEY = '__trip_sync_dirty_v1';
+let _dirty = { keys: [], items: {}, removed: [] };
+function _loadDirty(){
+  try{
+    const v = JSON.parse(_lsGet(DIRTY_KEY) || '{}');
+    _dirty = { keys: v.keys || [], items: v.items || {}, removed: v.removed || [] };
+  }catch(e){ _dirty = { keys: [], items: {}, removed: [] }; }
+}
+function _saveDirty(){ _lsSet(DIRTY_KEY, JSON.stringify(_dirty)); }
+function _clearDirty(){ _dirty = { keys: [], items: {}, removed: [] }; _saveDirty(); }
+function _dirtyCount(){
+  return _dirty.keys.length + _dirty.removed.length
+    + Object.keys(_dirty.items).reduce((n,k)=> n + _dirty.items[k].length, 0);
+}
+function _pushUnique(arr, v){ if(!arr.includes(v)) arr.push(v); }
+function _dropFrom(arr, v){ const i = arr.indexOf(v); if(i >= 0) arr.splice(i, 1); }
+
+// Break a stored list/map into id → serialised-entry, so a write can be
+// compared against what was there before and flag only the entries that
+// actually changed (not the whole key).
+function _entriesOf(key, str){
+  const out = new Map();
+  try{
+    const parsed = JSON.parse(str || (MERGE_MAP_KEYS.includes(key) ? '{}' : '[]'));
+    if(Array.isArray(parsed)){
+      parsed.forEach(it => { if(it && it.id != null) out.set(String(it.id), JSON.stringify(it)); });
+    } else if(parsed && typeof parsed === 'object'){
+      Object.keys(parsed).forEach(k => out.set(k, JSON.stringify(parsed[k])));
+    }
+  }catch(e){}
+  return out;
+}
+function _markDirty(key, prevStr, nextStr){
+  if(MERGE_LIST_KEYS.includes(key) || MERGE_MAP_KEYS.includes(key)){
+    const prev = _entriesOf(key, prevStr), next = _entriesOf(key, nextStr);
+    const ids = _dirty.items[key] || (_dirty.items[key] = []);
+    // entries this device removed are recorded as tombstones instead, which
+    // merge as a union and so never need dirty-flagging
+    next.forEach((v, id) => { if(prev.get(id) !== v) _pushUnique(ids, id); });
+  } else {
+    _pushUnique(_dirty.keys, key);
+  }
+  _dropFrom(_dirty.removed, key);
+  _saveDirty();
+}
+
 const Store = {
   async get(key){
     // 1. cloud (cross-device source of truth)
@@ -958,8 +1017,10 @@ const Store = {
     return (key in _memCache) ? _memCache[key] : null;
   },
   async set(key, value){
+    const prev = (key in _memCache) ? _memCache[key] : _lsGet(key);
     _memCache[key] = value; // keep session working no matter what
     const localOk = _lsSet(key, value);
+    _markDirty(key, prev, value); // remember this came from here, not the cloud
     let cOk = false;
     try{
       await window.storage.set(key, value, false);
@@ -976,6 +1037,12 @@ const Store = {
   async delete(key){
     delete _memCache[key];
     _lsDel(key);
+    // a merge starts from the cloud snapshot, so a removal has to be recorded
+    // explicitly or the key would simply come back on the next sync
+    _pushUnique(_dirty.removed, key);
+    _dropFrom(_dirty.keys, key);
+    delete _dirty.items[key];
+    _saveDirty();
     try{ await window.storage.delete(key, false); }catch(e){}
     scheduleWorkerPush();
   }
@@ -1031,24 +1098,24 @@ async function describeFailedResponse(res){
   try{ body = await res.text(); }catch(e){}
   return res.status + (body ? (' ' + body.slice(0,200)) : '');
 }
-async function pullFromCloud(){
-  let res;
-  try{ res = await fetch(WORKER_SYNC_URL, { headers: workerAuthHeaders(), cache: 'no-store' }); }
-  catch(e){ throw new Error('連不到 Worker：' + e.message); }
-  if(!res.ok) throw new Error('讀取失敗：' + await describeFailedResponse(res));
-  const data = await res.json();
-  let n = 0;
-  for(const [key, value] of Object.entries(data)){
+// Write a merged snapshot into this device's caches. Deliberately bypasses
+// Store.set: these values came from (or were reconciled against) the cloud,
+// so they must not be flagged dirty or they'd trigger another push.
+async function applyMergedLocally(merged){
+  let changed = 0;
+  for(const [key, value] of Object.entries(merged)){
+    const prev = (key in _memCache) ? _memCache[key] : _lsGet(key);
+    if(prev !== value) changed++;
     _memCache[key] = value; _lsSet(key, value);
     try{ await window.storage.set(key, value, false); }catch(e){}
-    n++;
   }
-  return n;
+  return changed;
 }
 // Lists that get added-to independently on different devices (an expense
 // entered on phone A shouldn't get wiped out by phone B pushing its own,
-// older snapshot a few seconds later). Merged by id — union of both sides,
-// local wins on an exact id conflict. Deletions are tracked separately as
+// older snapshot a few seconds later). Merged by id — union of both sides;
+// on an exact id conflict the cloud wins unless this device has that entry
+// flagged dirty, i.e. actually edited it. Deletions are tracked separately as
 // tombstones (see markDeleted below), since a plain union merge can never
 // represent "remove this id" — it would just re-add whatever the other
 // side still has.
@@ -1069,19 +1136,67 @@ function mergeTombstones(remoteStr, localStr){
   let local = []; try{ local = localStr ? JSON.parse(localStr) : []; }catch(e){}
   return JSON.stringify(Array.from(new Set([...remote, ...local])));
 }
-function mergeListById(remoteStr, localStr, tombstoneIds){
+function mergeListById(remoteStr, localStr, tombstoneIds, dirtyIds){
   let remote = []; try{ remote = remoteStr ? JSON.parse(remoteStr) : []; }catch(e){}
   let local = []; try{ local = localStr ? JSON.parse(localStr) : []; }catch(e){}
+  if(!Array.isArray(remote)) remote = [];
+  if(!Array.isArray(local)) local = [];
+  const dirty = new Set((dirtyIds || []).map(String));
   const map = new Map();
-  remote.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
-  local.forEach(item => { if(item && item.id != null) map.set(item.id, item); });
-  const tomb = new Set(tombstoneIds || []);
-  return JSON.stringify(Array.from(map.values()).filter(item => !tomb.has(item.id)));
+  remote.forEach(item => { if(item && item.id != null) map.set(String(item.id), item); });
+  local.forEach(item => {
+    if(!item || item.id == null) return;
+    const id = String(item.id);
+    // An id only this device has is a local addition — keep it (union).
+    // An id both sides have is a conflict, and the cloud wins unless this
+    // device actually edited that entry. That's the difference between a
+    // real edit and a stale tab echoing back what it loaded hours ago.
+    if(!map.has(id) || dirty.has(id)) map.set(id, item);
+  });
+  const tomb = new Set((tombstoneIds || []).map(String));
+  return JSON.stringify(Array.from(map.values()).filter(item => !tomb.has(String(item.id))));
 }
-function mergeMap(remoteStr, localStr){
+function mergeMap(remoteStr, localStr, dirtyKeys){
   let remote = {}; try{ remote = remoteStr ? JSON.parse(remoteStr) : {}; }catch(e){}
   let local = {}; try{ local = localStr ? JSON.parse(localStr) : {}; }catch(e){}
-  return JSON.stringify(Object.assign({}, remote, local));
+  if(!remote || typeof remote !== 'object') remote = {};
+  if(!local || typeof local !== 'object') local = {};
+  const dirty = new Set(dirtyKeys || []);
+  const out = Object.assign({}, remote);
+  // same rule as lists: only checkboxes toggled on this device override the cloud
+  Object.keys(local).forEach(k => { if(!(k in out) || dirty.has(k)) out[k] = local[k]; });
+  return JSON.stringify(out);
+}
+/* Reconcile a cloud snapshot with this device's data. The cloud snapshot is
+   the base — every key starts out at its cloud value, and local data is
+   layered on top only where this device has a recorded change. Keys the app
+   no longer lists (e.g. hotel:luzern, kept as a refund record) ride along
+   untouched instead of being dropped. */
+function mergeSnapshots(remote, local, dirty){
+  const merged = Object.assign({}, remote);
+  const handled = new Set();
+  for(const k of MERGE_LIST_KEYS){
+    const tk = tombstoneKey(k);
+    handled.add(k); handled.add(tk);
+    if(k in local || k in remote || tk in local || tk in remote){
+      const mergedTomb = mergeTombstones(remote[tk], local[tk]);
+      merged[tk] = mergedTomb;
+      let tombIds = []; try{ tombIds = JSON.parse(mergedTomb); }catch(e){}
+      merged[k] = mergeListById(remote[k], local[k], tombIds, dirty.items[k]);
+    }
+  }
+  for(const k of MERGE_MAP_KEYS){
+    handled.add(k);
+    if(k in local || k in remote) merged[k] = mergeMap(remote[k], local[k], dirty.items[k]);
+  }
+  // plain keys (hotel:*): only the ones this device actually edited
+  for(const k of dirty.keys){
+    if(!handled.has(k) && k in local) merged[k] = local[k];
+  }
+  for(const k of dirty.removed){
+    if(!handled.has(k)) delete merged[k];
+  }
+  return merged;
 }
 async function fetchCloudSnapshot(){
   let res;
@@ -1091,28 +1206,14 @@ async function fetchCloudSnapshot(){
   return await res.json();
 }
 async function pushToCloud(){
-  let remote = {};
-  try{ remote = await fetchCloudSnapshot(); }
-  catch(e){ /* couldn't read remote first — fall back to pushing local as-is below */ }
-
+  // A POST replaces trip-data.json wholesale, so pushing without knowing the
+  // current cloud state is destructive. This used to swallow a failed read and
+  // push local as the complete state, which wiped every key this device didn't
+  // hold. Let the error propagate instead: nothing is written, the change stays
+  // flagged dirty, and the next sync retries it.
+  const remote = await fetchCloudSnapshot();
   const local = collectAllData();
-  const merged = Object.assign({}, remote, local);
-  for(const k of MERGE_LIST_KEYS){
-    const tk = tombstoneKey(k);
-    if(k in local || k in remote || tk in local || tk in remote){
-      const mergedTomb = mergeTombstones(remote[tk], local[tk]);
-      merged[tk] = mergedTomb;
-      merged[k] = mergeListById(remote[k], local[k], JSON.parse(mergedTomb));
-    }
-  }
-  for(const k of MERGE_MAP_KEYS){
-    if(k in local || k in remote) merged[k] = mergeMap(remote[k], local[k]);
-  }
-  // reflect the merged result on this device too, so a merge that pulled in
-  // another device's entries shows up immediately, not just on next reload
-  for(const [key, value] of Object.entries(merged)){
-    _memCache[key] = value; _lsSet(key, value);
-  }
+  const merged = mergeSnapshots(remote, local, _dirty);
 
   const mergedSize = JSON.stringify(merged).length;
   cloudSizeWarning = mergedSize > 800*1024
@@ -1129,6 +1230,13 @@ async function pushToCloud(){
     });
   }catch(e){ throw new Error('連不到 Worker：' + e.message); }
   if(!res.ok) throw new Error('寫入失敗：' + await describeFailedResponse(res));
+
+  // Only now is it safe to forget what was pending — if anything above threw,
+  // the flags survive and the change goes out on the next attempt.
+  _clearDirty();
+  // reflect the merged result here too, so entries merged in from another
+  // device show up immediately rather than on next reload
+  await applyMergedLocally(merged);
 }
 let _toastHideTimer = null;
 function showSyncToast(message, kind, autoHideMs){
@@ -1161,7 +1269,11 @@ function scheduleWorkerPush(){
 }
 function collectAllData(){
   const out = {};
-  for(const key of allDataKeys()){
+  // dirty keys are included explicitly: allDataKeys() derives hotel keys from
+  // stayOrder, so a pending hotel edit would go missing if the itinerary seed
+  // failed to load this session
+  for(const key of allDataKeys().concat(_dirty.keys)){
+    if(key in out) continue;
     const v = (key in _memCache) ? _memCache[key] : _lsGet(key);
     if(v !== null && v !== undefined) out[key] = v;
   }
@@ -1175,19 +1287,53 @@ async function refreshAllViews(){
   await renderOotdList();
   await renderCalendar();
 }
-async function initWorkerSync(){
+/* Pull the cloud state and reconcile it into this device. Safe to call at any
+   time: pending local edits are preserved by the same dirty-key rules the push
+   uses, so this can't clobber something typed a second ago.
+   This is what keeps a long-open tab from drifting — previously the page
+   pulled once at load and never looked again, so a tab open all day held an
+   ever-staler snapshot, which is exactly what made overwrites likely. */
+let _syncBusy = false;
+let _lastResyncAt = 0;
+async function resyncFromCloud(reason){
+  if(_syncBusy) return;
+  if(reason === 'auto' && Date.now() - _lastResyncAt < 5000) return;
+  _syncBusy = true;
   try{
-    await pullFromCloud();
-    workerSyncOK = true;
-    lastSyncError = '';
-    await refreshAllViews();
+    const remote = await fetchCloudSnapshot();
+    const merged = mergeSnapshots(remote, collectAllData(), _dirty);
+    const changed = await applyMergedLocally(merged);
+    workerSyncOK = true; lastSyncError = '';
+    _lastResyncAt = Date.now();
+    if(changed){
+      await refreshAllViews();
+      if(reason === 'auto') showSyncToast('🔄 已更新為最新資料', 'ok', 2000);
+    }
   }catch(e){
-    workerSyncOK = false;
-    lastSyncError = e.message;
-    console.warn('cloud sync unavailable', e);
+    workerSyncOK = false; lastSyncError = e.message;
+    console.warn('cloud resync failed', e);
+  }finally{
+    _syncBusy = false;
+    updatePersistNote();
   }
+  // anything still pending (offline edit, earlier failed push) goes out now
+  if(_workerReady && _dirtyCount()) scheduleWorkerPush();
+}
+async function initWorkerSync(){
+  _loadDirty();
+  await resyncFromCloud('init');
   _workerReady = true;
   updatePersistNote();
+  if(_dirtyCount()) scheduleWorkerPush();
+
+  // Re-check whenever the tab comes back to the foreground, plus a slow poll
+  // while it's visible. Phones suspend background tabs, so returning to the
+  // app after hours is precisely when the local snapshot is most stale.
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden) resyncFromCloud('auto');
+  });
+  window.addEventListener('focus', ()=> resyncFromCloud('auto'));
+  setInterval(()=>{ if(!document.hidden) resyncFromCloud('auto'); }, 60000);
 }
 
 async function loadItinerarySeed(){
