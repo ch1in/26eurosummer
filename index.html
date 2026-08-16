@@ -257,6 +257,13 @@
     background:#fff;
   }
   .link-btn.doc-jump{cursor:pointer; font-weight:600;}
+  .doc-inline-link{margin-top:8px;}
+  .app-update-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:300;
+    background:var(--rust); color:#fff; text-align:center; cursor:pointer;
+    padding:13px 14px; font-family:'Inter',sans-serif; font-weight:700; font-size:13px;
+    box-shadow:0 -2px 12px rgba(0,0,0,.18);
+  }
   .link-btn.alt{border-color:var(--lake); color:var(--lake);}
   .link-btn.gold{border-color:var(--gold); color:var(--gold);}
   .priority-tag{
@@ -1413,6 +1420,28 @@ async function initWorkerSync(){
   setInterval(()=>{ if(!document.hidden) resyncFromCloud('auto'); }, 60000);
 }
 
+/* GitHub Pages (and iOS home-screen bookmarks especially) will happily serve a
+   cached index.html for a long time. Because the itinerary comes from the
+   Worker with cache:'no-store', a stale page shows fresh *data* inside old
+   *code* — new days appear, but new tabs and features silently don't. That's
+   confusing enough that the page checks its own version against the one in
+   itinerary.json and offers a cache-busting reload.
+   Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
+const APP_VERSION = '2026-08-16.4';
+function checkAppVersion(latest){
+  if(!latest || latest === APP_VERSION) return;
+  let el = document.getElementById('app-update-bar');
+  if(el) return;
+  el = document.createElement('div');
+  el.id = 'app-update-bar';
+  el.className = 'app-update-bar';
+  el.innerHTML = '🔄 有新版本（' + latest + '）· 點此更新';
+  el.onclick = ()=>{
+    // a fresh URL sidesteps the cached copy that a plain reload would reuse
+    location.replace(location.pathname + '?v=' + encodeURIComponent(latest));
+  };
+  document.body.appendChild(el);
+}
 async function loadItinerarySeed(){
   const errEl = document.getElementById('itinerary-error');
   try{
@@ -1425,6 +1454,7 @@ async function loadItinerarySeed(){
     DEFAULT_HOTELS = seed.hotels || {};
     days = seed.days || [];
     renderHeader(seed.header);
+    checkAppVersion(seed.appVersion);
     if(errEl) errEl.style.display = 'none';
     return true;
   }catch(e){
@@ -1691,12 +1721,6 @@ const todoData = [
     "group": "pre",
     "items": [
       {
-          "title": "Day15（9/25）確認 eSIM 到期，決定要不要續購",
-          "desc": "15 天方案若在 9/11 開通，到 9/25 當天就到期。9/26 回程要用網路的地方不少：叫車／查 Malpensa Express 班次、線上 check-in、登機證、轉機時聯絡家人。\n\nDay15 在米蘭時先做兩件事：① 在 eSIM App 查剩餘天數與流量 ② 若 9/26 沒有涵蓋，直接在 App 加購最短天數的方案（通常 1–3 天，很便宜），不要等到機場才處理。\n\n💡 備案：Malpensa 機場與航班上都有 Wi-Fi，真的斷了不至於卡死，但別把登機證只留在雲端，前一晚先截圖存手機。",
-          "priority": "medium",
-          "links": []
-        },
-      {
         "title": "歐洲通用 eSIM（✅ 已購・15 天）",
         "desc": "已購 15 天方案，涵蓋 DE／CH／IT（瑞士非歐盟，注意方案的瑞士流量政策）。出發前先安裝好設定檔，抵達再開通。\n\n⚠️ 15 天是從「開通日」起算，不是從購買日。若 9/11 抵達當天開通 → 9/25（Day15）用完，9/26 回程當天就沒網路了。行程已在 Day15 放了一則提醒去確認到期日。",
         "priority": "high",
@@ -1712,6 +1736,12 @@ const todoData = [
             "cls": "alt"
           }
         ]
+      },
+      {
+        "title": "Day15（9/25）確認 eSIM 到期，決定要不要續購",
+        "desc": "15 天方案若在 9/11 開通，到 9/25 當天就到期。9/26 回程要用網路的地方不少：叫車／查 Malpensa Express 班次、線上 check-in、登機證、轉機時聯絡家人。\n\nDay15 在米蘭時先做兩件事：① 在 eSIM App 查剩餘天數與流量 ② 若 9/26 沒有涵蓋，直接在 App 加購最短天數的方案（通常 1–3 天，很便宜），不要等到機場才處理。\n\n💡 備案：Malpensa 機場與航班上都有 Wi-Fi，真的斷了不至於卡死，但別把登機證只留在雲端，前一晚先截圖存手機。",
+        "priority": "medium",
+        "links": []
       }
     ]
   },
@@ -1835,26 +1865,6 @@ const todoData = [
         "title": "Grindelwald First ＋ Bachalpsee（未排入行程・備案）",
         "desc": "⛔ 已從 Day7 拿掉——Day7 改成純山谷village＋Kleine Scheidegg 景觀路線，不上 First。目前沒有排在任何一天。\n\n若之後想補：Grindelwald → First 纜車是 Bachalpsee 健行的起點，夏季全票 CHF76、持半價卡 5 折 → CHF38。現場售票口或官網皆可，通常不需提前預約。⚠️ 這是半天以上的行程，要補的話建議整天安排，不要塞進已排滿的日子。",
         "priority": "medium",
-        "links": []
-      }
-    ]
-  },
-  {
-    "icon": "🧳",
-    "title": "行李寄放（當天彈性）",
-    "badge": "看情況",
-    "group": "day",
-    "items": [
-      {
-        "title": "Day4 逛 Colmar 老城前（9/14 上午退房）",
-        "desc": "9/14 是離開 Colmar 前往 Iseltwald 的日子。退房後想輕鬆逛老城，可把大行李寄放 Colmar 火車站置物櫃（Consigne，投幣式約€5–8/件），逛完取回再搭車。",
-        "priority": "low",
-        "links": []
-      },
-      {
-        "title": "Day6 去 Brienz Rothorn 前（9/16）",
-        "desc": "到 Brienz 後可把大件行李寄放在 Brienz SBB Station Locker，輕裝搭 Rothorn 齒軌火車上山，回程取回行李再前往 Iseltwald。",
-        "priority": "low",
         "links": []
       }
     ]
@@ -2141,6 +2151,7 @@ async function renderDayPanel(){
         ${link ? `<a href="${link}" target="_blank" rel="noopener">路線 ↗</a>` : ''}
         ${item.bookNote ? `<div class="transit-book-note">🎫 ${item.bookNote}</div>` : ''}
         ${item.note && !item.bookNote ? `<div class="transit-book-note" style="color:var(--ink-soft);">ℹ️ ${item.note}</div>` : ''}
+        ${docLinkHtml(item.docId)}
       </div>`;
     } else if(item.type==='luggage'){
       bodyHtml += `<div class="luggage-block"><span class="lg-ic">🧳</span><div>${item.text}</div></div>`;
@@ -2149,6 +2160,7 @@ async function renderDayPanel(){
         <div class="ba-head">⚠️ ${item.title}</div>
         <div>${item.text}</div>
         ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">前往預約 ↗</a>` : ''}
+        ${docLinkHtml(item.docId)}
       </div>`;
     }
   });
@@ -2695,17 +2707,27 @@ async function deleteOotd(id){
    ============================================================ */
 const DOC_QR_CACHE_PREFIX = '__trip_doc_qr_v1:'; // per-device cache, never synced
 const DOCS = [
-  { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡',
+  { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡', short:'半價卡',
     sub:'效期 2026/09/10 – 10/09 · 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
     qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
-  { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）',
+  { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）', short:'9/15 一日票',
     sub:'9/15 00:00 – 9/16 05:00 · 二等車廂 · GA 全網範圍<br>這天不必再單買車票，Luzern／Lungern 來回都涵蓋',
     qr:'daypass915-qr', qrCap:'9/15 當天查票出示：這個 QR ＋ 護照' },
-  { id:'ci61', icon:'✈️', title:'去程電子機票 CI61',
+  { id:'ci61', icon:'✈️', title:'去程電子機票 CI61', short:'去程機票',
     sub:'09/10 22:50 桃園 T1 → 09/11 06:50 Frankfurt T3<br>航程 14:00 · 免費托運 2 件' },
-  { id:'cxreturn', icon:'✈️', title:'回程電子機票 CX234 / CX530',
+  { id:'cxreturn', icon:'✈️', title:'回程電子機票 CX234 / CX530', short:'回程機票',
     sub:'09/26 12:45 Malpensa T1 → 09/27 06:15 香港 T1<br>轉 CX530 08:35 → 10:35 抵桃園 T1 · 免費托運 1 件' },
 ];
+/* Timeline entries that depend on a ticket carry a docId; this renders the
+   button that opens it, so the document is one tap away on the day you need
+   it rather than something to go hunting for. Unknown ids render nothing. */
+function docLinkHtml(docId){
+  if(!docId) return '';
+  const doc = DOCS.find(d => d.id === docId);
+  if(!doc) return '';
+  return `<div class="doc-inline-link"><button type="button" class="link-btn doc-jump"
+    onclick="openDocViewer('${doc.id}')">${doc.icon} 開啟${doc.short || doc.title}</button></div>`;
+}
 // jump straight to a document from wherever it's referenced (e.g. the
 // half-fare TODO item), so the card is one tap away when it's needed
 function goToDocs(){
@@ -2731,7 +2753,7 @@ function renderDocs(){
       <div class="doc-sub">${d.sub}</div>
       ${d.qr ? `<img class="doc-qr" id="doc-qr-${d.id}" alt="${d.title} QR code"><div class="doc-qr-cap">${d.qrCap}</div>` : ''}
       <div class="doc-actions">
-        <button class="doc-btn primary" onclick="openDocViewer('${d.id}', ${JSON.stringify(d.title)})">📄 看完整文件</button>
+        <button class="doc-btn primary" onclick="openDocViewer('${d.id}')">📄 看完整文件</button>
       </div>
       <div class="doc-state" id="doc-state-${d.id}"></div>
     </div>`).join('');
@@ -2760,7 +2782,12 @@ async function loadDocQr(doc){
       !cached);
   }
 }
-function openDocViewer(id, title){
+/* Takes the id alone and looks the title up here — passing the title through an
+   inline onclick meant JSON-quoting it into an HTML attribute, and the double
+   quotes silently terminated the attribute, breaking the button. */
+function openDocViewer(id){
+  const doc = DOCS.find(d => d.id === id);
+  const title = doc ? doc.title : id;
   const v = document.getElementById('doc-viewer');
   const body = document.getElementById('doc-viewer-body');
   document.getElementById('doc-viewer-title').textContent = title;
