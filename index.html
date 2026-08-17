@@ -581,6 +581,12 @@
   .expense-total .et-cur{font-family:'IBM Plex Mono',monospace; font-size:12px; color:#C9BFA8;}
   .expense-total .et-amt{font-family:'Fraunces',serif; font-weight:600; font-size:20px;}
   .expense-total .et-empty{font-size:12.5px; color:#C9BFA8;}
+  .expense-total .et-sum{margin-top:9px; padding-top:9px; border-top:1px solid rgba(201,191,168,.35);}
+  .expense-total .et-grand{font-size:24px;}
+  .expense-total .et-fx{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:#C9BFA8;
+    margin-top:4px; letter-spacing:.02em;
+  }
   .swipe-hint{
     text-align:right; font-family:'IBM Plex Mono',monospace;
     font-size:10.5px; color:var(--ink-soft); margin-bottom:8px;
@@ -1444,7 +1450,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-16.12';
+const APP_VERSION = '2026-08-17.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1588,12 +1594,32 @@ const todoData = [
     "group": "pre",
     "items": [
       {
-        "id": "flight-checkin-windows",
-        "title": "線上報到時間（去程 9/8 開放・回程 9/24 開放）",
+        "id": "checkin-outbound",
+        "title": "線上報到｜去程 CI61（9/8 22:50 開放）",
         "docBtn": "🎫 看機票文件",
-        "desc": "兩家都是起飛前 48 小時開放線上報到、起飛前 60 分鐘關閉。先設好手機提醒：\n\n✈️ 去程 CI61（9/10 22:50 桃園 T1 起飛）\n• 線上報到開放：9/8（二）22:50\n• 線上報到截止：9/10 21:50\n• 華航建議起飛前 2 小時到機場；接送 19:40 上車，時間充裕。\n• 已線上報到但要托運行李，仍需在起飛前 1 小時左右到櫃檯。\n\n✈️ 回程 CX234（9/26 12:45 Malpensa T1 起飛）\n• 線上報到開放：9/24（四）12:45\n• 線上報到截止：9/26 11:45\n• 櫃檯一般於起飛前 3 小時開放（約 09:45）。\n• ⚠️ 9/24 開放時人在義大利，eSIM 若已到期會很麻煩——Day15 那則提醒要一起看。\n\n📌 登機證存好後再截圖一份，別只留在雲端。\n（時間依兩家航空公司公告的一般規則推算，電子機票上的 Last check-in 欄位是空白的；臨行前建議在 App 內再確認一次。）",
+        "desc": "✈️ CI61 · 9/10 22:50 桃園 T1 起飛\n• 線上報到開放：9/8（二）22:50（起飛前 48 小時）\n• 線上報到截止：9/10 21:50（起飛前 60 分鐘）\n• 華航建議起飛前 2 小時到機場；接送 19:40 上車，時間充裕。\n• 已線上報到但要托運行李，仍需在起飛前 1 小時左右到櫃檯。\n• 登機證存好後截圖一份備援。\n\n（依華航公告的一般規則推算，電子機票的 Last check-in 欄位為空白；報到時在 App 內再確認。）",
         "priority": "high",
-        "links": []
+        "links": [
+          {
+            "label": "華航線上報到",
+            "url": "https://airportservice.china-airlines.com/eCheckin/eCheckin_home?country=us&locale=en",
+            "cls": ""
+          }
+        ]
+      },
+      {
+        "id": "checkin-return",
+        "title": "線上報到｜回程 CX234（9/24 12:45 開放）",
+        "docBtn": "🎫 看機票文件",
+        "desc": "✈️ CX234 · 9/26 12:45 Malpensa T1 起飛（轉 CX530 回桃園）\n• 線上報到開放：9/24（四）12:45（起飛前 48 小時）\n• 線上報到截止：9/26 11:45（起飛前 60 分鐘）\n• Malpensa 櫃檯一般於起飛前 3 小時開放（約 09:45）；建議 09:30 前抵達航廈。\n• ⚠️ 9/24 開放時人在義大利——eSIM 若已到期會沒網路報到，跟 Day15 的續購提醒一起看。\n• 登機證存好後截圖一份備援。\n\n（依國泰公告的一般規則推算；報到時在 App 內再確認。）",
+        "priority": "high",
+        "links": [
+          {
+            "label": "國泰線上報到",
+            "url": "https://www.cathaypacific.com/cx/en_US/manage-booking/check-in-options.html",
+            "cls": ""
+          }
+        ]
       },
       {
         "id": "award-ticket-miles",
@@ -1710,6 +1736,11 @@ const todoData = [
         "priority": "high",
         "links": [
           {
+            "label": "🕐 官方班次＋票價",
+            "url": "https://brienz-rothorn-bahn.ch/en/fahrplan-preise/",
+            "cls": ""
+          },
+          {
             "label": "官網資訊／訂票",
             "url": "https://www.brienz-rothorn-bahn.ch",
             "cls": ""
@@ -1721,7 +1752,13 @@ const todoData = [
         "title": "Gornergrat 齒軌列車（Day10）",
         "desc": "夏季（5–10 月）全票 CHF132，持半價卡 5 折 → CHF66。旺季可加購 CHF7 優先上車券。\n\n✅ 決定：到 Zermatt 現場憑半價卡買，不先在 KKday 買。兩者價差很小（KKday 約 TWD 2,428 vs 現場約 TWD 2,620），但現場買可以看天氣決定哪天上山——Gornergrat 是為了看 Matterhorn，雲層擋住就整個白跑。Day9–Day11 都在 Zermatt 附近，有調整空間。",
         "priority": "high",
-        "links": []
+        "links": [
+          {
+            "label": "🕐 官方班次",
+            "url": "https://www.gornergrat.ch/en/pages/timetable-gornergrat-bahn",
+            "cls": ""
+          }
+        ]
       }
     ]
   },
@@ -1785,7 +1822,7 @@ const todoData = [
       {
         "id": "esim-purchase",
         "title": "歐洲通用 eSIM（✅ 已購・15 天）",
-        "desc": "已購 15 天方案，涵蓋 DE／CH／IT（瑞士非歐盟，注意方案的瑞士流量政策）。出發前先安裝好設定檔，抵達再開通。\n\n⚠️ 15 天是從「開通日」起算，不是從購買日。若 9/11 抵達當天開通 → 9/25（Day15）用完，9/26 回程當天就沒網路了。行程已在 Day15 放了一則提醒去確認到期日。",
+        "desc": "已購 15 天方案，涵蓋 DE／CH／IT（瑞士非歐盟，注意方案的瑞士流量政策）。📲 QR code 要到蝦皮的賣家對話裡索取，出發前先拿到並安裝好設定檔，抵達再開通。安裝過程需要網路，落地後沒網路就裝不了；賣家不一定秒回，提前一兩天問比較保險。QR 通常只能掃一次，拿到後先截圖備份。\n\n⚠️ 15 天是從「開通日」起算，不是從購買日。若 9/11 抵達當天開通 → 9/25（Day15）用完，9/26 回程當天就沒網路了。行程已在 Day15 放了一則提醒去確認到期日。",
         "priority": "high",
         "links": [
           {
@@ -1905,7 +1942,13 @@ const todoData = [
         "title": "Rhine 遊船船票（Day3）",
         "desc": "Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。",
         "priority": "low",
-        "links": []
+        "links": [
+          {
+            "label": "🕐 KD 遊船班次",
+            "url": "https://www.k-d.com/en/",
+            "cls": ""
+          }
+        ]
       },
       {
         "id": "pfingstegg",
@@ -1938,12 +1981,17 @@ const todoData = [
 async function renderCalendar(){
   const el = document.getElementById('rail-list');
   let html = '';
-  html += `<div class="rail-stop" onclick="alert('CI61 台北→法蘭克福\\n22:50 09/10 → 06:50 09/11')">
+  // The outbound flight card sits *after* Day 0, not before it: Day 0 is the
+  // departure day in Taiwan (eSIM pickup, transfer, check-in) and the flight
+  // only leaves at 22:50, so chronologically the day comes first.
+  const outboundCard = `<div class="rail-stop" onclick="alert('CI61 台北→法蘭克福\\n22:50 09/10 → 06:50 09/11')">
     <div class="rail-dot fly">✈️</div>
     <div class="rail-card">
       <div><div class="rail-date">09/10 →09/11</div><div class="rail-title">去程航班 CI61</div><div class="rail-sub">台北 → 法蘭克福</div></div>
       <span class="flag-pill fly">飛行</span>
     </div></div>`;
+  let outboundPlaced = false;
+  if(!days.some(d=>d.n===0)){ html += outboundCard; outboundPlaced = true; }
   for(const d of days){
     const cls = COUNTRY_CLASS[d.country] || 'de';
     let hotelSub = '';
@@ -1962,6 +2010,7 @@ async function renderCalendar(){
         </div>
         <span class="flag-pill ${cls}">${d.country}</span>
       </div></div>`;
+    if(d.n === 0 && !outboundPlaced){ html += outboundCard; outboundPlaced = true; }
   }
   html += `<div class="rail-stop" onclick="alert('CX234 米蘭 Malpensa T1 → 香港 T1\\n12:45 09/26 → 06:15 09/27\\n\\nCX530 香港 T1 → 桃園 T1\\n08:35 → 10:35 09/27')">
     <div class="rail-dot fly">✈️</div>
@@ -2024,16 +2073,16 @@ async function renderCustomTodoSection(){
   const list = await getCustomTodos();
   if(!list.length) return '';
   const rows = list.map(it=>`
-    <div class="todo-item">
+    <div class="todo-item" data-done="${it.done?1:0}">
       <div class="todo-check ${it.done?'done':''}" onclick="toggleCustomTodo('${it.id}')">${it.done?'✓':''}</div>
       <div class="todo-body">
         <div class="todo-title ${it.done?'done':''}">${it.title}</div>
       </div>
       <button class="custom-todo-del" onclick="deleteCustomTodo('${it.id}')">✕</button>
-    </div>`).join('');
+    </div>`);
   return `<div class="todo-sec">
     <div class="todo-sec-head"><span class="ic">✏️</span><h3>我的待辦</h3><span class="badge">自訂</span></div>
-    ${rows}
+    ${sinkDone(rows).join('')}
   </div>`;
 }
 async function addCustomTodo(){
@@ -2068,10 +2117,11 @@ async function renderAccommodationSection(){
     const saved = await getHotelEntry(key);
     const dayNums = days.filter(d=>d.stayKey===key).map(d=>d.n);
     const dayLabel = dayNums.length>1 ? `Day ${dayNums[0]}–${dayNums[dayNums.length-1]}` : `Day ${dayNums[0]}`;
-    return `<div class="todo-item">
+    // a booked stay collapses like a finished todo; tap the title to reopen it
+    return `<div class="todo-item${saved?' collapsed':''}" id="todo-item-stay-${key}" data-done="${saved?1:0}">
       <div class="todo-check ${saved?'done':''}">${saved?'✓':''}</div>
       <div class="todo-body">
-        <div class="todo-title ${saved?'done':''}">${s.city}<span class="priority-tag ${saved?'low':'high'}">${saved? '已加入地點' : '尚未加入'}</span></div>
+        <div class="todo-title ${saved?'done':''}"${saved?` onclick="toggleTodoCollapse('stay-${key}')"`:''}>${s.city}<span class="priority-tag ${saved?'low':'high'}">${saved? '已加入地點' : '尚未加入'}</span>${saved?'<span class="todo-expand">展開</span>':''}</div>
         <div class="todo-desc">${dayLabel} · ${fmtShort(s.checkin)}–${fmtShort(s.checkout)}（${s.nights} 晚）· 建議區域：${s.area}<br>${s.tip}</div>
         ${saved ? `<div class="todo-links"><a class="link-btn alt" href="${saved.url}" target="_blank" rel="noopener">📍 ${saved.name} ↗</a></div>`
                 : `<div class="todo-links"><a class="link-btn" href="${s.bookUrl}" target="_blank" rel="noopener">Booking.com 搜尋 ↗</a></div>
@@ -2081,13 +2131,21 @@ async function renderAccommodationSection(){
   }));
   return `<div class="todo-sec">
     <div class="todo-sec-head"><span class="ic">🏨</span><h3>住宿預訂</h3><span class="badge">全部尚待確認地點</span></div>
-    ${rows.join('')}
+    ${sinkDone(rows).join('')}
   </div>`;
 }
 
+/* Finished things sink to the bottom of their section so what still needs
+   doing stays at the top. Relative order within each group is preserved. */
+function sinkDone(rows){
+  const open = rows.filter(r => !/ data-done="1"/.test(r));
+  const done = rows.filter(r =>  / data-done="1"/.test(r));
+  return open.concat(done);
+}
 function renderTodoSectionHtml(sec, si){
   let html = `<div class="todo-sec">
     <div class="todo-sec-head"><span class="ic">${sec.icon}</span><h3>${sec.title}</h3><span class="badge">${sec.badge}</span></div>`;
+  const rows = [];
   sec.items.forEach((it, ii)=>{
     // Each item carries its own stable id. This used to be the section/item
     // index, which meant inserting, reordering or deleting anything silently
@@ -2099,7 +2157,7 @@ function renderTodoSectionHtml(sec, si){
               : '<span class="priority-tag low">不急</span>';
     // A finished item collapses to just its title so the list stays scannable;
     // tapping the title expands it again when the details are needed.
-    html += `<div class="todo-item${done?' collapsed':''}" id="todo-item-${key}">
+    rows.push(`<div class="todo-item${done?' collapsed':''}" id="todo-item-${key}" data-done="${done?1:0}">
       <div class="todo-check ${done?'done':''}" onclick="toggleTodo('${key}')">${done?'✓':''}</div>
       <div class="todo-body">
         <div class="todo-title ${done?'done':''}"${done?` onclick="toggleTodoCollapse('${key}')"`:''}>${it.title}${pri}${done?'<span class="todo-expand">展開</span>':''}</div>
@@ -2109,8 +2167,9 @@ function renderTodoSectionHtml(sec, si){
           + (it.sbbBtn ? sbbBtnHtml(it.sbbBtn) : '')
         }${it.links.map(l=>`<a class="link-btn ${l.cls}" href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('')}</div>` : ''}
       </div>
-    </div>`;
+    </div>`);
   });
+  html += sinkDone(rows).join('');
   html += `</div>`;
   return html;
 }
@@ -2442,6 +2501,51 @@ async function deleteExpense(id){
 }
 
 let swipedExpId = null;
+/* ---------- FX: one TWD grand total across mixed currencies ----------
+   Rates are fetched once a day from a free public API and cached on the
+   device. If every source is unreachable the last cached rates are used and
+   the UI says which day they came from; if there are none, the converted
+   total is simply omitted rather than shown with invented numbers.
+   Cache key is per-device and deliberately outside allDataKeys(). */
+const FX_CACHE_KEY = '__trip_fx_v1';
+const FX_SOURCES = [
+  'https://open.er-api.com/v6/latest/TWD',
+  'https://api.exchangerate-api.com/v4/latest/TWD'
+];
+let fxRates = null;
+function _fxCached(){ try{ return JSON.parse(_lsGet(FX_CACHE_KEY) || 'null'); }catch(e){ return null; } }
+async function loadFxRates(){
+  const cached = _fxCached();
+  const today = todayISO();
+  if(cached && cached.date === today){ fxRates = cached; return cached; }
+  for(const url of FX_SOURCES){
+    try{
+      const res = await fetch(url, { cache:'no-store' });
+      if(!res.ok) continue;
+      const j = await res.json();
+      const r = j && j.rates;
+      if(!r || !r.EUR) continue;
+      // the API returns "1 TWD = x FOO"; invert to get TWD per unit of FOO
+      const per = { TWD: 1 };
+      ['EUR','CHF','HKD','USD','JPY','GBP'].forEach(c => { if(r[c]) per[c] = 1 / r[c]; });
+      fxRates = { date: today, per, src: url.split('/')[2] };
+      _lsSet(FX_CACHE_KEY, JSON.stringify(fxRates));
+      return fxRates;
+    }catch(e){ /* try the next source */ }
+  }
+  fxRates = cached;   // stale beats nothing, and the label shows its date
+  return fxRates;
+}
+function twdTotal(totals){
+  if(!fxRates || !fxRates.per) return null;
+  let sum = 0;
+  for(const [cur, amt] of Object.entries(totals)){
+    const rate = fxRates.per[cur];
+    if(!rate) return null;            // an unknown currency would silently skew the total
+    sum += amt * rate;
+  }
+  return sum;
+}
 async function renderExpenses(){
   const totalEl = document.getElementById('expense-total');
   const listEl = document.getElementById('expense-list');
@@ -2453,8 +2557,17 @@ async function renderExpenses(){
   list.forEach(e=>{ const c=e.currency||'EUR'; totals[c]=(totals[c]||0)+(Number(e.amount)||0); });
   const curKeys = Object.keys(totals);
   if(curKeys.length){
+    const twd = twdTotal(totals);
+    const missing = curKeys.filter(c => !(fxRates && fxRates.per && fxRates.per[c]));
+    const stale = fxRates && fxRates.date !== todayISO();
     totalEl.innerHTML = `<div class="et-label">總金額（依幣別）</div>` +
-      curKeys.map(c=>`<div class="et-row"><span class="et-cur">${c}</span><span class="et-amt">${fmtMoney(totals[c])}</span></div>`).join('');
+      curKeys.map(c=>`<div class="et-row"><span class="et-cur">${c}</span><span class="et-amt">${fmtMoney(totals[c])}</span></div>`).join('') +
+      (twd !== null
+        ? `<div class="et-sum">
+             <div class="et-row"><span class="et-cur">合計 TWD</span><span class="et-amt et-grand">${fmtMoney(Math.round(twd))}</span></div>
+             <div class="et-fx">${stale ? '⚠️ 匯率取自 ' + fxRates.date + '（今日取得失敗）' : '依 ' + fxRates.date + ' 匯率換算'} · ${fxRates.src}</div>
+           </div>`
+        : `<div class="et-sum"><div class="et-fx">${missing.length ? '⚠️ 缺少 ' + missing.join('／') + ' 匯率，暫不顯示台幣合計' : '匯率取得中／目前無法取得，暫不顯示台幣合計'}</div></div>`);
   } else {
     totalEl.innerHTML = `<div class="et-label">總金額</div><div class="et-empty">尚無記帳項目</div>`;
   }
@@ -2938,6 +3051,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   renderExpenses();
 
   await initWorkerSync();
+  loadFxRates().then(()=>renderExpenses()).catch(()=>{});
   // Warm each offline QR copy once, so they're already on the device the first
   // time they're actually needed — without re-downloading on every load.
   DOCS.filter(d => d.qr && !_lsGet(DOC_QR_CACHE_PREFIX + d.qr)).forEach(d => {
