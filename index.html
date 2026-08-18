@@ -1450,7 +1450,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-17.3';
+const APP_VERSION = '2026-08-17.4';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1704,7 +1704,7 @@ const todoData = [
         "id": "swiss-regional-trains",
         "sbbBtn": "用 SBB App 買票",
         "title": "瑞士境內各段火車",
-        "desc": "Interlaken↔Luzern／Luzern→Lungern→Iseltwald／Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。",
+        "desc": "Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n（Interlaken↔Luzern、Luzern→Lungern→Iseltwald 不在此列——那是 Day5 的路線，全程由 9/15 的 Saver Day Pass 涵蓋，不用買單程票。）\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。",
         "priority": "low",
         "links": []
       }
