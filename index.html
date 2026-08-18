@@ -1450,7 +1450,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-17.2';
+const APP_VERSION = '2026-08-17.3';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1944,9 +1944,14 @@ const todoData = [
         "priority": "low",
         "links": [
           {
-            "label": "🕐 KD 遊船班次",
-            "url": "https://www.k-d.com/en/",
+            "label": "🕐 KD 2026 官方時刻表（PDF）",
+            "url": "https://www.k-d.com/wp-content/uploads/2026/02/KD_Fahrplan_2026_web.pdf",
             "cls": ""
+          },
+          {
+            "label": "KD 官網",
+            "url": "https://www.k-d.com/en/",
+            "cls": "alt"
           }
         ]
       },
@@ -2289,6 +2294,7 @@ async function renderDayPanel(){
       bodyHtml += `<div class="transit-block">
         <span class="t-ic">${item.icon}</span><span>${item.text}</span>
         ${link ? `<a href="${link}" target="_blank" rel="noopener">路線 ↗</a>` : ''}
+        ${item.extLink ? `<a href="${item.extLink.url}" target="_blank" rel="noopener">${item.extLink.label} ↗</a>` : ''}
         ${item.bookNote ? `<div class="transit-book-note">🎫 ${item.bookNote}</div>` : ''}
         ${item.note && !item.bookNote ? `<div class="transit-book-note" style="color:var(--ink-soft);">ℹ️ ${item.note}</div>` : ''}
         ${docLinkHtml(item.docId)}
