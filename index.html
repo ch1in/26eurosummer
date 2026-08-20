@@ -1450,7 +1450,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-17.4';
+const APP_VERSION = '2026-08-20.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1634,7 +1634,7 @@ const todoData = [
         "sbbBtn": "開啟 SBB App",
         "title": "Swiss Half Fare Card 半價卡（✅ 已購）",
         "docBtn": "🎫 開啟半價卡文件",
-        "desc": "SBB 官方核發 e-ticket。效期 9/10 – 10/9（30 天），涵蓋 Day4–Day11（9/14–9/21）在瑞士的全部行程。（金額與付款卡別記在💰記帳分頁）\n\n📄 卡片本身在「🎫 證件」分頁，QR code 會存在手機裡，離線也叫得出來。\n\n⚠️ 半價卡是「折扣卡」不是車票——瑞士境內每一趟都還是要買票，但都算 5 折（火車、巴士、船、山區纜車皆適用）。\n\n🛂 護照必帶！票面印明「Only valid with your Passport / ID」，這是記名票（票上有姓名、出生年），查票員會核對。在瑞士的 8 天護照要每天隨身，不能鎖在飯店保險箱。\n\n📱 SBB App 設定：因為是透過 KKday 買的，卡片本身「無法」顯示在 App 裡（只有用 SBB／SwissPass 帳號登入直接買的才能）。但可以自行宣告讓 App 顯示半價：\nSettings → Travellers → Edit → 勾「Half-fare travelcard (1/2)」→ Save。設完之後 App 查價就直接是 5 折價。\n\n🎫 查票要出示三樣：① App 裡的車票 ② 半價卡 QR code（見證件分頁）③ 護照。\n\n💡 已定案不買 Swiss Travel Pass：這趟山區纜車特別多（Rothorn、Gornergrat、First、Pfingstegg），持 STP 也一樣只有 5 折；火車段又多是短程區間車，吃不滿 STP 的門檻。",
+        "desc": "SBB 官方核發 e-ticket。🔁 8/20 已退掉舊卡（效期 9/10 起）改買此新卡——新效期起算日更貼近瑞士段。查票時只出示新卡 QR，舊的作廢別拿錯。效期 9/13 – 10/12（30 天），涵蓋 Day4–Day11（9/14–9/21）在瑞士的全部行程。（金額與付款卡別記在💰記帳分頁）\n\n📄 卡片本身在「🎫 證件」分頁，QR code 會存在手機裡，離線也叫得出來。\n\n⚠️ 半價卡是「折扣卡」不是車票——瑞士境內每一趟都還是要買票，但都算 5 折（火車、巴士、船、山區纜車皆適用）。\n\n🛂 護照必帶！票面印明「Only valid with your Passport / ID」，這是記名票（票上有姓名、出生年），查票員會核對。在瑞士的 8 天護照要每天隨身，不能鎖在飯店保險箱。\n\n📱 SBB App 設定：非 SBB／SwissPass 帳號直購（例如透過 KKday 等平台）時，卡片本身不會顯示在 App 裡。但可以自行宣告讓 App 顯示半價：\nSettings → Travellers → Edit → 勾「Half-fare travelcard (1/2)」→ Save。設完之後 App 查價就直接是 5 折價。\n\n🎫 查票要出示三樣：① App 裡的車票 ② 半價卡 QR code（見證件分頁）③ 護照。\n\n💡 已定案不買 Swiss Travel Pass：這趟山區纜車特別多（Rothorn、Gornergrat、First、Pfingstegg），持 STP 也一樣只有 5 折；火車段又多是短程區間車，吃不滿 STP 的門檻。",
         "priority": "high",
         "links": [
           {
@@ -2908,7 +2908,7 @@ async function deleteOotd(id){
 const DOC_QR_CACHE_PREFIX = '__trip_doc_qr_v1:'; // per-device cache, never synced
 const DOCS = [
   { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡', short:'半價卡',
-    sub:'效期 2026/09/10 – 10/09 · 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
+    sub:'效期 2026/09/13 – 10/12（🔁 8/20 重買的新卡）· 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
     sbb:true, qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
   { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）', short:'9/15 一日票',
     sub:'9/15 00:00 – 9/16 05:00 · 二等車廂 · GA 全網範圍<br>這天不必再單買車票，Luzern／Lungern 來回都涵蓋',
