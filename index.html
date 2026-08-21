@@ -1450,7 +1450,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-20.1';
+const APP_VERSION = '2026-08-20.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1759,6 +1759,19 @@ const todoData = [
             "cls": ""
           }
         ]
+      },
+      {
+        "id": "duomo-milan",
+        "title": "Milan Duomo 門票（Day14，想進教堂／登頂才需要）",
+        "desc": "Day14 行程有 Duomo。只在外面拍照不用票；要進教堂內部或上屋頂（rooftop）就建議先在官網買時段票——現場排隊常常很長。屋頂電梯與走樓梯是不同票價。若當天從 Como 過來時間不多，也可以留到 Day15 自由活動再上屋頂。",
+        "priority": "medium",
+        "links": [
+          {
+            "label": "Duomo 官網購票",
+            "url": "https://www.duomomilano.it/en/",
+            "cls": ""
+          }
+        ]
       }
     ]
   },
@@ -1790,6 +1803,19 @@ const todoData = [
     "badge": "影響打包與訂票",
     "group": "pre",
     "items": [
+      {
+        "id": "milan-hotel-0924",
+        "title": "🔴 訂 Milan 9/24 住宿（唯一還沒訂的一晚）",
+        "desc": "Day14（9/24）Como → Milan 後在米蘭過夜，但這晚是全部行程唯一還沒訂房的。其他 15 晚全數已訂。\n\n建議住 Centrale（隔天往 Malpensa 方便）或 Duomo 周邊（逛街方便）。9/25 那晚已訂 Malpensa 機場飯店，所以這晚只要顧 9/24 一晚。\n\n訂好後到「每日行程」Day14 輸入住宿地點，會自動歸檔到記帳。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "Booking.com 米蘭",
+            "url": "https://www.booking.com/city/it/milan.html",
+            "cls": ""
+          }
+        ]
+      },
       {
         "id": "como-checkin-conflict",
         "title": "⚠️ 確認 Como 民宿能否晚於 19:00 入住（Day11｜9/21）",
@@ -1975,6 +2001,39 @@ const todoData = [
         "desc": "⛔ 已從 Day7 拿掉——Day7 改成純山谷village＋Kleine Scheidegg 景觀路線，不上 First。目前沒有排在任何一天。\n\n若之後想補：Grindelwald → First 纜車是 Bachalpsee 健行的起點，夏季全票 CHF76、持半價卡 5 折 → CHF38。現場售票口或官網皆可，通常不需提前預約。⚠️ 這是半天以上的行程，要補的話建議整天安排，不要塞進已排滿的日子。",
         "priority": "medium",
         "links": []
+      },
+      {
+        "id": "como-lake-ferries",
+        "title": "Como 湖渡輪（Day12 Bellagio・Day13 Menaggio/Varenna）",
+        "desc": "兩天的湖上交通都是 Navigazione Laghi 渡輪，碼頭售票亭現場買即可，一般不用預約。可考慮買當日湖區一日券（依航段計價，來回多段通常比單買划算，現場比價）。快船（servizio rapido）比慢船貴、班次少，看時間彈性選。⚠️ 半價卡在義大利不適用。",
+        "priority": "medium",
+        "links": [
+          {
+            "label": "🕐 官方時刻表",
+            "url": "https://www.navigazionelaghi.it/en/",
+            "cls": ""
+          }
+        ]
+      },
+      {
+        "id": "como-milan-train",
+        "title": "Como S. Giovanni → Milano Centrale（Day14）",
+        "desc": "區域車約 40 分、班次密集，當天車站售票機或 Trenitalia／Trenord App 買即可，不用預約。⚠️ 紙本票上車前記得打票（validate）；App 電子票不用。",
+        "priority": "low",
+        "links": []
+      },
+      {
+        "id": "german-regional-trains",
+        "title": "德國段區間車（Day1 機場 S-Bahn・Day2 往 Rüdesheim）",
+        "desc": "Day1 FRA 機場 → Frankfurt Hbf 的 S8/S9，與 Day2 Frankfurt → Rüdesheim 的區域車，都是不用預約的區間車，當天 DB Navigator App 或售票機買即可。S-Bahn 屬 RMV 票區，在 DB App 買「Frankfurt Flughafen → Frankfurt Hbf」單程票就涵蓋。",
+        "priority": "low",
+        "links": [
+          {
+            "label": "DB Navigator",
+            "url": "https://www.bahn.com",
+            "cls": ""
+          }
+        ]
       }
     ]
   }
