@@ -379,6 +379,19 @@
     border-bottom:1px solid var(--line);
   }
   .day-panel-head .dp-date{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .dp-wear{
+    display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 9px;
+    margin-top:6px; padding:6px 9px; border-radius:7px;
+    background:var(--paper-2); border:1px solid var(--line);
+    font-size:11.5px; line-height:1.5;
+  }
+  .dp-wear .dw-t{font-family:'IBM Plex Mono',monospace; font-weight:600; white-space:nowrap;}
+  .dp-wear .dw-w{color:var(--ink-soft); flex:1; min-width:150px;}
+  .dp-wear.dw-cool{border-color:var(--lake);}
+  .dp-wear.dw-cool .dw-t{color:var(--lake);}
+  .dp-wear.dw-cold{border-color:var(--rust); background:#F4DED6;}
+  .dp-wear.dw-cold .dw-t{color:var(--rust);}
+  .dp-wear.dw-cold .dw-w{color:var(--rust);}
   .day-panel-head h2{
     font-family:'Fraunces',serif; font-size:21px; font-weight:600;
     margin:3px 0 0;
@@ -1480,7 +1493,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-20.5';
+const APP_VERSION = '2026-08-20.6';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2359,6 +2372,36 @@ function renderTimelineBlock(items){
   return `<div class="spot-list">${parts.join('')}</div>`;
 }
 
+/* ---------- 每日氣溫與建議穿搭 ----------
+   September climate normals per stop, adjusted for altitude on the mountain
+   days (Rothorn 2,350 m, Kleine Scheidegg 2,061 m, Gornergrat 3,089 m — the
+   last runs 5–10°C colder than Zermatt below it). `t` is the day's realistic
+   low–high span including early starts and evenings, not just midday.
+   Guidance rather than itinerary data, so it lives here, not in the JSON. */
+const DAY_WEAR = {
+  0:  { t:'26–31°C', w:'短袖短褲 · 機艙冷，外套放手提', tone:'warm' },
+  1:  { t:'11–21°C', w:'短袖＋長褲 · 清晨落地與晚上加外套', tone:'warm' },
+  2:  { t:'11–21°C', w:'短袖＋長褲 · 纜車上山風涼，外套隨身', tone:'warm' },
+  3:  { t:'11–21°C', w:'短袖＋長褲 · 🚢 甲板風大，外套一定要帶', tone:'warm' },
+  4:  { t:'8–21°C',  w:'白天短袖＋長褲 · 傍晚進 Iseltwald 明顯轉涼，外套', tone:'mild' },
+  5:  { t:'8–20°C',  w:'薄長袖＋長褲 · 一早出門冷，備薄外套', tone:'mild' },
+  6:  { t:'0–16°C',  w:'⛰️ 山頂 4–8°C：厚外套＋毛帽，手套建議帶', tone:'cold' },
+  7:  { t:'5–17°C',  w:'洋蔥式 · Kleine Scheidegg 6–10°C，中層＋外套', tone:'cool' },
+  8:  { t:'5–17°C',  w:'薄長袖＋長褲＋薄外套 · Blausee 林中陰涼', tone:'mild' },
+  9:  { t:'1–16°C',  w:'長袖長褲＋保暖外套 · 傍晚 Zermatt 看夕陽會冷', tone:'cool' },
+  10: { t:'0–11°C',  w:'❄️ Gornergrat 0–4°C 且風大：羽絨＋毛帽＋手套', tone:'cold' },
+  11: { t:'3–24°C',  w:'早上厚、下午脫 · 落差最大的一天，好穿脫為主', tone:'cool' },
+  12: { t:'15–25°C', w:'短袖短褲 · 🚢 渡輪甲板帶件薄外套', tone:'warm' },
+  13: { t:'15–25°C', w:'短袖短褲 · 🚢 渡輪甲板帶件薄外套', tone:'warm' },
+  14: { t:'15–25°C', w:'短袖短褲 · ⛪ 進 Duomo 需遮肩過膝，帶薄外套', tone:'warm' },
+  15: { t:'15–25°C', w:'短袖短褲 · 晚上到機場飯店，冷氣強', tone:'warm' },
+  16: { t:'15–25°C', w:'短袖＋長褲 · 機艙冷，外套放手提', tone:'warm' },
+};
+function dayWearHtml(n){
+  const w = DAY_WEAR[n];
+  if(!w) return '';
+  return `<div class="dp-wear dw-${w.tone}"><span class="dw-t">🌡 ${w.t}</span><span class="dw-w">${w.w}</span></div>`;
+}
 async function renderDayPanel(){
   const d = days.find(x=>x.n===activeDay);
   const el = document.getElementById('day-panel');
@@ -2457,6 +2500,7 @@ async function renderDayPanel(){
   el.innerHTML = `
     <div class="day-panel-head">
       <div class="dp-date">${fmtDate(d.date)} · DAY ${String(d.n).padStart(2,'0')}</div>
+      ${dayWearHtml(d.n)}
       <h2>${COUNTRY_FLAG[d.country]||''} ${d.title}</h2>
       ${d.note ? `<div style="font-size:12px;color:var(--rust);margin-top:5px;font-weight:600;">📌 ${d.note}</div>` : ''}
     </div>
