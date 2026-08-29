@@ -415,6 +415,8 @@
     display:flex; flex-direction:column; gap:6px;
   }
   .book-alert-block .ba-head{display:flex; align-items:center; gap:7px; font-weight:700;}
+  /* alert bodies are authored with real line breaks; render them as written */
+  .book-alert-block .ba-text{white-space:pre-wrap;}
   .book-alert-block a{
     align-self:flex-start;
     font-family:'IBM Plex Mono',monospace; font-size:11px;
@@ -1478,7 +1480,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-20.4';
+const APP_VERSION = '2026-08-20.5';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1791,7 +1793,7 @@ const todoData = [
       {
         "id": "duomo-milan",
         "title": "Milan Duomo 門票（Day14，想進教堂／登頂才需要）",
-        "desc": "Day14 行程有 Duomo。只在外面拍照不用票；要進教堂內部或上屋頂（rooftop）就建議先在官網買時段票——現場排隊常常很長。屋頂電梯與走樓梯是不同票價。若當天從 Como 過來時間不多，也可以留到 Day15 自由活動再上屋頂。",
+        "desc": "Day14 三個點只有 Duomo 要票：艾曼紐二世拱廊是開放通道、Navigli 運河區散步，兩者都免費；Duomo 的外觀與廣場也免費。\n\n要進教堂內部或上屋頂才需要買票（2026 官網票價）：\n• 教堂＋博物館 €10（不上屋頂，最便宜）\n• ＋屋頂・走樓梯 €15\n• ＋屋頂・搭電梯 €22（下行通常仍走樓梯）\n• 快速通關＋電梯＋考古區 €26\n\n屋頂能近看尖塔與雕像群，是這裡最值得的部分；體力可以就選樓梯票省 €7。建議官網先訂時段，現場排隊常常很久。\n\n⚠️ 服裝規定嚴格執行：需遮肩、褲長過膝，教堂內部、屋頂、博物館、考古區都適用，門口會擋。那天是短袖短褲天，記得帶薄外套或穿過膝長褲。\n\n💡 若當天從 Como 過來時間不夠，屋頂也可以留到 Day15 自由活動再上。",
         "priority": "medium",
         "links": [
           {
@@ -2391,7 +2393,7 @@ async function renderDayPanel(){
     } else if(item.type==='bookalert'){
       bodyHtml += `<div class="book-alert-block">
         <div class="ba-head">⚠️ ${item.title}</div>
-        <div>${item.text}</div>
+        <div class="ba-text">${item.text}</div>
         ${item.link ? `<a href="${item.link}" target="_blank" rel="noopener">前往預約 ↗</a>` : ''}
         ${docLinkHtml(item.docId)}
       </div>`;
