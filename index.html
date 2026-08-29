@@ -1494,7 +1494,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-29.4';
+const APP_VERSION = '2026-08-29.5';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1641,7 +1641,7 @@ const todoData = [
         "id": "checkin-outbound",
         "title": "線上報到｜去程 CI61（9/8 22:50 開放）",
         "docBtn": "🎫 看機票文件",
-        "desc": "✈️ CI61 · 9/10 22:50 桃園 T1 起飛\n• 線上報到開放：9/8（二）22:50（起飛前 48 小時）\n• 線上報到截止：9/10 21:50（起飛前 60 分鐘）\n• 華航建議起飛前 2 小時到機場；接送 19:40 上車，時間充裕。\n• 已線上報到但要托運行李，仍需在起飛前 1 小時左右到櫃檯。\n• 登機證存好後截圖一份備援。\n\n（依華航公告的一般規則推算，電子機票的 Last check-in 欄位為空白；報到時在 App 內再確認。）",
+        "desc": "✈️ CI61 · 9/10 22:50 桃園 T1 起飛\n• 線上報到開放：9/8（二）22:50（起飛前 48 小時）\n• 線上報到截止：9/10 21:50（起飛前 60 分鐘）\n• 華航建議起飛前 2 小時到機場；接送 19:40 上車，時間充裕。\n• 已線上報到但要托運行李，仍需在起飛前 1 小時左右到櫃檯。",
         "priority": "high",
         "links": [
           {
@@ -1655,7 +1655,7 @@ const todoData = [
         "id": "checkin-return",
         "title": "線上報到｜回程 CX234（9/24 12:45 開放）",
         "docBtn": "🎫 看機票文件",
-        "desc": "✈️ CX234 · 9/26 12:45 Malpensa T1 起飛（轉 CX530 回桃園）\n• 線上報到開放：9/24（四）12:45（起飛前 48 小時）\n• 線上報到截止：9/26 11:45（起飛前 60 分鐘）\n• Malpensa 櫃檯一般於起飛前 3 小時開放（約 09:45）；建議 09:30 前抵達航廈。\n• ⚠️ 9/24 開放時人在義大利——eSIM 若已到期會沒網路報到，跟 Day15 的續購提醒一起看。\n• 登機證存好後截圖一份備援。\n\n（依國泰公告的一般規則推算；報到時在 App 內再確認。）",
+        "desc": "✈️ CX234 · 9/26 12:45 Malpensa T1 起飛（轉 CX530 回桃園）\n• 線上報到開放：9/24（四）12:45（起飛前 48 小時）\n• 線上報到截止：9/26 11:45（起飛前 60 分鐘）\n• Malpensa 櫃檯一般於起飛前 3 小時開放（約 09:45）；建議 09:30 前抵達航廈。\n• ⚠️ 9/24 開放時人在義大利——eSIM 若已到期會沒網路報到，跟 Day15 的續購提醒一起看。",
         "priority": "high",
         "links": [
           {
@@ -1812,7 +1812,7 @@ const todoData = [
       {
         "id": "gornergrat",
         "title": "Gornergrat 齒軌列車（Day10）",
-        "desc": "夏季（5–10 月）全票 CHF132，持半價卡 5 折 → CHF66。旺季可加購 CHF7 優先上車券。\n\n✅ 決定：到 Zermatt 現場憑半價卡買，不先在 KKday 買。兩者價差很小（KKday 約 TWD 2,428 vs 現場約 TWD 2,620），但現場買可以看天氣決定哪天上山——Gornergrat 是為了看 Matterhorn，雲層擋住就整個白跑。Day9–Day11 都在 Zermatt 附近，有調整空間。",
+        "desc": "夏季（5–10 月）全票 CHF132，持半價卡 5 折 → CHF66。旺季可加購 CHF7 優先上車券。\n\n✅ 決定：到 Zermatt 現場憑半價卡買，不先在 KKday 買。兩者價差很小（KKday 約 TWD 2,428 vs 現場約 TWD 2,620），但現場買可以看天氣決定哪天上山——Gornergrat 是為了看 Matterhorn，雲層擋住就整個白跑。Day9–Day11 都在 Zermatt 附近，有調整空間。\n\n🎟️ 會賣完嗎——不會。Gornergrat 是「到場即搭」制，不需預訂；人多時會加掛車組連續發車，站內也有等候區，不會出現買不到票的情況。\n座位是先到先坐，所以想要好位置就早點排（行程已排第一班）。另有 CHF 7 的優先上車券（只適用上山），旺季想省排隊時間才需要，以我們搭第一班的安排來說用不到。",
         "priority": "high",
         "links": [
           {
@@ -1879,6 +1879,19 @@ const todoData = [
         ]
       },
       {
+        "id": "kkday-halffare-refund",
+        "title": "追蹤 KKday 半價卡退款",
+        "desc": "8/20 退掉舊的 Swiss Half Fare Card（效期 9/10–10/9、TWD 5,473、台新）改買新卡（9/13–10/12、TWD 5,362）。\n\n記帳已直接改為新卡金額，等於假設舊卡會全額退回——所以這筆要盯到入帳為止：\n• 確認 KKday 訂單已顯示退款完成\n• 對台新帳單，確認 5,473 已退回\n• 若有價差或手續費，回報給我調整記帳\n\n📄 舊卡 PDF 留在資料庫當佐證（docs/SBB_half_fare_REFUNDED_*.pdf），退款確認後可刪。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "KKday 我的訂單",
+            "url": "https://www.kkday.com/zh-tw/user/orders",
+            "cls": ""
+          }
+        ]
+      },
+      {
         "id": "como-checkin-conflict",
         "title": "⚠️ 確認 Como 民宿能否晚於 19:00 入住（Day11｜9/21）",
         "desc": "已訂的 Zermatt → Como 班次 18:49 抵達 Como S. Giovanni，但 Azzano Holidays B&B 的 check-in 截止是 19:00——只差 11 分鐘，扣掉下車、走出站根本來不及從容抵達。\n\n出發前務必先聯絡民宿問清楚：\n① 實際地址，以及從 Como S. Giovanni 過去要多久（民宿名稱裡的 Azzano 若是指湖西岸的 Azzano／Tremezzina，離 Como 市區還有一段距離，光是交通就不只 11 分鐘）\n② 晚到能否入住，有沒有自助入住或鑰匙箱\n③ 若不行，是否改搭更早一班車（SBB App 可改期，但頭等票要看票種規則）\n\n這是整趟行程目前唯一時間壓在紅線上的銜接，建議優先處理。",
@@ -1931,6 +1944,44 @@ const todoData = [
         "desc": "15 天方案若在 9/11 開通，到 9/25 當天就到期。9/26 回程要用網路的地方不少：叫車／查 Malpensa Express 班次、線上 check-in、登機證、轉機時聯絡家人。\n\nDay15 在米蘭時先做兩件事：① 在 eSIM App 查剩餘天數與流量 ② 若 9/26 沒有涵蓋，直接在 App 加購最短天數的方案（通常 1–3 天，很便宜），不要等到機場才處理。\n\n💡 備案：Malpensa 機場與航班上都有 Wi-Fi，真的斷了不至於卡死，但別把登機證只留在雲端，前一晚先截圖存手機。",
         "priority": "medium",
         "links": []
+      }
+    ]
+  },
+  {
+    "icon": "📱",
+    "title": "出發前手機準備",
+    "badge": "行前",
+    "group": "pre",
+    "items": [
+      {
+        "id": "phone-storage",
+        "title": "整理手機空間",
+        "desc": "16 天會拍很多照片與影片，出發前先清出空間。\n• 舊照片備份到雲端後刪除本機\n• 清掉用不到的 App 與離線影音\n• 順便確認 iCloud／Google 相簿的自動備份有開，但在歐洲用行動網路備份會吃 eSIM 流量——建議設成「只在 Wi-Fi 備份」。\n💡 證件分頁的票券 QR 會存在裝置上（每張約 200KB），空間不足時可能存不進去。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "id": "transit-apps",
+        "title": "下載各國購票 App（含註冊需求）",
+        "desc": "行程會用到三個，出發前先裝好並處理註冊，落地才不會卡在辦帳號：\n\n🇩🇪 DB Navigator（Day1 機場 S-Bahn、Day2 往 Rüdesheim、Day3 往 Colmar）\n→ ⚠️ 需要註冊才能買票，查班次可以不用。免費、幾分鐘，務必出發前辦好。\n\n🇨🇭 SBB Mobile（瑞士全段區間車與巴士）\n→ 可以用訪客身分直接買票，不註冊也行；但註冊才能保存票券與付款方式，建議還是辦。\n→ 別忘了在 Settings → Travellers → Edit 勾「Half-fare travelcard (1/2)」，查價才會顯示 5 折。\n\n🇮🇹 Trenord（Day14 Como → Milano Centrale）\n→ 註冊需求我沒查到明確說法，當作需要註冊先辦好比較保險；真的不行就用車站售票機買紙本票（記得打票）。\n\n💳 三個 App 都先把付款方式綁好，現場才不用臨時輸卡號。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "DB Navigator",
+            "url": "https://www.bahn.com/en/service/mobile/db-navigator",
+            "cls": ""
+          },
+          {
+            "label": "SBB Mobile",
+            "url": "https://www.sbb.ch/en/travel-information/apps/sbb-mobile.html",
+            "cls": "alt"
+          },
+          {
+            "label": "Trenord",
+            "url": "https://www.trenord.it/en/",
+            "cls": "alt"
+          }
+        ]
       }
     ]
   },
