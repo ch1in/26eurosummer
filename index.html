@@ -464,6 +464,7 @@
     color:var(--gold); background:#F7EFDC; border:1px solid #E8D8AE;
     padding:2px 7px; border-radius:20px; margin-top:4px;
   }
+  .spot-price .sp-half{color:var(--rust); font-weight:700;}
   .spot-note{font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.5;}
   .spot-actions{display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;}
 
@@ -1493,7 +1494,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-29.1';
+const APP_VERSION = '2026-08-29.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1750,6 +1751,24 @@ const todoData = [
         "desc": "Iseltwald↔Brienz（Rothorn Bahn 除外）／Interlaken↔Grindelwald／Lauterbrunnen↔Wengen↔Kleine Scheidegg↔Grindelwald／Kandersteg↔Spiez↔Zermatt 等。\n\n（Interlaken↔Luzern、Luzern→Lungern→Iseltwald 不在此列——那是 Day5 的路線，全程由 9/15 的 Saver Day Pass 涵蓋，不用買單程票。）\n\n⚠️ 持半價卡「每一趟都要買票」（半價），不像 Travel Pass 可以直接上車。這些區間車不需預約劃位，當天用 SBB App 買就好，但別忘了買——無票被查到會罰款。\n\n📌 Day7（少女峰地區）決定：不預購、不買通票。Lauterbrunnen→Wengen→Kleine Scheidegg→Grindelwald 全是區間齒軌車，只有 Kleine Scheidegg／Eigergletscher ↔ Jungfraujoch 才需要訂位，而我們不上 Jungfraujoch，所以當天用 SBB App 買就好。Jungfrau Travel Pass 最短 3 天（2026 約 CHF210 起），而這天整圈車資持半價卡約 CHF43–45，通票完全不划算，也沒有 1 日版。",
         "priority": "low",
         "links": []
+      },
+      {
+        "id": "rhine-cruise",
+        "title": "KD 萊茵河遊船線上預購（Day3｜9/13）",
+        "desc": "Day3（9/13）搭 09:00 Rüdesheim → 10:55 St. Goar。\n\n✅ 建議線上預購：KD 官網買好之後可以直接到碼頭上船，不必排售票亭。\n\n⚠️ 為什麼不建議當天現場買：碼頭售票亭每天只營業到最後一班船開走，開門時間又接近首班船，9:00 這班當天才買會很趕。前一天傍晚去買也不保險——那時可能已經收工。\n\n⏰ KD 要求開船前 15 分鐘抵達碼頭（→ 08:45 前到）。\n🚢 甲板風大，薄外套隨身。",
+        "priority": "high",
+        "links": [
+          {
+            "label": "🎟️ KD 線上訂票",
+            "url": "https://www.k-d.com/en/",
+            "cls": ""
+          },
+          {
+            "label": "🕐 2026 官方時刻表（PDF）",
+            "url": "https://www.k-d.com/wp-content/uploads/2026/02/KD_Fahrplan_2026_web.pdf",
+            "cls": "alt"
+          }
+        ]
       }
     ]
   },
@@ -1806,11 +1825,11 @@ const todoData = [
       {
         "id": "duomo-milan",
         "title": "Milan Duomo 門票（Day14，想進教堂／登頂才需要）",
-        "desc": "Day14 三個點只有 Duomo 要票：艾曼紐二世拱廊是開放通道、Navigli 運河區散步，兩者都免費；Duomo 的外觀與廣場也免費。\n\n要進教堂內部或上屋頂才需要買票（2026 官網票價）：\n• 教堂＋博物館 €10（不上屋頂，最便宜）\n• ＋屋頂・走樓梯 €15\n• ＋屋頂・搭電梯 €22（下行通常仍走樓梯）\n• 快速通關＋電梯＋考古區 €26\n\n屋頂能近看尖塔與雕像群，是這裡最值得的部分；體力可以就選樓梯票省 €7。建議官網先訂時段，現場排隊常常很久。\n\n⚠️ 服裝規定嚴格執行：需遮肩、褲長過膝，教堂內部、屋頂、博物館、考古區都適用，門口會擋。那天是短袖短褲天，記得帶薄外套或穿過膝長褲。\n\n💡 若當天從 Como 過來時間不夠，屋頂也可以留到 Day15 自由活動再上。",
+        "desc": "Day14 三個點只有 Duomo 要票：艾曼紐二世拱廊是開放通道、Navigli 運河區散步，兩者都免費；Duomo 的外觀與廣場也免費。\n\n要進教堂內部或上屋頂才需要買票（2026 官網票價）：\n• 教堂＋博物館 €10（不上屋頂，最便宜）\n• ＋屋頂・走樓梯 €15\n• ＋屋頂・搭電梯 €22（下行通常仍走樓梯）\n• 快速通關＋電梯＋考古區 €26\n\n屋頂能近看尖塔與雕像群，是這裡最值得的部分；體力可以就選樓梯票省 €7。\n\n🚦 先訂票還要排隊嗎——會，但排的是不同的隊：\n• 現場買票的隊伍旺季常要 40 分～2 小時，線上訂時段票可以整個跳過\n• 但「安檢」不分票種都要過，約 10–20 分鐘，沒有任何票能免\n→ 所以線上預訂省下的就是那 40 分～2 小時，值得訂。\n\n💡 那要不要買 €26 快速通關？我的看法是不必：它同樣不能跳過安檢，省時的關鍵在「有沒有線上訂」而不是票種，€26 比 €22 多的主要是地下考古區。想看考古區才買，純粹為了插隊就不划算。9 月已過旺季尖峰，人潮比 7–8 月少。\n\n⚠️ 服裝規定嚴格執行：需遮肩、褲長過膝，教堂內部、屋頂、博物館、考古區都適用，門口會擋。那天是短袖短褲天，記得帶薄外套或穿過膝長褲。\n\n💡 若當天從 Como 過來時間不夠，屋頂也可以留到 Day15 自由活動再上。",
         "priority": "medium",
         "links": [
           {
-            "label": "Duomo 官網購票",
+            "label": "🎟️ Duomo 官網購票",
             "url": "https://www.duomomilano.it/en/",
             "cls": ""
           }
@@ -2002,24 +2021,6 @@ const todoData = [
           {
             "label": "RheinWeinWelt",
             "url": "https://www.google.com/maps/search/?api=1&query=RheinWeinWelt%20R%C3%BCdesheim",
-            "cls": "alt"
-          }
-        ]
-      },
-      {
-        "id": "rhine-cruise",
-        "title": "Rhine 遊船船票（Day3）",
-        "desc": "Day3（9/13）搭 09:00 Rüdesheim → 10:55 St. Goar。\n\n✅ 建議線上預購：KD 官網買好之後可以直接到碼頭上船，不必排售票亭。\n\n⚠️ 為什麼不建議當天現場買：碼頭售票亭每天只營業到最後一班船開走，開門時間又接近首班船，9:00 這班當天才買會很趕。前一天傍晚去買也不保險——那時可能已經收工。\n\n⏰ KD 要求開船前 15 分鐘抵達碼頭（→ 08:45 前到）。\n🚢 甲板風大，薄外套隨身。",
-        "priority": "low",
-        "links": [
-          {
-            "label": "🕐 KD 2026 官方時刻表（PDF）",
-            "url": "https://www.k-d.com/wp-content/uploads/2026/02/KD_Fahrplan_2026_web.pdf",
-            "cls": ""
-          },
-          {
-            "label": "KD 官網",
-            "url": "https://www.k-d.com/en/",
             "cls": "alt"
           }
         ]
@@ -2344,7 +2345,10 @@ function isStayStartDay(d){
 function renderTimelineBlock(items){
   // items: consecutive run of {type:'spot', ...}
   const parts = items.map((s, i)=>{
-    const priceHtml = s.price ? `<div class="spot-price">🎫 ${s.price}</div>` : '';
+    // the half-fare figure is what you actually pay, so pull it out in red
+    const priceHtml = s.price
+      ? `<div class="spot-price">🎫 ${s.price.replace(/(持半價卡[^／。，]*?CHF\s?[\d.]+)/g, '<b class="sp-half">$1</b>')}</div>`
+      : '';
     const noteHtml = s.note ? `<div class="spot-note">${s.note}</div>` : '';
     const card = `<div class="spot-card">
       <img class="spot-photo" src="${photoUrl(s.photo)}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">
