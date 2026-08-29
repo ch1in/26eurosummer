@@ -737,6 +737,33 @@
     color:var(--rust); font-size:12px; margin-top:10px; min-height:14px;
   }
 
+  .pack-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:8px;}
+  .pack-table{
+    width:100%; border-collapse:collapse; background:var(--paper-2);
+    border:1px solid var(--line); border-radius:9px; overflow:hidden;
+  }
+  .pack-table th{
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-soft); text-align:left;
+    padding:8px 9px; border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  .pack-table td{padding:9px; font-size:12px; vertical-align:top; border-bottom:1px solid var(--line);}
+  .pack-table tr:last-child td{border-bottom:none;}
+  .pack-table .pk-wear{font-weight:700; white-space:nowrap;}
+  .pack-table .pk-days{font-family:'IBM Plex Mono',monospace; white-space:nowrap; color:var(--ink-soft);}
+  .pack-table .pk-where{color:var(--ink-soft); line-height:1.5; min-width:110px;}
+  .pack-table .pk-span{font-family:'IBM Plex Mono',monospace; font-size:11px; white-space:nowrap;}
+  /* a warm→cold cue down the left edge, so the two winter days stand out */
+  .pack-table tr.pk-warm td:first-child{box-shadow:inset 3px 0 0 var(--gold);}
+  .pack-table tr.pk-mild td:first-child{box-shadow:inset 3px 0 0 var(--ch);}
+  .pack-table tr.pk-cool td:first-child{box-shadow:inset 3px 0 0 var(--lake);}
+  .pack-table tr.pk-cold td:first-child{box-shadow:inset 3px 0 0 var(--rust);}
+  .pack-table tr.pk-cold .pk-wear{color:var(--rust);}
+  .pack-note{
+    font-size:11.5px; line-height:1.75; color:var(--ink-soft);
+    background:var(--paper-2); border:1px solid var(--line);
+    border-radius:9px; padding:10px 12px; margin-bottom:18px;
+  }
   /* ================= DOCS / 證件票券 ================= */
   .doc-note{
     background:var(--paper-2); border:1px solid var(--line); border-radius:9px;
@@ -915,6 +942,7 @@
 <!-- ============ OOTD ============ -->
 <div class="view" id="view-ootd">
   <div class="persist-note" id="persist-note-ootd" style="display:none;"></div>
+  <div id="pack-guide"></div>
   <div class="ootd-add">
     <label>日期</label>
     <select id="ootd-date"></select>
@@ -1450,7 +1478,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-20.3';
+const APP_VERSION = '2026-08-20.4';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2790,6 +2818,42 @@ document.getElementById('exp-save').addEventListener('click', async ()=>{
 document.getElementById('exp-cancel-edit')?.addEventListener('click', ()=>{ exitEditMode(); });
 
 
+/* ---------- 穿搭：每日衣著強度總表 ----------
+   Derived from September climate normals for each stop plus altitude: the trip
+   spans ~25°C between the Italian lakes and Gornergrat (3,089 m), so the table
+   is grouped by how much you need to wear rather than by date. Kept here (not
+   in itinerary.json) because it's guidance, not itinerary data. */
+const PACK_ROWS = [
+  { wear:'短袖短褲',        days:4, where:'Como 湖區、米蘭',            span:'Day 12–15', tone:'warm' },
+  { wear:'短袖＋長褲',      days:5, where:'法蘭克福、萊茵河、Colmar',    span:'Day 1–4、11', tone:'warm' },
+  { wear:'薄長袖＋長褲',    days:2, where:'琉森／Lungern、Spiez／Blausee', span:'Day 5、8', tone:'mild' },
+  { wear:'長袖長褲＋外套',  days:2, where:'少女峰地區、Zermatt',         span:'Day 7、9', tone:'cool' },
+  { wear:'接近冬裝',        days:2, where:'Brienzer Rothorn 2,350m、Gornergrat 3,089m', span:'Day 6、10', tone:'cold' },
+  { wear:'移動日',          days:1, where:'米蘭 ✈️ 台灣',               span:'Day 16', tone:'mild' },
+];
+function renderPackGuide(){
+  const el = document.getElementById('pack-guide');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="sec-label">每日衣著強度</div>
+    <div class="pack-wrap">
+      <table class="pack-table">
+        <thead><tr><th>穿法</th><th>天數</th><th>地點</th><th>哪幾天</th></tr></thead>
+        <tbody>${PACK_ROWS.map(r=>`
+          <tr class="pk-${r.tone}">
+            <td class="pk-wear">${r.wear}</td>
+            <td class="pk-days">${r.days} 天</td>
+            <td class="pk-where">${r.where}</td>
+            <td class="pk-span">${r.span}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="pack-note">☝️ 依「15°C 以下薄長袖長褲就要加外套」的體感估算。
+      Day 6、Day 10 上山推估 0–8°C 且風大，需羽絨或厚刷毛＋帽子手套。
+      🚢 船上（Day 3 萊茵河、Day 12–13 Como 渡輪）體感再低 4–5°C，外套隨身。
+      ⛪ Day 14 進 Duomo 不可露肩、短褲需過膝。</div>`;
+}
 function populateOotdDates(){
   const sel = document.getElementById('ootd-date');
   sel.innerHTML = days.map(d=>`<option value="${d.date}">${fmtDate(d.date)} · Day ${d.n} ${d.title}</option>`).join('');
@@ -3112,6 +3176,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   renderDayStrip();
   renderDayPanel();
   populateOotdDates();
+  renderPackGuide();
   renderOotdList();
   renderExpenses();
 
