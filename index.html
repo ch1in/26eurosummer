@@ -1493,7 +1493,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-20.6';
+const APP_VERSION = '2026-08-20.7';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2009,7 +2009,7 @@ const todoData = [
       {
         "id": "rhine-cruise",
         "title": "Rhine 遊船船票（Day3）",
-        "desc": "Rüdesheim 碼頭售票亭（KD Line／Rhein-Mosel Line）現場買，旺季提早 15–20 分到。",
+        "desc": "Day3（9/13）搭 09:00 Rüdesheim → 10:55 St. Goar。\n\n✅ 建議線上預購：KD 官網買好之後可以直接到碼頭上船，不必排售票亭。\n\n⚠️ 為什麼不建議當天現場買：碼頭售票亭每天只營業到最後一班船開走，開門時間又接近首班船，9:00 這班當天才買會很趕。前一天傍晚去買也不保險——那時可能已經收工。\n\n⏰ KD 要求開船前 15 分鐘抵達碼頭（→ 08:45 前到）。\n🚢 甲板風大，薄外套隨身。",
         "priority": "low",
         "links": [
           {
