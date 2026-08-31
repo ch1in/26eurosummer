@@ -383,6 +383,12 @@
     border-bottom:1px solid var(--line);
   }
   .day-panel-head .dp-date{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  /* 起床時間：出門時間往回抓 1 小時，有附早餐的飯店再往回 45 分 */
+  .day-panel-head .dp-wake{color:var(--rust); font-weight:600;}
+  .day-panel-head .dp-wake-note{
+    margin-top:3px; font-size:10.5px; color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+  }
   .dp-wear{
     display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 9px;
     margin-top:6px; padding:6px 9px; border-radius:7px;
@@ -1504,7 +1510,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-29.9';
+const APP_VERSION = '2026-08-30.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1879,6 +1885,13 @@ const todoData = [
         "id": "milan-hotel-0924",
         "title": "Milan 9/24 住宿（✅ 已訂）",
         "desc": "Day14（9/24）Como → Milan 這晚已訂 Romana Suites，全行程 16 晚到此全數訂完。（金額與付款卡別記在💰記帳分頁）\n\n📍 落在 Porta Romana、Duomo 南側（完整地址在每日行程 Day14 的住宿卡）：走到 Duomo 約 12 分、Navigli 約 20 分，Day14 三個點都走得到。地鐵 M3（黃線）Crocetta／Missori 站就在旁邊，往 Milano Centrale 約 10 分。\n\n🕑 入住 14:00–00:00、退房 05:00–10:00。\n• 從 Como 的車大約中午到，早到就先寄行李再出門。\n• Day15（9/25）10:00 前一定要退房，那天整天帶著行李——先問能不能寄放，不行就用 Milano Centrale 一樓的 Deposito Bagagli。\n\n📮 Booking 上還沒填抵達時間，回去補一下。這種小型 suite 常是約時間交鑰匙，填了比較保險。\n\n❓ 免費取消期限訂單上有寫的話告訴我，我補進記帳，到期前會提醒。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "id": "confirm-breakfast-it",
+        "title": "跟 Como、Milan 兩間確認有沒有附早餐",
+        "desc": "起床時間是用「出門前抓 1 小時，有附早餐再多抓 45 分」算出來的，所以每間有沒有早餐會直接改動日程上的 ⏰。\n\n目前的認定：\n• 有早餐：Iseltwald（Châlet Du Lac）、Malpensa（Cardano）\n• 沒有：Frankfurt、Rüdesheim、Colmar、Interlaken、Zermatt\n• ❓ 待確認：Como（Azzano Holidays B&B）、Milan（Romana Suites）——先當作沒有\n\n查到結果告訴我，我把 Day 11–14 的起床時間往前補 45 分。\n\n📌 另外：有附早餐的那兩間，check-in 時記得問「早餐幾點開始」。開始時間比有沒有早餐更關鍵——9/15 是 08:00 出門，早餐若 08:00 才開就等於沒有。",
         "priority": "medium",
         "links": []
       },
@@ -2563,7 +2576,9 @@ async function renderDayPanel(){
 
   el.innerHTML = `
     <div class="day-panel-head">
-      <div class="dp-date">${fmtDate(d.date)} · DAY ${String(d.n).padStart(2,'0')}</div>
+      <div class="dp-date">${fmtDate(d.date)} · DAY ${String(d.n).padStart(2,'0')}${
+        d.wake ? ` · <span class="dp-wake" title="${d.wakeNote||''}">⏰${d.wake}</span>` : ''}</div>
+      ${d.wake && d.wakeNote ? `<div class="dp-wake-note">${d.wakeNote}</div>` : ''}
       ${dayWearHtml(d.n)}
       <h2>${COUNTRY_FLAG[d.country]||''} ${d.title}</h2>
       ${d.note ? `<div style="font-size:12px;color:var(--rust);margin-top:5px;font-weight:600;">📌 ${d.note}</div>` : ''}
