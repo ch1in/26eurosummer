@@ -408,23 +408,26 @@
   }
   /* one compact line per leg: seat side · reservation · validation */
   .transit-ride{
-    margin-top:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
-    color:var(--ink-soft); letter-spacing:.01em;
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--ink-soft); letter-spacing:-.01em;
   }
   .transit-ride .rd-warn{color:var(--rust); font-weight:600;}
   .transit-block{
-    margin:12px 16px; padding:10px 12px;
+    margin:12px 12px; padding:10px 10px;
     background:#fff; border:1px dashed var(--line); border-radius:7px;
     font-size:12.5px; color:var(--ink-soft);
-    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   }
+  .transit-block .tb-main{display:flex; align-items:center; gap:8px;}
   .transit-block .t-ic{font-size:15px;}
-  .transit-block a{
-    margin-left:auto;
+  /* doc button · 路線 · 座位 all on one row */
+  .transit-block .tb-meta{
+    display:flex; align-items:center; flex-wrap:wrap; gap:5px 6px; margin-top:7px;
+  }
+  .transit-block .tb-meta a, .transit-block .tb-meta .link-btn{
     font-family:'IBM Plex Mono',monospace;
-    font-size:11px; color:var(--lake); text-decoration:none;
-    border:1px solid var(--lake); padding:4px 9px; border-radius:20px;
-    white-space:nowrap;
+    font-size:10px; color:var(--lake); text-decoration:none;
+    border:1px solid var(--lake); padding:2px 6px; border-radius:20px;
+    white-space:nowrap; background:none; line-height:1.4;
   }
   .transit-book-note{
     flex-basis:100%; font-size:11px; color:var(--rust); font-weight:600;
@@ -1510,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-30.6';
+const APP_VERSION = '2026-08-30.7';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1707,7 +1710,7 @@ const todoData = [
       {
         "id": "train-stgoar-colmar",
         "title": "St. Goar → Colmar",
-        "desc": "Day3（9/13）遊船 10:55 在 St. Goar 上岸，走 5 分鐘到車站搭火車到 Colmar，約 4 小時、需轉車（通常經 Koblenz／Mainz／Strasbourg）。\n\n🚦 先講結論：「這條線不可能「訂不到」」。德國區間車與法國 TER 都不劃位、當天一定買得到票，所以等 KD 確定了再訂完全沒有搶不到的風險——會變的只有價格。唯一的例外是行程裡如果含 TGV（強制訂位、會賣完），訂位前先確認你那張有沒有 TGV。\n\n🎫 DB 上看到的兩個票種差在哪（差 €3.61）：\n• 「Teilweise flexibel」€118.89 — 可退改但有限制與手續費，通常仍綁你訂的那班車\n• 「Beste Flexibilität」€122.50 — 「不綁車次」，當天同路線任何車都能搭，出發前退改幾乎無成本\n→ 你不確定 St. Goar 要待多久、也怕船誤點失接，那 €3.61 買到「不綁車次」是這兩者間最容易的決定：「選 Beste Flexibilität」。\n\n❓ 為什麼沒看到早鳥票：德法跨境的 Sparpreis Europa 通常 €39 起，最低只剩 €118 表示那批額度賣完了，或這個起訖組合不提供。值得再試：把起點改成 Koblenz 或 Mainz（小站有時吃不到跨境優惠額度），或換一個出發時段。\n\n💡 更省的做法是拆票（9/13 是週日，剛好有利）：\n• Quer-durchs-Land-Ticket €51／人（同行每加 1 人 +€12），全德區間車無限搭，週末 00:00 起就生效 → 一路搭到 Kehl／Offenburg\n• 過境後另買 Strasbourg → Colmar 的 TER，約 €13\n→ 一人約 €66，比 €122.50 省一半，而且完全不綁車次、不可能賣完。代價是只能搭區間車，比 €122 那條慢約 1–1.5 小時、轉車較多。當天 10:55 上岸，慢一點也還是傍晚就到 Colmar。\n→ 想在 St. Goar 上去看 Rheinfels 城堡再走，這個方案最適合——反正沒有車次要趕。\n\n⚠️ 全程都在瑞士境外，半價卡不適用，要買全票。",
+        "desc": "Day3（9/13）遊船 10:55 在 St. Goar 上岸，走 5 分鐘到車站搭火車到 Colmar，約 4 小時、需轉車（通常經 Koblenz／Mainz／Strasbourg）。\n\n🚦 先講結論：「這條線不可能「訂不到」」。德國區間車與法國 TER 都不劃位、當天一定買得到票，所以等 KD 確定了再訂完全沒有搶不到的風險——會變的只有價格。唯一的例外是行程裡如果含 TGV（強制訂位、會賣完），訂位前先確認你那張有沒有 TGV。\n\n🎫 DB 上看到的兩個票種差在哪（差 €3.61）：\n• 「Teilweise flexibel」€118.89 — 可退改但有限制與手續費，通常仍綁你訂的那班車\n• 「Beste Flexibilität」€122.50 — 「不綁車次」，當天同路線任何車都能搭，出發前退改幾乎無成本\n→ 你不確定 St. Goar 要待多久、也怕船誤點失接，那 €3.61 買到「不綁車次」是這兩者間最容易的決定：「選 Beste Flexibilität」。\n\n❓ 為什麼沒看到早鳥票：德法跨境的 Sparpreis Europa 通常 €39 起，最低只剩 €118 表示那批額度賣完了，或這個起訖組合不提供。值得再試：把起點改成 Koblenz 或 Mainz（小站有時吃不到跨境優惠額度），或換一個出發時段。\n\n💡 更省的做法是拆票（9/13 是週日，剛好有利）：\n• Quer-durchs-Land-Ticket €51／人（同行每加 1 人 +€12），全德區間車無限搭，週末 00:00 起就生效\n• 但它只吃「區間車」——RB／RE／RS／S-Bahn 可以，「IC 與 ICE 都不行」\n• 德國段搭到 Kehl（邊境站）為止，之後 Kehl → Strasbourg（約 €2–4）與 Strasbourg → Colmar 的 TER（約 €13）要另外買\n→ 一人約 €66–70，比 €122.50 省一半，完全不綁車次、不可能賣完。\n\n⚠️ DB 預設給你的班次幾乎都含 IC／ICE，那種買了 QdL 也不能搭。要用 QdL 就得在 DB 搜尋時勾「僅近距離交通／nur Nahverkehr」，讓它只排區間車。\n→ 全區間車的路線大致是 St. Goar →（RB26）Mainz →（RE）Mannheim → Karlsruhe → Offenburg → Kehl，再過境。含轉車等待約 6–6.5 小時。\n→ 這個時間其實跟 DB 給的含 ICE 班次差不多（你看到的兩班是 5h31 與 6h14），所以多花的時間有限，省的錢卻是一半。\n→ 想在 St. Goar 上去看 Rheinfels 城堡再走，這個方案最適合——反正沒有車次要趕。\n\n⚠️ 全程都在瑞士境外，半價卡不適用，要買全票。",
         "priority": "high",
         "links": [
           {
@@ -1897,9 +1900,9 @@ const todoData = [
       },
       {
         "id": "confirm-como-location",
-        "title": "🔴 確認 Como 那三晚的住宿位置",
-        "desc": "查訂房資料發現 Azzano Holidays B&B 在 Mezzegra（Tremezzina 鎮），湖西岸、離 Como 市區約 20 km，不是原本行程假設的「Como 市區走路 5–15 分」。Day11–14 的動線已依此全部改寫。\n\n請幫我確認兩件事：\n① 你訂的確實是這間、地址是 Viale Rimembranze 2, Mezzegra 22016 嗎？如果其實是 Como 市區的別家，告訴我我改回去。\n② 9/21 那天 18:49 到 Como 之後怎麼過去——船已收班，只剩巴士 C10（約 1 小時，約 20:00 到）或叫車（約 30–40 分）。抵達前先跟 B&B 講好幾點到、鑰匙怎麼拿。\n\n改對之後其實是賺到：Bellagio 就在正對岸（渡輪 10–15 分，原本從 Como 要 2 小時慢船），Menaggio 往北只有 4 km，Varenna 在對岸。Day12、13 兩天的船程都大幅縮短。",
-        "priority": "high",
+        "title": "Como 三晚的住宿位置（✅ 已確認）",
+        "desc": "已確認：住的是 Azzano Holidays B&B，Viale Rimembranze 2, Mezzegra 22016，在 Tremezzina 鎮、湖西岸，不是 Como 市區。Day11–14 的動線都已依此改寫。\n\n位置其實是賺到：Bellagio 就在正對岸（渡輪 10–15 分，從 Como 市區要 2 小時慢船），Menaggio 往北只有 4 km，Varenna 在對岸。Day12、13 的船程都很短，回程走中湖三角，車渡輪旺季開到晚上 10 點多，時間壓力小。\n\n⚠️ 唯一要留意的是 Day11 抵達：18:49 到 Como 時船已收班，要搭 C10 巴士（約 1 小時）或叫車（30–40 分）。抵達前先跟 B&B 講好幾點到、鑰匙怎麼拿。\n⚠️ 之後搭船別上錯方向——往南的 Como 線末班早很多（Varenna→Como 約 16:45），回程要找 Cadenabbia 或 Menaggio。",
+        "priority": "medium",
         "links": []
       },
       {
@@ -2521,14 +2524,20 @@ async function renderDayPanel(){
     flushSpots();
     if(item.type==='transit'){
       const link = item.origin ? mapDir(mapPoint(item.origin), mapPoint(item.dest), item.mode||'transit') : null;
+      // buttons and the seat line share one meta row so a leg stays compact
+      // instead of stacking doc / 路線 / 💺 on three separate lines
+      const meta = [
+        docLinkHtml(item.docId, true),
+        link ? `<a href="${link}" target="_blank" rel="noopener">路線</a>` : '',
+        item.extLink ? `<a href="${item.extLink.url}" target="_blank" rel="noopener">${item.extLink.label}</a>` : '',
+        // tighten the separators so the seat line fits beside the buttons
+        item.ride ? `<span class="transit-ride">${item.ride.replace(/\s·\s/g,'·').replace(/^💺\s/,'💺')}</span>` : ''
+      ].filter(Boolean).join('');
       bodyHtml += `<div class="transit-block">
-        <span class="t-ic">${item.icon}</span><span>${item.text}</span>
-        ${link ? `<a href="${link}" target="_blank" rel="noopener">路線 ↗</a>` : ''}
-        ${item.extLink ? `<a href="${item.extLink.url}" target="_blank" rel="noopener">${item.extLink.label} ↗</a>` : ''}
-        ${item.ride ? `<div class="transit-ride">${item.ride}</div>` : ''}
+        <div class="tb-main"><span class="t-ic">${item.icon}</span><span>${item.text}</span></div>
+        ${meta ? `<div class="tb-meta">${meta}</div>` : ''}
         ${item.bookNote ? `<div class="transit-book-note">🎫 ${item.bookNote}</div>` : ''}
         ${item.note && !item.bookNote ? `<div class="transit-book-note" style="color:var(--ink-soft);">ℹ️ ${item.note}</div>` : ''}
-        ${docLinkHtml(item.docId)}
       </div>`;
     } else if(item.type==='luggage'){
       bodyHtml += `<div class="luggage-block"><span class="lg-ic">🧳</span><div>${item.text}</div></div>`;
@@ -3181,7 +3190,7 @@ const DOCS = [
   { id:'halffare', icon:'🚆', title:'Swiss Half Fare Card 半價卡', short:'半價卡',
     sub:'效期 2026/09/13 – 10/12（🔁 8/20 重買的新卡）· 記名票，需與護照一起出示<br>瑞士境內每趟仍要買票，票價 5 折',
     sbb:true, qr:'halffare-qr', qrCap:'查票出示：這個 QR ＋ SBB App 車票 ＋ 護照' },
-  { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）', short:'9/15 一日票',
+  { id:'daypass915', icon:'🎟️', title:'Saver Day Pass（9/15 一日票）', short:'一日票',
     sub:'9/15 00:00 – 9/16 05:00 · 二等車廂 · GA 全網範圍<br>這天不必再單買車票，Luzern／Lungern 來回都涵蓋',
     sbb:true, qr:'daypass915-qr', qrCap:'9/15 當天查票出示：這個 QR ＋ 護照' },
   { id:'ci61', icon:'✈️', title:'去程電子機票 CI61', short:'去程機票',
@@ -3208,12 +3217,15 @@ function sbbBtnHtml(label){
 /* Timeline entries that depend on a ticket carry a docId; this renders the
    button that opens it, so the document is one tap away on the day you need
    it rather than something to go hunting for. Unknown ids render nothing. */
-function docLinkHtml(docId){
+function docLinkHtml(docId, inline){
   if(!docId) return '';
   const doc = DOCS.find(d => d.id === docId);
   if(!doc) return '';
-  return `<div class="doc-inline-link"><button type="button" class="link-btn doc-jump"
-    onclick="openDocViewer('${doc.id}')">${doc.icon} 開啟${doc.short || doc.title}</button></div>`;
+  // inline form drops the wrapper div and the 開啟 prefix so it fits on the
+  // transit block's single meta row
+  const btn = `<button type="button" class="link-btn doc-jump"
+    onclick="openDocViewer('${doc.id}')">${doc.icon} ${inline ? '' : '開啟'}${doc.short || doc.title}</button>`;
+  return inline ? btn : `<div class="doc-inline-link">${btn}</div>`;
 }
 // jump straight to a document from wherever it's referenced (e.g. the
 // half-fare TODO item), so the card is one tap away when it's needed
