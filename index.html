@@ -1510,7 +1510,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-30.4';
+const APP_VERSION = '2026-08-30.5';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2123,8 +2123,8 @@ const todoData = [
       },
       {
         "id": "como-lake-ferries",
-        "title": "Como 湖渡輪（Day12 Bellagio・Day13 Menaggio/Varenna）",
-        "desc": "兩天的湖上交通都是 Navigazione Laghi 渡輪，碼頭售票亭現場買即可，一般不用預約。可考慮買當日湖區一日券（依航段計價，來回多段通常比單買划算，現場比價）。快船（servizio rapido）比慢船貴、班次少，看時間彈性選。⚠️ 半價卡在義大利不適用。",
+        "title": "中湖渡輪（Day12 Bellagio・Day13 Menaggio/Varenna）",
+        "desc": "住宿在 Mezzegra（Tremezzina），所以這兩天走的是「中湖三角」Cadenabbia–Bellagio–Varenna，不是從 Como 市區出發的長程航線。\n\n• 都是 Navigazione Laghi，碼頭售票亭現場買，不用預約\n• 中湖航段很短（10–20 分），車渡輪（traghetto，也載步行乘客）旺季開到晚上 10 點多，回程壓力小\n• 可考慮當日湖區一日券——兩天各要跑 2–3 段，通常比單買划算，現場比價\n⚠️ 上船前確認方向：往南的 Como 線末班早很多（Varenna→Como 約 16:45），上錯船今晚回不了家。\n⚠️ 半價卡在義大利不適用。",
         "priority": "medium",
         "links": [
           {
@@ -2136,8 +2136,8 @@ const todoData = [
       },
       {
         "id": "como-milan-train",
-        "title": "Como S. Giovanni → Milano Centrale（Day14）",
-        "desc": "區域車約 40 分、班次密集，當天車站售票機或 Trenitalia／Trenord App 買即可，不用預約。⚠️ 紙本票上車前記得打票（validate）；App 電子票不用。",
+        "title": "Mezzegra → Milano Centrale（Day14）",
+        "desc": "住宿在 Tremezzina，所以不是單純的一段車，有兩條路：\n① 巴士 C10 → Como S. Giovanni（約 1 小時）→ 區域車 40 分到 Milano Centrale\n② 渡輪到 Varenna（約 20 分）→ Varenna-Esino 直達 Milano Centrale（約 1 小時）\n→ ② 通常較快也較舒服但綁船班；① 班次密、比較保險。前一晚查好當天班表再決定。\n\n兩條都是區域車，班次密集，當天售票機或 Trenitalia／Trenord App 買即可，不用預約。⚠️ 紙本票上車前記得打票（validate）；App 電子票不用。",
         "priority": "low",
         "links": []
       },
