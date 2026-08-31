@@ -186,12 +186,10 @@
     font-size:15.5px;
   }
   .rail-sub{font-size:12px; color:var(--ink-soft); margin-top:1px;}
-  /* 穿搭分頁用的是同一條 rail，只有副標從住宿換成當天穿搭，
-     並依冷熱給溫度上色（與每日行程的 .dp-wear 同一組色） */
-  .rail-card .wr-t{font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink);}
-  .rail-card.wr-cool .wr-t{color:var(--lake);}
-  .rail-card.wr-cold{border-color:var(--rust); background:#F4DED6;}
-  .rail-card.wr-cold .wr-t, .rail-card.wr-cold .rail-sub{color:var(--rust);}
+  /* 行事曆每一天的溫度，依冷熱上色（與每日行程的 .dp-wear 同一組色） */
+  .rail-date .wr-t{font-weight:600; color:var(--ink);}
+  .rail-date .wr-cool{color:var(--lake);}
+  .rail-date .wr-cold{color:var(--rust);}
   .flag-pill{
     font-family:'IBM Plex Mono',monospace;
     font-size:10px;
@@ -971,8 +969,6 @@
 <div class="view" id="view-ootd">
   <div class="persist-note" id="persist-note-ootd" style="display:none;"></div>
   <div id="pack-guide"></div>
-  <div class="sec-label">每日穿搭 · 16 天</div>
-  <div class="rail" id="wear-rail"></div>
   <div class="ootd-add">
     <label>日期</label>
     <select id="ootd-date"></select>
@@ -1508,7 +1504,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-29.7';
+const APP_VERSION = '2026-08-29.8';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2173,13 +2169,17 @@ async function renderCalendar(){
       const saved = await getHotelEntry(d.stayKey);
       hotelSub = '住宿：'+s.city + (saved ? '' : '（未訂地點）');
     }
+    // temperature rides along on the date line, outfit gets its own sub-line
+    const w = DAY_WEAR[d.n];
     html += `<div class="rail-stop" onclick="goToDay(${d.n})">
       <div class="rail-dot ${cls}">${COUNTRY_FLAG[d.country]||''}</div>
       <div class="rail-card">
         <div>
-          <div class="rail-date">${fmtDate(d.date)} · Day ${d.n}</div>
+          <div class="rail-date">${fmtDate(d.date)} · Day ${d.n}${
+            w ? ` · <span class="wr-t wr-${w.tone}">${w.t}</span>` : ''}</div>
           <div class="rail-title">${d.title}</div>
-          <div class="rail-sub">${hotelSub}</div>
+          ${hotelSub ? `<div class="rail-sub">${hotelSub}</div>` : ''}
+          ${w ? `<div class="rail-sub">穿搭：${w.w}</div>` : ''}
         </div>
         <span class="flag-pill ${cls}">${d.country}</span>
       </div></div>`;
@@ -2970,30 +2970,6 @@ function renderPackGuide(){
       🚢 船上（Day 3 萊茵河、Day 12–13 Como 渡輪）體感再低 4–5°C，外套隨身。
       ⛪ Day 14 進 Duomo 不可露肩、短褲需過膝。</div>`;
 }
-/* ---------- 穿搭分頁的每日清單 ----------
-   Same rail the calendar tab uses, so both stay in step with `days`; the only
-   difference is the sub-line — hotel there, that day's outfit here — and each
-   row taps through to the itinerary day. The flight cards are left out: they
-   aren't days and have no outfit of their own (Day 0 / Day 16 cover them). */
-function renderWearRail(){
-  const el = document.getElementById('wear-rail');
-  if(!el) return;
-  el.innerHTML = days.map(d=>{
-    const cls = COUNTRY_CLASS[d.country] || 'de';
-    const w = DAY_WEAR[d.n];
-    const sub = w ? `穿搭：<span class="wr-t">${w.t}</span> · ${w.w}` : '穿搭：—';
-    return `<div class="rail-stop" onclick="goToDay(${d.n})">
-      <div class="rail-dot ${cls}">${COUNTRY_FLAG[d.country]||''}</div>
-      <div class="rail-card wr-${w ? w.tone : 'warm'}">
-        <div>
-          <div class="rail-date">${fmtDate(d.date)} · Day ${d.n}</div>
-          <div class="rail-title">${d.title}</div>
-          <div class="rail-sub">${sub}</div>
-        </div>
-        <span class="flag-pill ${cls}">${d.country}</span>
-      </div></div>`;
-  }).join('');
-}
 function populateOotdDates(){
   const sel = document.getElementById('ootd-date');
   sel.innerHTML = days.map(d=>`<option value="${d.date}">${fmtDate(d.date)} · Day ${d.n} ${d.title}</option>`).join('');
@@ -3317,7 +3293,6 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   renderDayPanel();
   populateOotdDates();
   renderPackGuide();
-  renderWearRail();
   renderOotdList();
   renderExpenses();
 
