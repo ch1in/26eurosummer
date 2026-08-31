@@ -1510,7 +1510,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-30.5';
+const APP_VERSION = '2026-08-30.6';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1685,7 +1685,7 @@ const todoData = [
         "id": "award-ticket-miles",
         "title": "里程換機票（✅ 去回程都已開票）",
         "docBtn": "🎫 看機票文件",
-        "desc": "去程 CI61 與回程 CX234／CX530 都是里程兌換票，票面票價為 0，實際只付了稅金與燃油附加費（金額尚未登入記帳分頁）。\n\n⚠️ 兌換票的規則比一般票嚴格，出發前先弄清楚：\n① 兩張都是 NONEND（不可簽轉給其他航空），遇到取消／延誤時，地勤能幫你改的選項比一般票少，只能改同航空的班次。\n② 退票要收手續費，而且 **no-show 會另外罰款**——臨時不飛也一定要先取消，不能直接不出現，否則除了罰款，哩程可能也拿不回來。\n③ 回程票有效期為開票日起一年。\n④ 兌換票通常不再累積哩程，別預期這趟能回饋。\n\n📌 出發前要做的兩件事：\n• 確認哩程已正確扣除、訂位狀態仍是 OK\n• 起飛前 72 小時再查一次班表——兌換票遇到時刻變更時，有時不會自動改好，要主動打電話請航空公司重新安排\n\n🎫 兩張電子機票都在「證件」分頁，可直接開啟查看。",
+        "desc": "去程 CI61 與回程 CX234／CX530 都是里程兌換票，票面票價為 0，實際只付了稅金與燃油附加費（金額尚未登入記帳分頁）。\n\n⚠️ 兌換票的規則比一般票嚴格，出發前先弄清楚：\n① 兩張都是 NONEND（不可簽轉給其他航空），遇到取消／延誤時，地勤能幫你改的選項比一般票少，只能改同航空的班次。\n② 退票要收手續費，而且 「no-show 會另外罰款」——臨時不飛也一定要先取消，不能直接不出現，否則除了罰款，哩程可能也拿不回來。\n③ 回程票有效期為開票日起一年。\n④ 兌換票通常不再累積哩程，別預期這趟能回饋。\n\n📌 出發前要做的兩件事：\n• 確認哩程已正確扣除、訂位狀態仍是 OK\n• 起飛前 72 小時再查一次班表——兌換票遇到時刻變更時，有時不會自動改好，要主動打電話請航空公司重新安排\n\n🎫 兩張電子機票都在「證件」分頁，可直接開啟查看。",
         "priority": "medium",
         "links": []
       },
@@ -1707,7 +1707,7 @@ const todoData = [
       {
         "id": "train-stgoar-colmar",
         "title": "St. Goar → Colmar",
-        "desc": "Day3（9/13）萊茵河遊船在 St. Goar 上岸後，直接從 St. Goar 車站搭火車到 Colmar，約 4 小時、需轉車（通常經 Koblenz／Mainz／Strasbourg，依班次而定）。\n\n德國段可考慮 DB 早鳥票（Sparpreis）便宜不少，但綁定車次、改簽受限；行程若還有變動就現場買彈性票。\n\n⚠️ 全程都在瑞士境外，半價卡不適用，要買全票。",
+        "desc": "Day3（9/13）遊船 10:55 在 St. Goar 上岸，走 5 分鐘到車站搭火車到 Colmar，約 4 小時、需轉車（通常經 Koblenz／Mainz／Strasbourg）。\n\n🚦 先講結論：「這條線不可能「訂不到」」。德國區間車與法國 TER 都不劃位、當天一定買得到票，所以等 KD 確定了再訂完全沒有搶不到的風險——會變的只有價格。唯一的例外是行程裡如果含 TGV（強制訂位、會賣完），訂位前先確認你那張有沒有 TGV。\n\n🎫 DB 上看到的兩個票種差在哪（差 €3.61）：\n• 「Teilweise flexibel」€118.89 — 可退改但有限制與手續費，通常仍綁你訂的那班車\n• 「Beste Flexibilität」€122.50 — 「不綁車次」，當天同路線任何車都能搭，出發前退改幾乎無成本\n→ 你不確定 St. Goar 要待多久、也怕船誤點失接，那 €3.61 買到「不綁車次」是這兩者間最容易的決定：「選 Beste Flexibilität」。\n\n❓ 為什麼沒看到早鳥票：德法跨境的 Sparpreis Europa 通常 €39 起，最低只剩 €118 表示那批額度賣完了，或這個起訖組合不提供。值得再試：把起點改成 Koblenz 或 Mainz（小站有時吃不到跨境優惠額度），或換一個出發時段。\n\n💡 更省的做法是拆票（9/13 是週日，剛好有利）：\n• Quer-durchs-Land-Ticket €51／人（同行每加 1 人 +€12），全德區間車無限搭，週末 00:00 起就生效 → 一路搭到 Kehl／Offenburg\n• 過境後另買 Strasbourg → Colmar 的 TER，約 €13\n→ 一人約 €66，比 €122.50 省一半，而且完全不綁車次、不可能賣完。代價是只能搭區間車，比 €122 那條慢約 1–1.5 小時、轉車較多。當天 10:55 上岸，慢一點也還是傍晚就到 Colmar。\n→ 想在 St. Goar 上去看 Rheinfels 城堡再走，這個方案最適合——反正沒有車次要趕。\n\n⚠️ 全程都在瑞士境外，半價卡不適用，要買全票。",
         "priority": "high",
         "links": [
           {
@@ -1726,7 +1726,7 @@ const todoData = [
         "id": "train-colmar-iseltwald",
         "sbbBtn": "在 SBB App 看車票",
         "title": "Colmar → Iseltwald（✅ Colmar→Interlaken 已訂）",
-        "desc": "✅ 已訂 Colmar → Interlaken Ost：9/14（一）14:23 – 17:28，二等，1 次轉車。車票在 SBB App 裡。\n\n⚠️ 但這張票只到 Interlaken Ost。最後一段 **Interlaken Ost → Iseltwald（巴士 約 20–30 分）沒有含在裡面**，要當天自己買——用 SBB App 現場買即可，持半價卡 5 折。17:28 到站後直接在 App 買票再上車，別忘了。\n\n（法國段本來就在瑞士境外、半價卡不適用；這段已包含在上面這張訂票中。）",
+        "desc": "✅ 已訂 Colmar → Interlaken Ost：9/14（一）14:23 – 17:28，二等，1 次轉車。車票在 SBB App 裡。\n\n⚠️ 但這張票只到 Interlaken Ost。最後一段 「Interlaken Ost → Iseltwald（巴士 約 20–30 分）沒有含在裡面」，要當天自己買——用 SBB App 現場買即可，持半價卡 5 折。17:28 到站後直接在 App 買票再上車，別忘了。\n\n（法國段本來就在瑞士境外、半價卡不適用；這段已包含在上面這張訂票中。）",
         "priority": "medium",
         "links": [
           {
