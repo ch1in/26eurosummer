@@ -1504,7 +1504,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-29.8';
+const APP_VERSION = '2026-08-29.9';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1877,16 +1877,10 @@ const todoData = [
     "items": [
       {
         "id": "milan-hotel-0924",
-        "title": "🔴 訂 Milan 9/24 住宿（唯一還沒訂的一晚）",
-        "desc": "Day14（9/24）Como → Milan 後在米蘭過夜，但這晚是全部行程唯一還沒訂房的。其他 15 晚全數已訂。\n\n建議住 Centrale（隔天往 Malpensa 方便）或 Duomo 周邊（逛街方便）。9/25 那晚已訂 Malpensa 機場飯店，所以這晚只要顧 9/24 一晚。\n\n訂好後到「每日行程」Day14 輸入住宿地點，會自動歸檔到記帳。",
-        "priority": "high",
-        "links": [
-          {
-            "label": "Booking.com 米蘭",
-            "url": "https://www.booking.com/city/it/milan.html",
-            "cls": ""
-          }
-        ]
+        "title": "Milan 9/24 住宿（✅ 已訂）",
+        "desc": "Day14（9/24）Como → Milan 這晚已訂 Romana Suites，全行程 16 晚到此全數訂完。（金額與付款卡別記在💰記帳分頁）\n\n📍 落在 Porta Romana、Duomo 南側（完整地址在每日行程 Day14 的住宿卡）：走到 Duomo 約 12 分、Navigli 約 20 分，Day14 三個點都走得到。地鐵 M3（黃線）Crocetta／Missori 站就在旁邊，往 Milano Centrale 約 10 分。\n\n🕑 入住 14:00–00:00、退房 05:00–10:00。\n• 從 Como 的車大約中午到，早到就先寄行李再出門。\n• Day15（9/25）10:00 前一定要退房，那天整天帶著行李——先問能不能寄放，不行就用 Milano Centrale 一樓的 Deposito Bagagli。\n\n📮 Booking 上還沒填抵達時間，回去補一下。這種小型 suite 常是約時間交鑰匙，填了比較保險。\n\n❓ 免費取消期限訂單上有寫的話告訴我，我補進記帳，到期前會提醒。",
+        "priority": "medium",
+        "links": []
       },
       {
         "id": "kkday-halffare-refund",
