@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-08-30.8';
+const APP_VERSION = '2026-09-03.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1902,6 +1902,13 @@ const todoData = [
         "id": "confirm-como-location",
         "title": "Como 三晚的住宿位置（✅ 已確認）",
         "desc": "已確認：住的是 Azzano Holidays B&B，Viale Rimembranze 2, Mezzegra 22016，在 Tremezzina 鎮、湖西岸，不是 Como 市區。Day11–14 的動線都已依此改寫。\n\n位置其實是賺到：Bellagio 就在正對岸（渡輪 10–15 分，從 Como 市區要 2 小時慢船），Menaggio 往北只有 4 km，Varenna 在對岸。Day12、13 的船程都很短，回程走中湖三角，車渡輪旺季開到晚上 10 點多，時間壓力小。\n\n⚠️ 唯一要留意的是 Day11 抵達：18:49 到 Como 時船已收班，要搭 C10 巴士（約 1 小時）或叫車（30–40 分）。抵達前先跟 B&B 講好幾點到、鑰匙怎麼拿。\n⚠️ 之後搭船別上錯方向——往南的 Como 線末班早很多（Varenna→Como 約 16:45），回程要找 Cadenabbia 或 Menaggio。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "id": "vat-refund",
+        "title": "退稅：德國買、米蘭辦（Day1 買圍巾就會用到）",
+        "desc": "Day1 在法蘭克福 Goethestraße 買精品的話，非歐盟旅客可以退稅（德國標準稅率 19%，實拿約 12–14%），但流程橫跨兩個國家，容易做錯：\n\n🧾 在店裡：出示護照，請店員開「Tax Free 免稅單」（Global Blue／Planet 之類），發票與免稅單要留著，商品保持未使用、包裝別拆。門檻各店不同，通常單張發票 €50 起。\n\n✈️ 蓋章的地方是「離開歐盟的最後一站」，不是德國——你 9/26 從米蘭 Malpensa 飛香港，所以海關驗證要在 Malpensa 辦，不是在法蘭克福。中途進出瑞士不影響（瑞士非歐盟，但只是過境陸路，不算離境辦理點）。\n\n📌 Day16（9/26）在 Malpensa 的順序：先辦退稅驗證 → 再去櫃檯掛行李。海關可能要看實物，所以要退稅的商品「別先托運」。CX234 是 12:45 起飛，行程排 09:30 到 T1，時間夠，但退稅櫃檯旺季會排隊，別再壓縮。\n\n⏳ 期限：發票開立起 3 個月內離境有效。9/11 買、9/26 離境，沒問題。\n\n💳 退款方式：現場領現金要收手續費，退到信用卡免手續費但要等 1–2 個月。金額大就退卡。",
         "priority": "medium",
         "links": []
       },
