@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-03.3';
+const APP_VERSION = '2026-09-04.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1909,6 +1909,13 @@ const todoData = [
         "id": "vat-refund",
         "title": "退稅：德國買、米蘭辦（Day1 買圍巾就會用到）",
         "desc": "Day1 在法蘭克福 Goethestraße 買精品的話，非歐盟旅客可以退稅（德國標準稅率 19%，實拿約 12–14%），但流程橫跨兩個國家，容易做錯：\n\n🧾 在店裡：出示護照，請店員開「Tax Free 免稅單」（Global Blue／Planet 之類），發票與免稅單要留著，商品保持未使用、包裝別拆。門檻各店不同，通常單張發票 €50 起。\n\n✈️ 蓋章的地方是「離開歐盟的最後一站」，不是德國——你 9/26 從米蘭 Malpensa 飛香港，所以海關驗證要在 Malpensa 辦，不是在法蘭克福。中途進出瑞士不影響（瑞士非歐盟，但只是過境陸路，不算離境辦理點）。\n\n📌 Day16（9/26）在 Malpensa 的順序：先辦退稅驗證 → 再去櫃檯掛行李。海關可能要看實物，所以要退稅的商品「別先托運」。CX234 是 12:45 起飛，行程排 09:30 到 T1，時間夠，但退稅櫃檯旺季會排隊，別再壓縮。\n\n⏳ 期限：發票開立起 3 個月內離境有效。9/11 買、9/26 離境，沒問題。\n\n💳 退款方式：現場領現金要收手續費，退到信用卡免手續費但要等 1–2 個月。金額大就退卡。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "id": "schonegg-terrace",
+        "title": "訂 Schönegg Infinity Terrace（Day9 夕陽）",
+        "desc": "Day9（9/19）傍晚要上去看夕陽與 Matterhorn 剪影的那個露台，正式名稱是「Infinity Terrace by Schönegg」。非房客可以上去喝一杯或吃東西，官方寫「建議訂位」——夕陽時段是最熱門的，別賭現場有位。\n\n📞 +41 27 966 34 34\n✉️ info@schonegg.ch\n🕙 每天 10:00–00:00\n\n📌 訂位時一起問清楚三件事：\n① 9/19 當天有沒有營業——Zermatt 飯店常有換季休館，9 月下旬多半還開著，但要確認\n② 非房客上露台有沒有最低消費\n③ 想坐看得到 Matterhorn 的位子要不要特別指定\n\n⏰ 9/19 Zermatt 日落 19:12，訂 18:30 前後最從容——天還亮時先上去，等光線變化到天黑村燈亮起。從飯店走上去是上坡約 10–15 分，訂位時間要把這段算進去。\n\n💡 出發前先寄 email 最省事（有白紙黑字的確認）；沒回覆就到 Zermatt 當天早上打電話。",
         "priority": "medium",
         "links": []
       },
