@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-04.2';
+const APP_VERSION = '2026-09-04.3';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1916,6 +1916,13 @@ const todoData = [
         "id": "schonegg-terrace",
         "title": "訂 Schönegg Infinity Terrace（Day9 夕陽）",
         "desc": "Day9（9/19）傍晚要上去看夕陽與 Matterhorn 剪影的那個露台，正式名稱是「Infinity Terrace by Schönegg」。非房客可以上去喝一杯或吃東西，官方寫「建議訂位」——夕陽時段是最熱門的，別賭現場有位。\n\n📞 +41 27 966 34 34\n✉️ info@schonegg.ch\n🕙 每天 10:00–00:00\n\n📌 訂位時一起問清楚三件事：\n① 9/19 當天有沒有營業——Zermatt 飯店常有換季休館，9 月下旬多半還開著，但要確認\n② 非房客上露台有沒有最低消費\n③ 想坐看得到 Matterhorn 的位子要不要特別指定\n\n⏰ 9/19 Zermatt 日落 19:12，訂 18:30 前後最從容——天還亮時先上去，等光線變化到天黑村燈亮起。從飯店走上去是上坡約 10–15 分，訂位時間要把這段算進去。\n\n💡 出發前先寄 email 最省事（有白紙黑字的確認）；沒回覆就到 Zermatt 當天早上打電話。",
+        "priority": "medium",
+        "links": []
+      },
+      {
+        "id": "interlaken-pass",
+        "title": "Interlaken Pass 涵蓋範圍（✅ 已拿到，9/14–9/18）",
+        "desc": "住宿送的訪客卡數位版，通行證在 Apple 錢包裡，查票時出示即可。涵蓋範圍比名字聽起來小，這張表就是判斷「還要不要買票」的依據。\n\n✅ 免費：\n• Interlaken 及周邊村落的公共運輸——含 Interlaken Ost ⇄ Iseltwald 的 103 號巴士與季節性 Express 巴士\n• Interlaken West ⇄ Interlaken Ost 之間的火車、市區巴士\n\n❌ 不含，仍要用半價卡買：\n• 布里恩茨湖遊船（9/16 那段）——這張卡對 BLS 遊船只有「湖區一日票 8 折」，而且 Brienz 本來就在範圍外。半價卡 5 折買單程比 8 折的一日票便宜得多，照原訂走\n• 少女峰區：Lauterbrunnen／Wengen／Kleine Scheidegg／Grindelwald（9/17）\n• Spiez／Kandersteg／Blausee（9/18）\n• Brienz Rothorn 齒軌火車（已另外購票，在 Apple 錢包）\n\n💡 判斷方式：離開 Interlaken 與 Iseltwald 這一帶就要自己買票。\n\n📌 9/15 那天有 Saver Day Pass，全天所有交通都涵蓋，不必去想這張卡。\n🎁 順帶一提還有 Harder Kulm 纜車 85 折等折扣，但沒排在行程裡。",
         "priority": "medium",
         "links": []
       },
