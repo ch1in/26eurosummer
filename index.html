@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-04.1';
+const APP_VERSION = '2026-09-04.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1843,8 +1843,8 @@ const todoData = [
       },
       {
         "id": "duomo-milan",
-        "title": "Milan Duomo 門票（Day14，想進教堂／登頂才需要）",
-        "desc": "Day14 三個點只有 Duomo 要票：艾曼紐二世拱廊是開放通道、Navigli 運河區散步，兩者都免費；Duomo 的外觀與廣場也免費。\n\n要進教堂內部或上屋頂才需要買票（2026 官網票價）：\n• 教堂＋博物館 €10（不上屋頂，最便宜）\n• ＋屋頂・走樓梯 €15\n• ＋屋頂・搭電梯 €22（下行通常仍走樓梯）\n• 快速通關＋電梯＋考古區 €26\n\n屋頂能近看尖塔與雕像群，是這裡最值得的部分；體力可以就選樓梯票省 €7。\n\n🚦 先訂票還要排隊嗎——會，但排的是不同的隊：\n• 現場買票的隊伍旺季常要 40 分～2 小時，線上訂時段票可以整個跳過\n• 但「安檢」不分票種都要過，約 10–20 分鐘，沒有任何票能免\n→ 所以線上預訂省下的就是那 40 分～2 小時，值得訂。\n\n💡 那要不要買 €26 快速通關？我的看法是不必：它同樣不能跳過安檢，省時的關鍵在「有沒有線上訂」而不是票種，€26 比 €22 多的主要是地下考古區。想看考古區才買，純粹為了插隊就不划算。9 月已過旺季尖峰，人潮比 7–8 月少。\n\n⚠️ 服裝規定嚴格執行：需遮肩、下半身過膝，教堂內部、屋頂、博物館、考古區都適用，門口會擋。那天已排短袖＋長裙，配一件薄外套進去披上就過關。\n👟 鞋子沒有明文規定，但屋頂是大理石、遇濕很滑，官方建議平底好走的鞋；海灘夾腳拖與細跟高跟鞋不適合，一般涼鞋、球鞋都可以。\n\n💡 若當天從 Como 過來時間不夠，屋頂也可以留到 Day15 自由活動再上。\n\n🌇 「Serate d'incanto」（黃昏音樂會登屋頂）不用考慮了：2026 場次是 6/11–9/10 每週四，9/10 就結束——你們 9/24 抵達米蘭雖然剛好也是週四，但已經晚了兩週。屋頂請安排白天上去。\n\n⏰ 推薦時段：訂 16:00–16:30。\n• 開放 09:00–19:00，最後入場 18:10（屋頂）／18:00（教堂內部），19:00 硬性關閉。\n• 9/24 是週四：博物館有開（週三休），但不在延長開放的期間（延長僅 6/5–9/13 的五六日），所以 19:00 就是關門。\n• 為什麼是下午 4 點：中午 12–15 點人最多、頂光也最硬；16:00 後人潮開始散，斜射光打在大理石和尖塔上最好看，氣溫也舒服。\n• 距最後入場還有 2 小時緩衝，從 Como 過來的火車誤點也不會直接報銷時段票。\n• 接著逛旁邊的拱廊（免費、開到晚），再去 Navigli 吃 aperitivo（18:30 後才熱鬧），動線剛好。\n\n🌅 屋頂看不到日落：9/24 米蘭日落 19:13，但屋頂最後入場 18:10、19:00 硬性清場，等於太陽還沒下山就被請下來。\n→ 屋頂能拿到的是日落前的斜射金光（17:30–18:45 那段最好看），這已經是常規票的極限。真正的日落請留在主教座堂廣場，或走去 Navigli 河邊看倒影。唯一能在屋頂待到日落的是夏季的 Serate d'incanto 夜間開放，但 2026 場次 9/10 就結束了。\n\n🎟 「Combo Stairs + Pinacoteca Ambrosiana」€36 差在哪：它是「€15 樓梯票」再加上 Pinacoteca Ambrosiana。\n• Duomo 那半邊完全一樣——教堂＋屋頂（走 251 階樓梯，不含電梯）＋考古區＋博物館＋San Gottardo 教堂\n• 多出來的是 Ambrosiana 美術館：達文西《音樂家的肖像》與《大西洋古抄本》、拉斐爾《雅典學院》草圖原作、卡拉瓦喬《水果籃》，另含 San Sepolcro 地下聖堂\n• 位置在 Duomo 西邊步行約 5 分，順路\n→ 換算等於用 €21 進 Ambrosiana（單買約 €17），本身不算特別划算，但官方寫建議留 3 小時以上。你們 Day14 下午還要拱廊＋Navigli，硬塞會很趕。想看達文西真跡才值得，否則買 €15 樓梯票就好。\n\n🕘 若偏好人最少：09:00 第一批最空，但得一早從 Como 拖行李趕過來，行李也還沒辦法進房，會比較趕。",
+        "title": "Milan Duomo 門票（✅ 已訂 9/25）",
+        "desc": "✅ 已訂 9/25（五）：\n• 09:00　Duomo and Terraces – Stairs（教堂＋屋頂，走 251 階樓梯）\n• 10:00　Duomo History VR Experience\n（金額與付款卡別記在💰記帳分頁）\n\n📌 原本排在 9/24，改到 9/25 之後有一件事變了：那天要退房。大行李不能帶進教堂，所以順序必須是「先退房 → 先寄行李 → 再進 Duomo」。Day15 的行程已經照這個改寫，起床時間也往前調到 06:45。\n→ Day14 check-in 時記得問 B&B 能不能寄放行李。可以的話最省事（走 12 分就到 Duomo，還能晚 35 分起床）；不行就寄在 Milano Centrale 一樓的 Deposito Bagagli（07:00 開），那裡反而順路——晚上本來就要從 Centrale 搭 Malpensa Express。\n\n⏰ 09:00 是當天第一批，人最少；缺點是屋頂的光偏硬，不如下午斜射光好拍。安檢不分票種都要過（10–20 分），08:30 前到廣場比較安穩。\n\n⚠️ 服裝規定嚴格執行：需遮肩、下半身過膝。那天已排短袖＋長裙＋小外套，長裙記得帶過膝的那件。\n👟 要走 251 階上屋頂，而且屋頂是大理石遇濕很滑——穿平底好走的鞋，夾腳拖與細跟高跟鞋不適合。\n\n🎫 其餘同行程的免費點：艾曼紐二世拱廊是開放通道、Navigli 散步免費，都不用票。",
         "priority": "medium",
         "links": [
           {
@@ -2494,8 +2494,8 @@ const DAY_WEAR = {
   11: { t:'3–24°C',  w:'早上厚、下午脫 · 落差最大的一天，好穿脫為主', tone:'cool' },
   12: { t:'15–25°C', w:'短袖短褲 · 🚢 渡輪甲板帶件薄外套', tone:'warm' },
   13: { t:'15–25°C', w:'短袖短褲 · 🚢 渡輪甲板帶件薄外套', tone:'warm' },
-  14: { t:'15–25°C', w:'短袖＋長裙 · ⛪ 進 Duomo 需遮肩過膝，帶薄外套', tone:'warm' },
-  15: { t:'15–25°C', w:'短袖短褲 · 晚上到機場飯店，冷氣強', tone:'warm' },
+  14: { t:'15–25°C', w:'短袖短褲 · 傍晚 Navigli 河邊入夜轉涼，薄外套隨身', tone:'warm' },
+  15: { t:'15–25°C', w:'短袖＋長裙＋小外套 · ⛪ 進 Duomo 需遮肩過膝，鞋要好走', tone:'warm' },
   16: { t:'15–25°C', w:'短袖＋長褲 · 機艙冷，外套放手提', tone:'warm' },
 };
 function dayWearHtml(n){
@@ -2994,8 +2994,8 @@ document.getElementById('exp-cancel-edit')?.addEventListener('click', ()=>{ exit
    is grouped by how much you need to wear rather than by date. Kept here (not
    in itinerary.json) because it's guidance, not itinerary data. */
 const PACK_ROWS = [
-  { wear:'短袖短褲',        days:3, where:'Como 湖區、米蘭',            span:'Day 12–13、15', tone:'warm' },
-  { wear:'短袖＋長裙',      days:1, where:'米蘭（Duomo 日）',          span:'Day 14', tone:'warm' },
+  { wear:'短袖短褲',        days:3, where:'Como 湖區、米蘭',            span:'Day 12–14', tone:'warm' },
+  { wear:'短袖＋長裙＋小外套', days:1, where:'米蘭（Duomo 日）',          span:'Day 15', tone:'warm' },
   { wear:'短袖＋長褲',      days:5, where:'法蘭克福、萊茵河、Colmar',    span:'Day 1–4、11', tone:'warm' },
   { wear:'薄長袖＋長褲',    days:2, where:'琉森／Lungern、Spiez／Blausee', span:'Day 5、8', tone:'mild' },
   { wear:'長袖長褲＋外套',  days:2, where:'少女峰地區、Zermatt',         span:'Day 7、9', tone:'cool' },
