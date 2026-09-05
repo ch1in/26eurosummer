@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-04.3';
+const APP_VERSION = '2026-09-05.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1922,7 +1922,7 @@ const todoData = [
       {
         "id": "interlaken-pass",
         "title": "Interlaken Pass 涵蓋範圍（✅ 已拿到，9/14–9/18）",
-        "desc": "住宿送的訪客卡數位版，通行證在 Apple 錢包裡，查票時出示即可。涵蓋範圍比名字聽起來小，這張表就是判斷「還要不要買票」的依據。\n\n✅ 免費：\n• Interlaken 及周邊村落的公共運輸——含 Interlaken Ost ⇄ Iseltwald 的 103 號巴士與季節性 Express 巴士\n• Interlaken West ⇄ Interlaken Ost 之間的火車、市區巴士\n\n❌ 不含，仍要用半價卡買：\n• 布里恩茨湖遊船（9/16 那段）——這張卡對 BLS 遊船只有「湖區一日票 8 折」，而且 Brienz 本來就在範圍外。半價卡 5 折買單程比 8 折的一日票便宜得多，照原訂走\n• 少女峰區：Lauterbrunnen／Wengen／Kleine Scheidegg／Grindelwald（9/17）\n• Spiez／Kandersteg／Blausee（9/18）\n• Brienz Rothorn 齒軌火車（已另外購票，在 Apple 錢包）\n\n💡 判斷方式：離開 Interlaken 與 Iseltwald 這一帶就要自己買票。\n\n📌 9/15 那天有 Saver Day Pass，全天所有交通都涵蓋，不必去想這張卡。\n🎁 順帶一提還有 Harder Kulm 纜車 85 折等折扣，但沒排在行程裡。",
+        "desc": "住宿送的訪客卡數位版，通行證在 Apple 錢包裡，查票時出示即可。涵蓋範圍比名字聽起來小，這張表就是判斷「還要不要買票」的依據。\n\n✅ 免費：\n• Interlaken 及周邊村落的公共運輸——含 Interlaken Ost ⇄ Iseltwald 的 103 號巴士與季節性 Express 巴士。約每小時一班，末班 Interlaken Ost 21:04 → Iseltwald 21:21——在 Interlaken 吃晚餐再回去沒問題，但那是最後一班，錯過只能叫車\n• Interlaken West ⇄ Interlaken Ost 之間的火車、市區巴士\n\n❌ 不含，仍要用半價卡買：\n• 布里恩茨湖遊船（9/16 那段）——這張卡對 BLS 遊船只有「湖區一日票 8 折」，而且 Brienz 本來就在範圍外。半價卡 5 折買單程比 8 折的一日票便宜得多，照原訂走\n• 少女峰區：Lauterbrunnen／Wengen／Kleine Scheidegg／Grindelwald（9/17）\n• Spiez／Kandersteg／Blausee（9/18）\n• Brienz Rothorn 齒軌火車（已另外購票，在 Apple 錢包）\n\n💡 判斷方式：離開 Interlaken 與 Iseltwald 這一帶就要自己買票。\n\n📌 9/15 那天有 Saver Day Pass，全天所有交通都涵蓋，不必去想這張卡。\n🎁 順帶一提還有 Harder Kulm 纜車 85 折等折扣，但沒排在行程裡。",
         "priority": "medium",
         "links": []
       },
