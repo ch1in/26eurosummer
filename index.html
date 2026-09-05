@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-05.1';
+const APP_VERSION = '2026-09-05.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2418,6 +2418,19 @@ async function toggleTodo(key){
    ITINERARY RENDER
    ============================================================ */
 let activeDay = 1;
+/* Open the itinerary on whichever day is closest to today rather than a fixed
+   day: before the trip that lands on Day 0, during it on today, and after it
+   on the last day. Ties go to the earlier day. */
+function nearestDayToToday(){
+  if(!days || !days.length) return activeDay;
+  const today = new Date(todayISO()+'T00:00:00').getTime();
+  let best = days[0], bestGap = Infinity;
+  for(const d of days){
+    const gap = Math.abs(new Date(d.date+'T00:00:00').getTime() - today);
+    if(gap < bestGap){ bestGap = gap; best = d; }
+  }
+  return best.n;
+}
 function renderDayStrip(){
   const el = document.getElementById('day-strip');
   el.innerHTML = days.map(d=>{
@@ -3354,6 +3367,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
   renderCalendar();
   loadTodoState().then(renderTodo);
+  activeDay = nearestDayToToday();
   renderDayStrip();
   renderDayPanel();
   populateOotdDates();
