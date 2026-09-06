@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-06.2';
+const APP_VERSION = '2026-09-06.3';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1879,15 +1879,15 @@ const todoData = [
       },
       {
         "id": "cancel-rudesheim",
-        "title": "🔴 退掉 Rüdesheim 9/12 訂房",
-        "desc": "9/12 改成 Baden-Baden 一日遊後直接到 Colmar，Rüdesheim 那晚用不到了。\n\n⚠️ 壞消息：那筆訂房的免費取消期限是 8/29，已經過了。現在退可能要付全額或高額手續費。\n\n📌 還是值得做這幾件事：\n① 先看訂房平台上目前顯示的取消條件與金額——有些是「部分退款」而不是全額不退\n② 直接寫信或打電話給民宿說明情況，小型酒莊民宿有時願意通融，尤其如果他們能再賣掉那晚\n③ 若信用卡有旅遊不便險，看看能不能申請\n④ 真的退不了就當沉沒成本，但務必「取消入住通知」，別讓他們空等\n\n結果告訴我，我把記帳調整成實際損失的金額（目前已把這筆從記帳移除）。",
-        "priority": "high",
+        "title": "Rüdesheim 9/12 訂房已退（✅ 收一半）",
+        "desc": "9/12 改成 Baden-Baden 一日遊後不需要這晚，已取消。\n\n結果：民宿收了一半，9/5 退回 €56.50，銀行入帳約 3–5 個工作天。\n→ 免費取消期限（8/29）已過還能拿回一半，比預期好。淨損失 €56.50 已登入記帳。\n\n📌 收到退款後對一下帳單，金額有出入再告訴我。",
+        "priority": "medium",
         "links": []
       },
       {
         "id": "book-colmar-0912",
         "title": "🔴 補訂 Colmar 9/12 那晚",
-        "desc": "改行程後 9/12 傍晚 16:56 就到 Colmar，但原本的 Hotel Turenne 只訂了 9/13–9/14 一晚——「9/12 這晚目前沒有房」。\n\n📌 最省事的做法：直接問 Hotel Turenne 能不能把訂房往前延一晚，同一間房不用搬。\n→ 訂不到再找別家，但那樣 9/13 早上要換飯店、拖行李，很麻煩。\n\n⏰ 這是全程唯一沒訂的一晚，而且只剩不到一週，優先處理。\n\n訂好告訴我金額與卡別，我補進記帳，也把住宿資料改成 9/12–9/14 兩晚。",
+        "desc": "🔴 這是現在全程唯一沒訂的一晚，而且出發在即，優先處理。\n\n9/12 傍晚 16:56 就到 Colmar，但 Hotel Turenne 只訂了 9/13–9/14。\n\n📌 最省事：直接問 Hotel Turenne 能不能把訂房往前延一晚，同一間房不用搬。\n→ 訂不到再找別家，但那樣 9/13 早上要換飯店、拖著行李，很麻煩。\n\n💡 訂之前可以參考：Rüdesheim 那晚最後被收了一半（€56.50）。這次訂 Colmar 時留意取消條件，出發前這幾天行程還可能再動。\n\n訂好告訴我金額與卡別，我補進記帳，住宿資料的 9/12–9/14 兩晚已經先改好了。",
         "priority": "high",
         "links": []
       },
