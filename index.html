@@ -1513,7 +1513,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-06.3';
+const APP_VERSION = '2026-09-07.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1886,8 +1886,8 @@ const todoData = [
       },
       {
         "id": "book-colmar-0912",
-        "title": "🔴 補訂 Colmar 9/12 那晚",
-        "desc": "🔴 這是現在全程唯一沒訂的一晚，而且出發在即，優先處理。\n\n9/12 傍晚 16:56 就到 Colmar，但 Hotel Turenne 只訂了 9/13–9/14。\n\n📌 最省事：直接問 Hotel Turenne 能不能把訂房往前延一晚，同一間房不用搬。\n→ 訂不到再找別家，但那樣 9/13 早上要換飯店、拖著行李，很麻煩。\n\n💡 訂之前可以參考：Rüdesheim 那晚最後被收了一半（€56.50）。這次訂 Colmar 時留意取消條件，出發前這幾天行程還可能再動。\n\n訂好告訴我金額與卡別，我補進記帳，住宿資料的 9/12–9/14 兩晚已經先改好了。",
+        "title": "Colmar 9/12 住宿（✅ 已訂）",
+        "desc": "✅ 已訂，9/12 那晚有房了——全程 15 晚到此全部訂完。（金額與付款卡別記在💰記帳分頁）\n\n❓ 一件要跟我確認的：這晚訂的是不是就是 Hotel Turenne（9/13 那晚的同一家）？\n• 是同一家 → 兩晚連住，不用搬，行程照現在這樣就對\n• 是別家 → 9/13 早上要退房、拖行李換飯店，那我得把 Day3 改寫，並把住宿資料拆成兩筆\n→ 告訴我是哪一種，我來調整。",
         "priority": "high",
         "links": []
       },
