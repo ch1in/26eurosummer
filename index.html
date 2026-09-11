@@ -631,6 +631,27 @@
     padding:10px 12px; margin-bottom:14px;
     font-size:12px; color:var(--rust); line-height:1.5;
   }
+  /* expense rows are grouped by date, each group headed by its own total */
+  .exp-day{margin-bottom:16px;}
+  .exp-day-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    padding:0 2px 6px; margin-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .exp-day-date{
+    font-family:'Inter',sans-serif; font-weight:700; font-size:12.5px;
+    color:var(--ink); white-space:nowrap;
+  }
+  .exp-day-date .edd-n{color:var(--ink-soft); font-weight:600; margin-left:5px;}
+  .exp-day-sums{text-align:right; min-width:0;}
+  .exp-day-amt{
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px;
+    color:var(--ink); word-break:break-word;
+  }
+  .exp-day-twd{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--ink-soft); margin-top:1px;
+  }
   /* expense rows with swipe: left→delete, right→edit */
   .exp-item-wrap{
     position:relative; overflow:hidden;
@@ -1513,7 +1534,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-11.1';
+const APP_VERSION = '2026-09-11.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2774,6 +2795,12 @@ function twdTotal(totals){
   }
   return sum;
 }
+// ledger day headers carry the trip's own Day number where the date is in range
+function dayNumberFor(iso){
+  if(!iso || !Array.isArray(days)) return null;
+  const d = days.find(x=>x.date===iso);
+  return d ? d.n : null;
+}
 async function renderExpenses(){
   const totalEl = document.getElementById('expense-total');
   const listEl = document.getElementById('expense-list');
@@ -2807,9 +2834,21 @@ async function renderExpenses(){
   }
   hintEl.style.display = 'block';
 
-  // sort by date then keep insertion order
-  const sorted = [...list].sort((a,b)=> (a.date||'').localeCompare(b.date||''));
-  listEl.innerHTML = sorted.map(e=>{
+  // group by date, each group headed by that day's own total; undated rows last
+  const byDate = new Map();
+  [...list].sort((a,b)=> (a.date||'').localeCompare(b.date||''))
+    .forEach(e=>{
+      const k = e.date || '';
+      if(!byDate.has(k)) byDate.set(k, []);
+      byDate.get(k).push(e);
+    });
+  const dayKeys = [...byDate.keys()].sort((a,b)=>{
+    if(!a) return 1;            // 無日期 sinks to the bottom
+    if(!b) return -1;
+    return a.localeCompare(b);
+  });
+
+  const rowHtml = e => {
     const ic = CAT_ICON[e.category] || '📦';
     return `<div class="exp-item-wrap">
       <button class="exp-edit-btn" onclick="onEditExpense('${e.id}')">✏️ 編輯</button>
@@ -2818,11 +2857,33 @@ async function renderExpenses(){
         <div class="exp-cat-ic">${ic}</div>
         <div class="exp-info">
           <div class="exp-name-txt">${e.name||'(未命名)'}</div>
-          <div class="exp-meta">${e.category||''} · ${e.date?fmtDateFull(e.date):'無日期'}${e.payment?' · 💳 '+e.payment:''}</div>
+          <div class="exp-meta">${e.category||''}${e.payment?' · 💳 '+e.payment:''}</div>
           ${e.cancelBefore?`<div class="exp-cancel">🕒 免費取消前：${fmtDateFull(e.cancelBefore)}</div>`:''}
         </div>
         <div class="exp-amt-txt">${e.currency||''} ${fmtMoney(e.amount)}</div>
       </div>
+    </div>`;
+  };
+
+  listEl.innerHTML = dayKeys.map(k=>{
+    const rows = byDate.get(k);
+    const dayTotals = {};
+    rows.forEach(e=>{ const c=e.currency||'EUR'; dayTotals[c]=(dayTotals[c]||0)+(Number(e.amount)||0); });
+    const sums = Object.keys(dayTotals)
+      .map(c=>`${c} ${fmtMoney(dayTotals[c])}`).join(' ＋ ');
+    const dayTwd = twdTotal(dayTotals);
+    // only worth showing the TWD line when it isn't just repeating the row above
+    const showTwd = dayTwd !== null && !(Object.keys(dayTotals).length === 1 && dayTotals.TWD !== undefined);
+    const dn = dayNumberFor(k);
+    return `<div class="exp-day">
+      <div class="exp-day-head">
+        <div class="exp-day-date">${k ? fmtDate(k) : '無日期'}${dn !== null ? `<span class="edd-n">Day ${dn}</span>` : ''}</div>
+        <div class="exp-day-sums">
+          <div class="exp-day-amt">${sums}</div>
+          ${showTwd ? `<div class="exp-day-twd">≈ TWD ${fmtMoney(Math.round(dayTwd))}</div>` : ''}
+        </div>
+      </div>
+      ${rows.map(rowHtml).join('')}
     </div>`;
   }).join('');
 
