@@ -1534,7 +1534,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-11.2';
+const APP_VERSION = '2026-09-14.1';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -1732,7 +1732,7 @@ const todoData = [
         "id": "train-colmar-iseltwald",
         "sbbBtn": "在 SBB App 看車票",
         "title": "Colmar → Iseltwald（✅ Colmar→Interlaken 已訂）",
-        "desc": "✅ 已訂 Colmar → Interlaken Ost：9/14（一）14:23 – 17:28，二等，1 次轉車。車票在 SBB App 裡。\n\n⚠️ 但這張票只到 Interlaken Ost。最後一段 「Interlaken Ost → Iseltwald（巴士 約 20–30 分）沒有含在裡面」，要當天自己買——用 SBB App 現場買即可，持半價卡 5 折。17:28 到站後直接在 App 買票再上車，別忘了。\n\n（法國段本來就在瑞士境外、半價卡不適用；這段已包含在上面這張訂票中。）",
+        "desc": "✅ 已訂 Colmar → Interlaken Ost（9/14）。當天重買了提早出發的一等票，原本 14:23 – 17:28 的二等票不再使用——實際發車與轉車時間以手上的新票為準。車票在 SBB App 裡。\n\n⚠️ 但這張票只到 Interlaken Ost。最後一段 「Interlaken Ost → Iseltwald（巴士 約 20–30 分）沒有含在裡面」，要當天自己買——用 SBB App 現場買即可，持半價卡 5 折。17:28 到站後直接在 App 買票再上車，別忘了。\n\n（法國段本來就在瑞士境外、半價卡不適用；這段已包含在上面這張訂票中。）",
         "priority": "medium",
         "links": [
           {
