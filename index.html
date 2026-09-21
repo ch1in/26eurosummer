@@ -631,6 +631,16 @@
     padding:10px 12px; margin-bottom:14px;
     font-size:12px; color:var(--rust); line-height:1.5;
   }
+  /* per-stay facts that stay relevant after booking (phone, check-out deadline).
+     The area/tip block is suppressed once a hotel is saved, so these live apart
+     from it — otherwise they'd be invisible on exactly the stays that need them. */
+  .hotel-notes{
+    margin-top:8px; padding:8px 10px;
+    background:var(--paper-2); border:1px solid var(--line); border-radius:6px;
+    font-size:11.5px; line-height:1.55; color:var(--ink);
+    white-space:pre-line;
+  }
+  .hotel-notes a{color:var(--lake); font-weight:600;}
   /* expense rows are grouped by date, each group headed by its own total */
   .exp-day{margin-bottom:16px;}
   .exp-day-head{
@@ -1534,7 +1544,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-09-21.1';
+const APP_VERSION = '2026-09-21.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -2570,7 +2580,8 @@ async function renderDayPanel(){
       ${saved
         ? `<a class="hotel-saved-link" href="${saved.url}" target="_blank" rel="noopener">📍 ${saved.name} ↗</a><button class="hotel-clear" onclick="clearHotel('${d.stayKey}')">清除</button>
            ${saved.cancelBefore ? `<div class="exp-cancel" style="margin-top:6px;">🕒 免費取消期限：${fmtDateFull(saved.cancelBefore)}</div>` : ''}
-           ${saved.amount ? `<div><span class="exp-filed-badge">💰 已記帳 ${saved.currency} ${fmtMoney(saved.amount)}${saved.payment?' · 💳 '+saved.payment:''} · 見記帳分頁</span></div>` : `<div class="exp-cancel" style="margin-top:6px;color:var(--ink-soft);">尚未記帳（可在記帳分頁補登）</div>`}`
+           ${saved.amount ? `<div><span class="exp-filed-badge">💰 已記帳 ${saved.currency} ${fmtMoney(saved.amount)}${saved.payment?' · 💳 '+saved.payment:''} · 見記帳分頁</span></div>` : `<div class="exp-cancel" style="margin-top:6px;color:var(--ink-soft);">尚未記帳（可在記帳分頁補登）</div>`}
+           ${s.notes ? `<div class="hotel-notes">${s.notes}</div>` : ''}`
         : `<span class="hotel-status pending">尚未加入地點</span>
            <div class="hotel-booking-link"><a class="link-btn gold" href="${s.bookUrl}" target="_blank" rel="noopener">Booking.com 搜尋 ↗</a></div>
            <div class="hotel-input-row">
