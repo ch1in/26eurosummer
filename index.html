@@ -1643,7 +1643,7 @@ async function initWorkerSync(){
    confusing enough that the page checks its own version against the one in
    itinerary.json and offers a cache-busting reload.
    Bump APP_VERSION and itinerary.json's appVersion together on each deploy. */
-const APP_VERSION = '2026-10-19.1';
+const APP_VERSION = '2026-10-19.2';
 function checkAppVersion(latest){
   if(!latest || latest === APP_VERSION) return;
   let el = document.getElementById('app-update-bar');
@@ -3229,6 +3229,7 @@ document.getElementById('exp-cancel-edit')?.addEventListener('click', ()=>{ exit
    is grouped by how much you need to wear rather than by date. Kept here (not
    in itinerary.json) because it's guidance, not itinerary data. */
 let RAIL_FLIGHTS = {};
+let PACK_NOTE = '';
 let PACK_ROWS = [
   { wear:'短袖短褲',        days:3, where:'Como 湖區、米蘭',            span:'Day 12–14', tone:'warm' },
   { wear:'短袖＋長裙＋小外套', days:1, where:'米蘭（Duomo 日）',          span:'Day 15', tone:'warm' },
@@ -3256,10 +3257,7 @@ function renderPackGuide(){
         </tbody>
       </table>
     </div>
-    <div class="pack-note">☝️ 依「15°C 以下薄長袖長褲就要加外套」的體感估算。
-      Day 6、Day 10 上山推估 0–8°C 且風大，需羽絨或厚刷毛＋帽子手套。
-      🚢 船上（Day 3 萊茵河、Day 12–13 Como 渡輪）體感再低 4–5°C，外套隨身。
-      ⛪ Day 14 進 Duomo 不可露肩、短褲需過膝。</div>`;
+    ${PACK_NOTE ? `<div class="pack-note">${PACK_NOTE}</div>` : ''}`;
 }
 function populateOotdDates(){
   const sel = document.getElementById('ootd-date');
@@ -3493,13 +3491,20 @@ function setDocState(id, msg, isErr){
    was already public. Any other trip supplies its own through the private
    seed (trip.docs / trip.todo / trip.wear / trip.pack); a trip that supplies
    nothing gets an empty table and the views show their empty state. */
-const EU_CONTENT = { docs: DOCS, todo: todoData, wear: DAY_WEAR, pack: PACK_ROWS };
+const EU_PACK_NOTE = `☝️ 依「15°C 以下薄長袖長褲就要加外套」的體感估算。
+      Day 6、Day 10 上山推估 0–8°C 且風大，需羽絨或厚刷毛＋帽子手套。
+      🚢 船上（Day 3 萊茵河、Day 12–13 Como 渡輪）體感再低 4–5°C，外套隨身。
+      ⛪ Day 14 進 Duomo 不可露肩、短褲需過膝。`;
+const EU_CONTENT = { docs: DOCS, todo: todoData, wear: DAY_WEAR, pack: PACK_ROWS, packNote: EU_PACK_NOTE };
 function applyTripContent(trip){
-  const built = (trip && trip.id === LEGACY_TRIP_ID) ? EU_CONTENT : {docs:[], todo:[], wear:{}, pack:[]};
+  const built = (trip && trip.id === LEGACY_TRIP_ID) ? EU_CONTENT : {docs:[], todo:[], wear:{}, pack:[], packNote:''};
   DOCS      = (trip && trip.docs) || built.docs;
   todoData  = (trip && trip.todo) || built.todo;
   DAY_WEAR  = (trip && trip.wear) || built.wear;
   PACK_ROWS = (trip && trip.pack) || built.pack;
+  // the footnote under the packing table used to be hardcoded Europe text, so
+  // every other trip showed the Rhine cruise and the Duomo dress code
+  PACK_NOTE = (trip && trip.packNote) || built.packNote || '';
   // the two flight cards on the calendar rail; a trip with no flights booked
   // yet simply has none
   RAIL_FLIGHTS = (trip && trip.railFlights) || {};
